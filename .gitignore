@@ -1,0 +1,98 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+.mvn
+*.iws
+*.iml
+*.ipr
+mvnw
+mvnw.cmd
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+logs/
+
+### VS Code ###
+.vscode/
+##ignore this file##
+**/target/
+*target
+.target
+.iml
+.classpath
+.project
+*.settings/
+.settings
+bin
+##*data      
+ ##filter databfileăsln file##
+*.mdb  
+*.ldb  
+*.sln    
+##class file##
+**/.classpath
+*.com  
+*.class  
+*.dll  
+*.exe  
+*.o  
+*.so  
+# compression file
+*.7z  
+*.dmg  
+*.gz  
+*.iso  
+*.jar  
+*.rar  
+*.tar  
+*.zip  
+*.via
+*.tmp
+*.err 
+# OS generated files #  
+.DS_Store  
+.DS_Store?  
+._*  
+.Spotlight-V100  
+.Trashes  
+Icon?  
+ehthumbs.db  
+Thumbs.db
+/.apt_generated/
+/target/
+/.setting/
+data/
+logs
+/root
+### STS ###
+.apt_generated
+.apt_generated_tests
+.factorypath
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+target
+build
+src/main/resources/template/
