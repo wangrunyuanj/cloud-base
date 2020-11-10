@@ -1,0 +1,9 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 111.229.218.230:8848
