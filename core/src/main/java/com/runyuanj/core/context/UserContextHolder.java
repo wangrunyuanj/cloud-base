@@ -5,6 +5,9 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * @author runyuan
+ */
 public class UserContextHolder {
 
     private ThreadLocal<Map<String, String>> threadLocal;
