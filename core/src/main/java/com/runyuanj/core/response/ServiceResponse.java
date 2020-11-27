@@ -88,7 +88,7 @@ public class ServiceResponse<T> {
         return new ServiceResponse(baseException.getErrorType(), message, null);
     }
 
-    public static ServiceResponse fail(BaseException baseException) {
+    private static ServiceResponse fail(BaseException baseException) {
         return new ServiceResponse(baseException.getErrorType());
     }
 
