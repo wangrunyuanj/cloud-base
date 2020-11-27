@@ -1,7 +1,7 @@
 package com.runyuanj.core.utils;
 
 
-import com.runyuanj.core.exception.BizException;
+import com.runyuanj.core.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
@@ -19,6 +19,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static com.runyuanj.core.exception.type.SystemErrorType.DATE_SCOPE_ERROR;
 
 /**
  * 描述：日期工具类
@@ -659,7 +661,7 @@ public class DateUtils {
             dateType = MONTH;
             dateList.addAll(DateUtils.getBetweenMonth(startDate, endDate, DEFAULT_MONTH_FORMAT));
         } else {
-            throw new BizException("日期参数只能介于0-365天之间");
+            throw new ServiceException(DATE_SCOPE_ERROR, "日期参数只能介于0-365天之间");
         }
         return dateType;
     }
@@ -687,7 +689,7 @@ public class DateUtils {
             dateType = MONTH;
             dateList.addAll(DateUtils.getBetweenMonth(startDate, endDate, DEFAULT_MONTH_FORMAT_EN));
         } else {
-            throw new BizException("日期参数只能介于0-365天之间");
+            throw new ServiceException(DATE_SCOPE_ERROR, "日期参数只能介于0-365天之间");
         }
         return dateType;
     }

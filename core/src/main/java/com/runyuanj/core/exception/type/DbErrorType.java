@@ -1,5 +1,6 @@
 package com.runyuanj.core.exception.type;
 
+import com.runyuanj.core.ErrorType;
 import lombok.Getter;
 
 @Getter

@@ -1,6 +1,6 @@
 package com.runyuanj.core.exception.type;
 
-import com.runyuanj.core.exception.type.ErrorType;
+import com.runyuanj.core.ErrorType;
 import lombok.Getter;
 
 @Getter
@@ -12,12 +12,14 @@ public enum SystemErrorType implements ErrorType {
     GATEWAY_CONNECT_TIME_OUT("Sys_0002", "网关超时"),
     GATEWAY_NOT_FOUND_SERVICE("Sys_0404", "服务未找到"),
     GATEWAY_ERROR("Sys_0500", "网关异常"),
-
     PARAM_INVALID("Sys_0003", "参数异常"),
     SERVICE_RUN_TIMEOUT("Sys_0004", "服务运行超时"),
+
+    DATE_FORMAT_ERROR("Date_0001", "日期格式化错误"),
+    DATE_SCOPE_ERROR("Date_0002", "时间范围错误"),
+
     UPLOAD_FILE_COUNT_LIMIT("Sys_0013", "上传文件数量超过限制"),
     UPLOAD_FILE_SIZE_LIMIT("Sys_0014", "上传文件大小超过限制");
-
 
     /**
      * type code
