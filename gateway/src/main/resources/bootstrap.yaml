@@ -11,3 +11,7 @@ spring:
         prefix: database
         server-addr: 111.229.218.230:8848
         file-extension: yml
+  kafka:
+    bootstrap-servers: "10.0.4.138:8088"
+    consumer:
+      group-id: "gatewayConfig"
