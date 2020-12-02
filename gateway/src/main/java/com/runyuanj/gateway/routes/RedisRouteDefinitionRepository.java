@@ -22,13 +22,31 @@ public class RedisRouteDefinitionRepository implements RouteDefinitionRepository
         return Flux.fromIterable(routeService.getRouteDefinitions());
     }
 
+    /**
+     * 新增路由信息
+     *
+     * @param route
+     * @return
+     */
     @Override
     public Mono<Void> save(Mono<RouteDefinition> route) {
-        return null;
+        return route.flatMap(routeDefinition -> {
+            routeService.save(routeDefinition);
+            return Mono.empty();
+        });
     }
 
+    /**
+     * 触发删除事件
+     *
+     * @param routeId
+     * @return
+     */
     @Override
     public Mono<Void> delete(Mono<String> routeId) {
-        return null;
+        return routeId.flatMap(id -> {
+            routeService.delete(id);
+            return Mono.empty();
+        });
     }
 }

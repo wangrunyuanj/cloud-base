@@ -1,6 +1,6 @@
-package com.runyuanj.core.exception;
+package com.runyuanj.common.exception;
 
-import com.runyuanj.core.BaseException;
+import com.runyuanj.common.BaseException;
 
 /**
  * @author Administrator

@@ -1,7 +1,7 @@
-package com.runyuanj.core.exception;
+package com.runyuanj.common.exception;
 
-import com.runyuanj.core.BaseException;
-import com.runyuanj.core.ErrorType;
+import com.runyuanj.common.BaseException;
+import com.runyuanj.common.ErrorType;
 
 public class ServiceException extends BaseException {
 

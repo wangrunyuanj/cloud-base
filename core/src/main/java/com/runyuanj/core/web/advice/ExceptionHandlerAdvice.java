@@ -1,8 +1,8 @@
 package com.runyuanj.core.web.advice;
 
-import com.runyuanj.core.BaseException;
-import com.runyuanj.core.exception.type.DbErrorType;
-import com.runyuanj.core.exception.type.SystemErrorType;
+import com.runyuanj.common.BaseException;
+import com.runyuanj.common.exception.type.DbErrorType;
+import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.core.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;

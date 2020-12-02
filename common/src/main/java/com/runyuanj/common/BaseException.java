@@ -1,8 +1,8 @@
-package com.runyuanj.core;
+package com.runyuanj.common;
 
 import lombok.Getter;
 
-import static com.runyuanj.core.exception.type.SystemErrorType.SYSTEM_ERROR;
+import static com.runyuanj.common.exception.type.SystemErrorType.SYSTEM_ERROR;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Getter
@@ -11,9 +11,9 @@ public class BaseException extends RuntimeException {
     /**
      * 异常对应的错误类型
      */
-    private final ErrorType errorType;
+    private ErrorType errorType;
 
-    private final String message;
+    private String message;
 
     /**
      * 默认是系统异常

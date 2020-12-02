@@ -1,14 +1,14 @@
 package com.runyuanj.core.response;
 
-import com.runyuanj.core.BaseException;
-import com.runyuanj.core.ErrorType;
+import com.runyuanj.common.BaseException;
+import com.runyuanj.common.ErrorType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
 
-import static com.runyuanj.core.exception.type.SystemErrorType.SYSTEM_ERROR;
+import static com.runyuanj.common.exception.type.SystemErrorType.SYSTEM_ERROR;
 
 @Data
 @AllArgsConstructor

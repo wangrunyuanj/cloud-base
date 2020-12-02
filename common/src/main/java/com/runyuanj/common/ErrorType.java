@@ -1,4 +1,4 @@
-package com.runyuanj.core;
+package com.runyuanj.common;
 
 public interface ErrorType {
 

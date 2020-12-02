@@ -1,6 +1,6 @@
-package com.runyuanj.core.exception.type;
+package com.runyuanj.common.exception.type;
 
-import com.runyuanj.core.ErrorType;
+import com.runyuanj.common.ErrorType;
 import lombok.Getter;
 
 @Getter
@@ -10,7 +10,7 @@ public enum AuthErrorType implements ErrorType {
     USER_NOT_EXSITS("Auth_0002", "用户不存在"),
     INVALID_TOKEN("Auth_0003", "无效token");
 
-    AuthErrorType (String code, String msg) {
+    AuthErrorType(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }

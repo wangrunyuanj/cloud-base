@@ -1,4 +1,4 @@
-package com.runyuanj.cloud.cache.redis;
+package com.runyuanj.cloud.cache.redis.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -19,9 +19,6 @@ import java.time.Duration;
 
 import static org.springframework.data.redis.cache.RedisCacheConfiguration.defaultCacheConfig;
 
-/**
- * // TODO 使用本地缓存和分布式集中缓存, 代理所有查询请求. 当缓存中不存在时, 调用回调方法查询数据库并存入2级缓存
- */
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
 
