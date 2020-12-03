@@ -12,6 +12,14 @@
     <name>authentication-server</name>
     <description>Demo project for Spring Boot</description>
 
+    <distributionManagement>
+        <repository>
+            <id>remote</id>
+            <name>remote</name>
+            <url>http://10.0.4.134:8087/repository/maven-snapshots</url><!--私服对应url-->
+        </repository>
+    </distributionManagement>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>

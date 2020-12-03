@@ -68,6 +68,14 @@
 
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>remote</id>
+            <name>remote</name>
+            <url>http://10.0.4.134:8087/repository/maven-snapshots</url><!--私服对应url-->
+        </repository>
+    </distributionManagement>
+
     <dependencyManagement>
         <dependencies>
 

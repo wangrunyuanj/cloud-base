@@ -19,6 +19,14 @@
         <swagger.version>2.9.2</swagger.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>remote</id>
+            <name>remote</name>
+            <url>http://10.0.4.134:8087/repository/maven-snapshots</url><!--私服对应url-->
+        </repository>
+    </distributionManagement>
+
     <dependencies>
 
         <dependency>
@@ -80,11 +88,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.runyuanj</groupId>
-            <artifactId>authentication-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <build>
