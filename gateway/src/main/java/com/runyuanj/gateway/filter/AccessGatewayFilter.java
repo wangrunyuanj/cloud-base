@@ -3,15 +3,20 @@ package com.runyuanj.gateway.filter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
+import com.runyuanj.auth.client.provider.AuthProvider;
 import com.runyuanj.gateway.service.IPermissionService;
-import com.springboot.cloud.auth.client.service.IAuthService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
@@ -22,18 +27,23 @@ import reactor.core.publisher.Mono;
  * 请求url权限校验
  */
 @Configuration
-@ComponentScan(basePackages = "com.runyuanj.auth.client")
 @Slf4j
 public class AccessGatewayFilter implements GlobalFilter {
+
+    /**
+     * Authorization认证开头是"bearer "
+     */
+    private static final String BEARER = "Bearer ";
+
+    /**
+     * jwt token 密钥，主要用于token解析，签名验证
+     */
+    @Value("${spring.security.oauth2.jwt.signingKey}")
+    private String signingKey;
 
     private static final String X_CLIENT_TOKEN_USER = "x-client-token-user";
     private static final String X_CLIENT_TOKEN = "x-client-token";
 
-    /**
-     * 由auth-client模块提供签权的feign客户端
-     */
-    @Autowired
-    private IAuthService authService;
     @Autowired
     private IPermissionService permissionService;
 
@@ -55,7 +65,7 @@ public class AccessGatewayFilter implements GlobalFilter {
 
         log.debug("url:{},method:{},headers:{}", url, method, request.getHeaders());
 
-        if (authService.ignoreAuthentication(url)) {
+        if (permissionService.ignoreAuthentication(url)) {
             return chain.filter(exchange);
         }
 
@@ -91,12 +101,21 @@ public class AccessGatewayFilter implements GlobalFilter {
     private String getUserToken(String authentication) {
         String token = "{}";
         try {
-            token = new ObjectMapper().writeValueAsString(authService.getJwt(authentication).getBody());
+            token = new ObjectMapper().writeValueAsString(getJwt(authentication).getBody());
             return token;
         } catch (JsonProcessingException e) {
             log.error("token json error:{}", e.getMessage());
         }
         return token;
+    }
+
+    private Jws<Claims> getJwt(String token) {
+        if (token.startsWith(BEARER)) {
+            token = StringUtils.substring(token, BEARER.length());
+        }
+        return Jwts.parser()  //得到DefaultJwtParser
+                .setSigningKey(signingKey.getBytes()) //设置签名的秘钥
+                .parseClaimsJws(token);
     }
 
     /**

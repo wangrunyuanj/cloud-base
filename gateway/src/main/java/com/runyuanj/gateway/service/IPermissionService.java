@@ -16,4 +16,13 @@ public interface IPermissionService {
      * @return
      */
     boolean permission(String authentication, String url, String method);
+
+
+    /**
+     * 是否忽略该url
+     *
+     * @param url
+     * @return
+     */
+    boolean ignoreAuthentication(String url);
 }

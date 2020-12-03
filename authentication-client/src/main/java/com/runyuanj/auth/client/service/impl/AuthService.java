@@ -72,8 +72,10 @@ public class AuthService implements IAuthService {
         if (jwtToken.startsWith(BEARER)) {
             jwtToken = StringUtils.substring(jwtToken, BEARER.length());
         }
-        return Jwts.parser()  //得到DefaultJwtParser
-                .setSigningKey(signingKey.getBytes()) //设置签名的秘钥
+        //得到DefaultJwtParser
+        return Jwts.parser()
+                //设置签名的秘钥
+                .setSigningKey(signingKey.getBytes())
                 .parseClaimsJws(jwtToken);
     }
 

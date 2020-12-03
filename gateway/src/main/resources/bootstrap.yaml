@@ -3,15 +3,16 @@ server:
 spring:
   application:
     name: gateway
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 111.229.218.230:8848
-      config:
-        prefix: database
-        server-addr: 111.229.218.230:8848
-        file-extension: yml
   kafka:
     bootstrap-servers: "10.0.4.138:8088"
     consumer:
       group-id: "gatewayConfig"
+
+  security:
+    oauth2:
+      jwt:
+        signingKey: runyuanj123
+gate:
+  ignore:
+    authentication:
+      startWith: /oauth,/open
