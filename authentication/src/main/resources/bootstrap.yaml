@@ -1,0 +1,16 @@
+server:
+  port: 8002
+spring:
+  application:
+    name: authentication-server
+  kafka:
+    bootstrap-servers: "10.0.4.138:8088"
+    consumer:
+      group-id: "authenticationConfig"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+      config:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+        file-extension: yml

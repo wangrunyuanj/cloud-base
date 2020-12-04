@@ -1,6 +1,6 @@
 package com.runyuanj.auth.server.provider;
 
-import com.runyuanj.core.response.Result;
+import com.runyuanj.common.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

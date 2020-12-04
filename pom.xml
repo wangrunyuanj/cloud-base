@@ -112,6 +112,30 @@
                 <version>${spring.cloud.alibaba.version}</version>
             </dependency>
 
+            <!--热部署-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <version>${spring.boot.version}</version>
+                <scope>runtime</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <!--oauth2认证-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-security</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+            <!--security 的测试包-->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-test</artifactId>
+                <version>${spring.boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter</artifactId>
@@ -213,7 +237,12 @@
                 <version>2.10.2</version>
             </dependency>
 
-
+            <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.2</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
@@ -225,6 +254,30 @@
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>3.8.1</version>
+            </dependency>
+
+            <!--mybatis plus依赖包-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+
+            <!--连接msql数据库相关jar包-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jdbc</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.47</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -271,6 +324,6 @@
         <module>core</module>
         <module>log</module>
         <module>cache</module>
-        <module>authentication-client</module>
+        <module>authentication</module>
     </modules>
 </project>

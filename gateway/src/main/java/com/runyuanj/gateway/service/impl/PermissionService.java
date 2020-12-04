@@ -2,15 +2,39 @@ package com.runyuanj.gateway.service.impl;
 
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.Cached;
+import com.runyuanj.common.response.Result;
 import com.runyuanj.gateway.service.IPermissionService;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Service
 @Slf4j
 public class PermissionService implements IPermissionService {
+
+    /**
+     * Authorization认证开头是"bearer "
+     */
+    private static final String BEARER = "Bearer ";
+
+    /**
+     * jwt token 密钥，主要用于token解析，签名验证
+     */
+    @Value("${spring.security.oauth2.jwt.signingKey}")
+    private String signingKey;
+
+    /**
+     * 不需要网关签权的url配置(/oauth,/open)
+     * 默认/oauth开头是不需要的
+     */
+    @Value("${gate.ignore.authentication.startWith:/oauth}")
+    private String ignoreUrls;
 
     /**
      * 校验权限, 在本地缓存权限数据.
@@ -25,8 +49,41 @@ public class PermissionService implements IPermissionService {
     @Cached(name = "gateway_auth::", key = "#authentication+#method+#url",
             cacheType = CacheType.LOCAL, expire = 10, timeUnit = SECONDS, localLimit = 20000)
     public boolean permission(String authentication, String url, String method) {
-        boolean result = sendRequestToAuth(authentication, url, method);
-        return result;
+
+        // 如果请求未携带token信息, 直接拒绝
+        if (StringUtils.isBlank(authentication) || !authentication.startsWith(BEARER)) {
+            log.error("user token is null");
+            return Boolean.FALSE;
+        }
+
+        //token是否有效，在网关进行校验，无效/过期等
+        if (invalidJwtAccessToken(authentication)) {
+            return Boolean.FALSE;
+        }
+
+        Result result = sendRequestToAuth(authentication, url, method);
+        return result.isSuccess() && (boolean) result.getData();
+    }
+
+    public boolean invalidJwtAccessToken(String authentication) {
+        // 是否无效true表示无效
+        boolean invalid = Boolean.TRUE;
+        try {
+            getJwt(authentication);
+            invalid = Boolean.FALSE;
+        } catch (SignatureException | ExpiredJwtException | MalformedJwtException ex) {
+            log.error("user token error :{}", ex.getMessage());
+        }
+        return invalid;
+    }
+
+    public Jws<Claims> getJwt(String jwtToken) {
+        if (jwtToken.startsWith(BEARER)) {
+            jwtToken = StringUtils.substring(jwtToken, BEARER.length());
+        }
+        return Jwts.parser()  //得到DefaultJwtParser
+                .setSigningKey(signingKey.getBytes()) //设置签名的秘钥
+                .parseClaimsJws(jwtToken);
     }
 
     /**
@@ -39,10 +96,18 @@ public class PermissionService implements IPermissionService {
     @Cached(name = "gateway_ignore_url::", key = "#url",
             cacheType = CacheType.LOCAL, expire = 10, timeUnit = SECONDS, localLimit = 20000)
     public boolean ignoreAuthentication(String url) {
-        return false;
+        return Stream.of(this.ignoreUrls.split(",")).anyMatch(ignoreUrl -> url.startsWith(StringUtils.trim(ignoreUrl)));
     }
 
-    private boolean sendRequestToAuth(String authentication, String url, String method) {
-        return true;
+    /**
+     * 向authentication服务发送验证请求
+     *
+     * @param authentication
+     * @param url
+     * @param method
+     * @return
+     */
+    private Result sendRequestToAuth(String authentication, String url, String method) {
+        return Result.success();
     }
 }

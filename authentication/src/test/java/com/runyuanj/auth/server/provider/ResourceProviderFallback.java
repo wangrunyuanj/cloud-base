@@ -1,11 +1,10 @@
 package com.runyuanj.auth.server.provider;
 
-import com.runyuanj.core.response.Result;
+import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
-import java.util.Set;
 
 @Component
 @Slf4j

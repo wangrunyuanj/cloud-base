@@ -1,4 +1,4 @@
-package com.runyuanj.core.response;
+package com.runyuanj.common.response;
 
 import com.runyuanj.common.BaseException;
 import com.runyuanj.common.ErrorType;
@@ -68,7 +68,7 @@ public class Result<T> {
     }
 
     public static Result success(Object data) {
-        return new Result(SUCCESS_CODE, SUCCESS_MSG, data);
+        return new Result(SUCCESS_CODE, null, data);
     }
 
     /**
