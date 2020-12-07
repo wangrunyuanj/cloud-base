@@ -14,9 +14,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @TableName("groups")
 public class Group extends BasePo {
+    /**
+     * 名称
+     */
     private String name;
+    /**
+     * 上级组id
+     */
     private String parentId;
+    /**
+     * 描述
+     */
     private String description;
+    /**
+     * mysql逻辑删除
+     */
     @TableLogic
     private String deleted = "N";
 }

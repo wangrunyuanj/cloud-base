@@ -12,7 +12,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Position extends BasePo {
+    /**
+     * 名称
+     */
     private String name;
+    /**
+     * 描述
+     */
     private String description;
     @TableLogic
     private String deleted = "N";

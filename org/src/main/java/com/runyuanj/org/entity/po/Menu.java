@@ -11,11 +11,32 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Menu extends BasePo {
+    /**
+     * 上级菜单id
+     */
     private String parentId;
+    /**
+     * 菜单名称
+     */
     private String name;
+    /**
+     * 类型
+     */
     private String type;
+    /**
+     * 链接地址
+     */
     private String href;
+    /**
+     * icon
+     */
     private String icon;
+    /**
+     * 排序
+     */
     private int orderNum;
+    /**
+     * 描述
+     */
     private String description;
 }
