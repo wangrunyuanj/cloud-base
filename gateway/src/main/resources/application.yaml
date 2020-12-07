@@ -1,6 +1,6 @@
 spring:
   redis:
-    host: ${REDIS_HOST:10.0.4.134}
+    host: ${REDIS_HOST:10.0.4.138}
     port: ${REDIS_PORT:8086}
     lettuce:
       pool:
