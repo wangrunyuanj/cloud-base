@@ -40,9 +40,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <nacos.discovery.version>0.2.1.RELEASE</nacos.discovery.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
         <swagger.version>2.9.2</swagger.version>
         <lombok.version>1.16.20</lombok.version>
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
