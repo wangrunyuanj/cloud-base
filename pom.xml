@@ -86,30 +86,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-            <!--<dependency>
+            <dependency>
                 <groupId>com.alibaba.cloud</groupId>
-                <artifactId>aliyun-spring-boot-dependencies</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring.cloud.alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
--->
-<!--            <dependency>-->
-<!--                <groupId>com.alibaba.boot</groupId>-->
-<!--                <artifactId>nacos-config-spring-boot-starter</artifactId>-->
-<!--                <version>0.2.7</version>-->
-<!--            </dependency>-->
-
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-                <version>${nacos.discovery.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-                <version>${spring.cloud.alibaba.version}</version>
             </dependency>
 
             <!--热部署-->
@@ -124,7 +106,7 @@
             <!--oauth2认证-->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-security</artifactId>
+                <artifactId>spring-cloud-starter-security</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
 
@@ -141,28 +123,12 @@
                 <artifactId>spring-cloud-starter</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-eureka</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-config-server</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-gateway</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-openfeign-core</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
