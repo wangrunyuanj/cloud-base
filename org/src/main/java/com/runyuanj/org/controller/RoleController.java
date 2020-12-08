@@ -50,6 +50,10 @@ public class RoleController {
         return Result.success(roleService.getAll());
     }
 
+    /**
+     * 权限控制
+     * @PreAuthorize("hasAuthority('course_teachplan_add')")
+     */
     @GetMapping(value = "/user/{userId}")
     public Result query(@PathVariable String userId) {
         log.debug("query with userId:{}", userId);
