@@ -24,11 +24,11 @@ public class Resource extends BasePo {
      */
     private String url;
     /**
-     * 方法名
+     * 请求方式 GET/POST/DELETE/PUT
      */
     private String method;
     /**
-     * 名称
+     * 资源名称
      */
     private String name;
     /**

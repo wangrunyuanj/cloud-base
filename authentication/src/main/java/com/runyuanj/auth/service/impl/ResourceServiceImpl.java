@@ -1,8 +1,11 @@
 package com.runyuanj.auth.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.runyuanj.auth.service.NewMvcRequestMatcher;
 import com.runyuanj.auth.service.ResourceService;
 import com.runyuanj.common.response.Result;
+import com.runyuanj.common.utils.ResponseDataUtil;
 import com.runyuanj.core.auth.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +14,10 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.runyuanj.auth.utils.Constants.NONE_URL;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * 用于从org服务获取资源权限信息
@@ -31,6 +37,10 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     private HandlerMappingIntrospector mvcHandlerMappingIntrospector;
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private static final String ORG_RESOURCE_PATH = "http://org/resource/all";
 
     /**
      * 系统中所有权限集合
@@ -63,12 +73,12 @@ public class ResourceServiceImpl implements ResourceService {
      * 加载权限资源数据
      */
     @Override
+    @PostConstruct
     public synchronized void loadResource() {
-        Result<Set<Resource>> resourceResult = getOrgResources();
-        if (resourceResult.isFail()) {
+        Set<Resource> resources = getOrgResources();
+        if (resources == null) {
             System.exit(1);
         }
-        Set<Resource> resources = resourceResult.getData();
         Map<MvcRequestMatcher, SecurityConfig> temResources = resources.stream().collect(Collectors.toMap(
                 resource -> this.newMvcRequestMatcher(resource.getUrl(), resource.getMethod()),
                 resource -> new SecurityConfig(resource.getCode())
@@ -76,8 +86,18 @@ public class ResourceServiceImpl implements ResourceService {
         localConfigAttributes.putAll(temResources);
     }
 
-    private Result<Set<Resource>> getOrgResources() {
-        return Result.success(new HashSet<Resource>());
+    private Set<Resource> getOrgResources() {
+        try {
+            Result responseEntity = restTemplate.getForObject(ORG_RESOURCE_PATH, Result.class);
+            JSONArray jsonArray = ResponseDataUtil.parseArrayResponse(responseEntity);
+
+            return jsonArray.stream()
+                    .map(obj -> JSON.parseObject(JSON.toJSONString(obj), Resource.class))
+                    .collect(toSet());
+        } catch (Exception e) {
+            log.error("sed to org service for resources error");
+            return null;
+        }
     }
 
     /**
