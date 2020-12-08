@@ -73,11 +73,11 @@ public class ResourceServiceImpl implements ResourceService {
      * 加载权限资源数据
      */
     @Override
-    @PostConstruct
     public synchronized void loadResource() {
         Set<Resource> resources = getOrgResources();
         if (resources == null) {
-            System.exit(1);
+            log.error("get org resources error");
+            resources = new HashSet<>();
         }
         Map<MvcRequestMatcher, SecurityConfig> temResources = resources.stream().collect(Collectors.toMap(
                 resource -> this.newMvcRequestMatcher(resource.getUrl(), resource.getMethod()),
@@ -108,6 +108,9 @@ public class ResourceServiceImpl implements ResourceService {
      */
     @Override
     public ConfigAttribute findConfigAttributes(HttpServletRequest request) {
+        if (localConfigAttributes == null) {
+            loadResource();
+        }
         localConfigAttributes.keySet().stream().filter(requestMatcher -> requestMatcher.matches(request))
                 .map(requestMatcher -> localConfigAttributes.get(requestMatcher))
                 .peek(urlConfig -> log.debug("url在资源池中配置：{}", urlConfig.getAttribute()))

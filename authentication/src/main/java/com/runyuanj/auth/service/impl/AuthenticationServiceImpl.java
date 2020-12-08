@@ -35,8 +35,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return
      */
     @Override
-    @Cached(name = "auth_check::", key = "#authentication+#method+#url",
-            cacheType = CacheType.LOCAL, expire = 10, timeUnit = SECONDS, localLimit = 20000)
+    /*@Cached(name = "auth_check::", key = "#authentication+#method+#url",
+            cacheType = CacheType.LOCAL, expire = 10, timeUnit = SECONDS, localLimit = 20000)*/
     public boolean hasPermission(HttpServletRequest authRequest) {
         // 获取用户认证信息
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
