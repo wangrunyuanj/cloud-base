@@ -5,15 +5,12 @@ import com.runyuanj.auth.model.HttpServletRequestAuthWrapper;
 import com.runyuanj.auth.service.AuthenticationService;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 @Slf4j
 public class AuthController {
 
@@ -25,9 +22,8 @@ public class AuthController {
         return Result.success();
     }
 
-
     @PostMapping(value = "/auth/permission")
-    @Cached(expire = 10, localLimit = 20000)
+    // @Cached(expire = 10, localLimit = 20000)
     public Result auth(@RequestParam String url, @RequestParam String method, HttpServletRequest request) {
 
         boolean result = authenticationService.hasPermission(new HttpServletRequestAuthWrapper(request, url, method));

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.runyuanj.auth.service.NewMvcRequestMatcher;
 import com.runyuanj.auth.service.ResourceService;
+import com.runyuanj.auth.service.ServiceFeign;
 import com.runyuanj.common.response.Result;
 import com.runyuanj.common.utils.ResponseDataUtil;
 import com.runyuanj.core.auth.Resource;
@@ -38,7 +39,9 @@ public class ResourceServiceImpl implements ResourceService {
     @Autowired
     private HandlerMappingIntrospector mvcHandlerMappingIntrospector;
     @Autowired
-    private RestTemplate restTemplate;
+    private ServiceFeign serviceFeign;
+
+
 
     private static final String ORG_RESOURCE_PATH = "http://org/resource/all";
 
@@ -88,7 +91,8 @@ public class ResourceServiceImpl implements ResourceService {
 
     private Set<Resource> getOrgResources() {
         try {
-            Result responseEntity = restTemplate.getForObject(ORG_RESOURCE_PATH, Result.class);
+            Result responseEntity = (Result) serviceFeign.queryAll();
+            // Result responseEntity = serviceFeign.findResources().getForObject(ORG_RESOURCE_PATH, Result.class);
             JSONArray jsonArray = ResponseDataUtil.parseArrayResponse(responseEntity);
 
             return jsonArray.stream()
@@ -96,7 +100,7 @@ public class ResourceServiceImpl implements ResourceService {
                     .collect(toSet());
         } catch (Exception e) {
             log.error("sed to org service for resources error");
-            return null;
+            throw e;
         }
     }
 
@@ -108,7 +112,7 @@ public class ResourceServiceImpl implements ResourceService {
      */
     @Override
     public ConfigAttribute findConfigAttributes(HttpServletRequest request) {
-        if (localConfigAttributes == null) {
+        if (localConfigAttributes.isEmpty()) {
             loadResource();
         }
         localConfigAttributes.keySet().stream().filter(requestMatcher -> requestMatcher.matches(request))

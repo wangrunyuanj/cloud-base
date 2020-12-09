@@ -34,3 +34,6 @@ jetcache:
       host: ${spring.redis.host}
       port: ${spring.redis.port}
       # password: ${REDIS_PASSWORD:root}
+logging:
+  level:
+    com.runyuanj: debug

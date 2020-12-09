@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartException;
 
+import static com.runyuanj.common.exception.type.NullPointerErrorType.NULL_POINTER;
+
 @Slf4j
 public class ExceptionHandlerAdvice {
 
@@ -44,6 +46,13 @@ public class ExceptionHandlerAdvice {
     public Result duplicateKeyException(DuplicateKeyException ex) {
         log.error("primary key duplication exception:{}", ex.getMessage());
         return Result.fail(DbErrorType.DUPLICATE_PRIMARY_KEY);
+    }
+
+
+    @ExceptionHandler(value = {NullPointerException.class})
+    public Result baseException(NullPointerException ex) {
+        log.error("NullPointerException {}", ex.getMessage());
+        return Result.fail(NULL_POINTER);
     }
 
     @ExceptionHandler(value = {BaseException.class})

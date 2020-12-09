@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author Administrator
- *
  * @EnableGlobalMethodSecurity 为controller层方法添加权限控制:
  * @PreAuthorize("hasAuthority('course_teachplan_add')")
  */
@@ -54,7 +53,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .and()
-                .authorizeRequests().anyRequest().authenticated();
+                .authorizeRequests()
+                .antMatchers("/auth/permission").permitAll()
+                .anyRequest().
+                authenticated();
 
     }
 }
