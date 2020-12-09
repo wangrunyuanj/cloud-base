@@ -1,5 +1,6 @@
 package com.runyuanj.common.response;
 
+import com.alibaba.fastjson.JSONObject;
 import com.runyuanj.common.BaseException;
 import com.runyuanj.common.ErrorType;
 import lombok.AllArgsConstructor;
@@ -110,6 +111,12 @@ public class Result<T> {
         return new Result(baseException.getErrorType(), message, data);
     }
 
+    public static boolean isJsonSuccess(JSONObject responseEntity) {
+        if (responseEntity != null && SUCCESS_CODE.equals(responseEntity.getString("code"))) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * 成功code = 0

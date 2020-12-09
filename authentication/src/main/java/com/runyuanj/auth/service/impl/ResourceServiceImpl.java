@@ -2,6 +2,7 @@ package com.runyuanj.auth.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.runyuanj.auth.service.NewMvcRequestMatcher;
 import com.runyuanj.auth.service.ResourceService;
 import com.runyuanj.auth.service.ServiceFeign;
@@ -91,13 +92,14 @@ public class ResourceServiceImpl implements ResourceService {
 
     private Set<Resource> getOrgResources() {
         try {
-            Result responseEntity = (Result) serviceFeign.queryAll();
-            // Result responseEntity = serviceFeign.findResources().getForObject(ORG_RESOURCE_PATH, Result.class);
-            JSONArray jsonArray = ResponseDataUtil.parseArrayResponse(responseEntity);
-
-            return jsonArray.stream()
-                    .map(obj -> JSON.parseObject(JSON.toJSONString(obj), Resource.class))
-                    .collect(toSet());
+            JSONObject responseEntity = serviceFeign.queryAll();
+            if (Result.isJsonSuccess(responseEntity)) {
+                JSONArray jsonArray = responseEntity.getJSONArray("data");
+                return jsonArray.stream()
+                        .map(obj -> JSON.parseObject(JSON.toJSONString(obj), Resource.class))
+                        .collect(toSet());
+            }
+            return null;
         } catch (Exception e) {
             log.error("sed to org service for resources error");
             throw e;
