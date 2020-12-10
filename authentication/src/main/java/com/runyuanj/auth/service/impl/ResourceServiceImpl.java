@@ -42,10 +42,6 @@ public class ResourceServiceImpl implements ResourceService {
     @Autowired
     private ServiceFeign serviceFeign;
 
-
-
-    private static final String ORG_RESOURCE_PATH = "http://org/resource/all";
-
     /**
      * 系统中所有权限集合
      */
@@ -117,12 +113,11 @@ public class ResourceServiceImpl implements ResourceService {
         if (localConfigAttributes.isEmpty()) {
             loadResource();
         }
-        localConfigAttributes.keySet().stream().filter(requestMatcher -> requestMatcher.matches(request))
+        return localConfigAttributes.keySet().stream().filter(requestMatcher -> requestMatcher.matches(request))
                 .map(requestMatcher -> localConfigAttributes.get(requestMatcher))
                 .peek(urlConfig -> log.debug("url在资源池中配置：{}", urlConfig.getAttribute()))
                 .findFirst()
                 .orElse(new SecurityConfig(NONE_URL));
-        return null;
     }
 
     /**
@@ -133,8 +128,13 @@ public class ResourceServiceImpl implements ResourceService {
      */
     @Override
     public Set<Resource> queryByUserName(String username) {
-
-        return null;
+        username = "admin";
+        JSONObject response = serviceFeign.queryByUsername(username);
+        if (Result.isJsonSuccess(response)) {
+            JSONArray data = response.getJSONArray("data");
+            return data.stream().map(resource -> JSON.parseObject(JSON.toJSONString(resource), Resource.class)).collect(toSet());
+        }
+        return new HashSet<>();
     }
 
     /**

@@ -15,6 +15,8 @@ public enum SystemErrorType implements ErrorType {
     PARAM_INVALID("Sys_0003", "参数异常"),
     SERVICE_RUN_TIMEOUT("Sys_0004", "服务运行超时"),
 
+    FEIGN_ERROR("Feign_0001", "服务间异常"),
+
     DATE_FORMAT_ERROR("Date_0001", "日期格式化错误"),
     DATE_SCOPE_ERROR("Date_0002", "时间范围错误"),
 
