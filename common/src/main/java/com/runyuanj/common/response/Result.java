@@ -36,7 +36,7 @@ public class Result<T> {
         this.message = message;
     }
 
-    private Result(String code, String message, T data) {
+    public Result(String code, String message, T data) {
         this(code, message);
         this.data = data;
     }
