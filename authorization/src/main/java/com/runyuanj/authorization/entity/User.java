@@ -14,7 +14,13 @@ public class User extends BasePo {
     private String username;
     private String password;
     private Boolean enabled;
+    /**
+     * 账号是否有效
+     */
     private Boolean accountNonExpired;
+    /**
+     * 密码是否有效
+     */
     private Boolean credentialsNonExpired;
     private Boolean accountNonLocked;
 }

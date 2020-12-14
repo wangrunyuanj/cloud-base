@@ -43,12 +43,12 @@ public class User extends BasePo {
     private Boolean enabled;
 
     /**
-     * 账号是否未过期
+     * 账号是否在有效期
      */
     private Boolean accountNonExpired;
 
     /**
-     * 密码是否未过期
+     * 密码是否在有效期
      */
     private Boolean credentialsNonExpired;
     /**
