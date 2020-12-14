@@ -1,7 +1,5 @@
 package com.runyuanj.auth.service.impl;
 
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.anno.Cached;
 import com.runyuanj.auth.service.AuthenticationService;
 import com.runyuanj.auth.service.ResourceService;
 import com.runyuanj.core.auth.Resource;
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 import static com.runyuanj.auth.utils.Constants.NONE_URL;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * 对获取到的用户信息和资源权限信息进行验证

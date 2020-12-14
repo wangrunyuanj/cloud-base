@@ -7,7 +7,6 @@ import com.runyuanj.auth.service.NewMvcRequestMatcher;
 import com.runyuanj.auth.service.ResourceService;
 import com.runyuanj.auth.service.ServiceFeign;
 import com.runyuanj.common.response.Result;
-import com.runyuanj.common.utils.ResponseDataUtil;
 import com.runyuanj.core.auth.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +15,8 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.HashSet;
