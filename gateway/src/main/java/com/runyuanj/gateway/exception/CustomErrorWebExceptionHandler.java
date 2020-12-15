@@ -16,6 +16,7 @@ import java.util.Map;
 
 /**
  * webflux异常处理
+ * @author Administrator
  */
 public class CustomErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
 
@@ -43,11 +44,11 @@ public class CustomErrorWebExceptionHandler extends DefaultErrorWebExceptionHand
     @Override
     protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
         Map<String, Object> error = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL));
-        HttpStatus errorStatus = getHttpStatus(error);
+        int httpStatus = getHttpStatus(error);
         Throwable throwable = getError(request);
-        return ServerResponse.status(errorStatus)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .body(BodyInserters.fromObject(gateWayExceptionHandlerAdvice.handle(throwable)));
-        //.doOnNext((resp) -> logError(request, errorStatus));
+        return ServerResponse.status(httpStatus)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(gateWayExceptionHandlerAdvice.handle(throwable)))
+                .doOnNext(resp -> logError(request, resp, throwable));
     }
 }

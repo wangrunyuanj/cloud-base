@@ -9,6 +9,11 @@ spring:
     oauth2:
       jwt:
         signingKey: runyuanj123
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:${DATASOURCE_DBTYPE:mysql}://${DATASOURCE_HOST:111.229.218.230}:${DATASOURCE_PORT:3306}/sc_gateway?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:dontcrack123}
 jetcache:
   statIntervalMinutes: 15  # 统一间隔
   areaInCacheName: false  # 设置不把areaName作为Key前缀

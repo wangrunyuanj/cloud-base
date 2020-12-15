@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.reactive.ClientHttpConnector;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,7 +46,8 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
-    public WebClient rest(ClientRegistrationRepository clients, OAuth2AuthorizedClientRepository authz) {
+    public WebClient webClient(ClientRegistrationRepository clients, OAuth2AuthorizedClientRepository authz) {
+
         ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
                 new ServletOAuth2AuthorizedClientExchangeFilterFunction(clients, authz);
         return WebClient.builder()

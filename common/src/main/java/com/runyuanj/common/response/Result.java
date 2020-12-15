@@ -6,6 +6,7 @@ import com.runyuanj.common.ErrorType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 
@@ -13,7 +14,9 @@ import static com.runyuanj.common.exception.type.SystemErrorType.SYSTEM_ERROR;
 
 @Data
 @AllArgsConstructor
-public class Result<T> {
+public class Result<T> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final String SUCCESS_CODE = "0";
     public static final String SUCCESS_MSG = "success";

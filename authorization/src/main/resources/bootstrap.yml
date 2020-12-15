@@ -1,0 +1,16 @@
+server:
+  port: 8003
+spring:
+  application:
+    name: authorization
+  kafka:
+    bootstrap-servers: "10.0.4.138:8088"
+    consumer:
+      group-id: "authorizationConfig"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+      config:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+        file-extension: yml
