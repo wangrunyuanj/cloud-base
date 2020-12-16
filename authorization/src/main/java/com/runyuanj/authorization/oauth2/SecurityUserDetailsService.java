@@ -16,16 +16,29 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
+
+/**
+ * UserDetailsService: Spring Security的核心接口, 获取用户的指定信息.
+ * 实现Spring Security的UserDetailService,通过username构建UserDetails对象
+ *
+ * @author Administrator
+ */
 @Slf4j
 @Service("userDetailsService")
-public class CustomUserDetailsService implements UserDetailsService {
+public class SecurityUserDetailsService implements UserDetailsService {
 
     @Autowired
     private ServiceFeign serviceFeign;
 
-
+    /**
+     * 加载用户信息
+     *
+     * @param uniqueId 用户名或手机号邮箱号, 用来表示用户身份的唯一标识
+     * @return UserDetails 构建Authentication对象必须的关键信息，可以自定义，可能需要访问DB得到. 这里使用Spring Security默认的实现User.
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String uniqueId) throws UsernameNotFoundException {
         JSONObject json = serviceFeign.getUserByUniqueId(uniqueId);
@@ -40,6 +53,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             log.info("load empty User By Username: {}", uniqueId);
         }
         log.info("load user by username :{}", user.toString());
+        // 将数据库的User组装成Spring Security默认的实现类User
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
@@ -47,16 +61,18 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getAccountNonExpired(),
                 user.getCredentialsNonExpired(),
                 user.getAccountNonLocked(),
+                // 用户的授权信息, 通常用角色表示
                 this.obtainGrantedAuthorities(user));
     }
 
     /**
-     * 获得登录者所有角色的权限集合.
+     * 获得登录者所有角色的授权信息, 包装为GrantedAuthority集合
      *
      * @param user
      * @return
      */
     protected Collection<? extends GrantedAuthority> obtainGrantedAuthorities(User user) {
+        // 查询user的所有角色,
         JSONObject jsonObject = serviceFeign.queryRolesByUserId(user.getId());
         if (Result.isJsonSuccess(jsonObject)) {
             JSONObject data = jsonObject.getJSONObject("data");
@@ -64,7 +80,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 HashSet<Role> rolesSet = data.toJavaObject(HashSet.class);
                 if (!rolesSet.isEmpty()) {
                     log.info("user:{},roles:{}", user.getUsername(), rolesSet);
-                    return rolesSet.stream().map(role -> new SimpleGrantedAuthority(role.getCode())).collect(Collectors.toSet());
+                    return rolesSet.stream().map(role -> new SimpleGrantedAuthority(role.getCode())).collect(toSet());
                 }
             }
         }

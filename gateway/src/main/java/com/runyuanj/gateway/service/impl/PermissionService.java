@@ -1,15 +1,18 @@
 package com.runyuanj.gateway.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.Cached;
 import com.runyuanj.common.response.Result;
 import com.runyuanj.gateway.service.IPermissionService;
+import com.runyuanj.gateway.service.ServiceFeign;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -17,6 +20,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @Service
 @Slf4j
 public class PermissionService implements IPermissionService {
+
+    @Resource
+    private ServiceFeign serviceFeign;
 
     /**
      * Authorization认证开头是"bearer "
@@ -61,8 +67,7 @@ public class PermissionService implements IPermissionService {
             return Boolean.FALSE;
         }
 
-        Result result = sendRequestToAuth(authentication, url, method);
-        return result.isSuccess() && (boolean) result.getData();
+        return sendRequestToAuth(authentication, url, method);
     }
 
     public boolean invalidJwtAccessToken(String authentication) {
@@ -107,7 +112,14 @@ public class PermissionService implements IPermissionService {
      * @param method
      * @return
      */
-    private Result sendRequestToAuth(String authentication, String url, String method) {
-        return Result.success();
+    private boolean sendRequestToAuth(String authentication, String url, String method) {
+        JSONObject jsonObject = serviceFeign.hasPermission(authentication, url, method);
+        if (Result.isJsonSuccess(jsonObject)) {
+            Boolean data = jsonObject.getBoolean("data");
+            if (data != null) {
+                return data;
+            }
+        }
+        return false;
     }
 }

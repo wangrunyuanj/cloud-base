@@ -36,4 +36,8 @@ jetcache:
       # password: ${REDIS_PASSWORD:root}
 logging:
   level:
-    com.runyuanj: debug
+    com:
+      runyuanj: debug
+    org:
+      springframework:
+        security: debug

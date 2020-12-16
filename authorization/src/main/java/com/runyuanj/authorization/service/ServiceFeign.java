@@ -2,14 +2,13 @@ package com.runyuanj.authorization.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.runyuanj.authorization.config.DefaultFeignConfiguration;
 import com.runyuanj.common.response.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "org", configuration = DefaultFeignConfiguration.class, fallback = ServiceFeign.ServiceFeignFallback.class)
+@FeignClient(value = "org", fallback = ServiceFeign.ServiceFeignFallback.class)
 public interface ServiceFeign {
 
     /**
