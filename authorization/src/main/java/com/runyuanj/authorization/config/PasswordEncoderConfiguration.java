@@ -5,6 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.SecureRandom;
+
+import static org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.BCryptVersion.$2B;
+
 @Configuration
 public class PasswordEncoderConfiguration {
 
@@ -13,7 +17,13 @@ public class PasswordEncoderConfiguration {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder($2B, 4, new SecureRandom());
+    }
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder($2B, 4, new SecureRandom());
+        String encode = passwordEncoder.encode("12345678");
+        System.out.println(encode);
     }
 
 }

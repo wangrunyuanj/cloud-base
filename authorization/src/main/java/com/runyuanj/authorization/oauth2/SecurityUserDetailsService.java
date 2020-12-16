@@ -82,7 +82,6 @@ public class SecurityUserDetailsService implements UserDetailsService {
             if (data != null) {
                 List<Role> rolesList = data.toJavaList(Role.class);
                 if (!rolesList.isEmpty()) {
-                    // log.info("user:{},roles:{}", user.getUsername(), rolesList);
                     return rolesList.stream().map(role -> new SimpleGrantedAuthority(role.getCode())).collect(toSet());
                 }
             }

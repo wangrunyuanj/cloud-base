@@ -63,11 +63,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService securityUserDetailsService;
 
-/*    @Override
+    @Override
     public void configure(WebSecurity web) throws Exception {
-        //忽略哪些资源不用security来管理
+        // 不用security来管理
         web.ignoring().antMatchers("/login", "/logout", "/jwt");
-    }*/
+    }
 
 /*    @Bean
     @Override

@@ -6,6 +6,9 @@ spring:
           github:
             client-id: 5131f864258e5c1fb52c
             client-secret: 0e814819298710aa575bd62f74c4f97281af0357
+    user:
+      name: admin
+      password: 12345678
   redis:
     host: ${REDIS_HOST:10.0.4.138}
     port: ${REDIS_PORT:8086}

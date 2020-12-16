@@ -4,6 +4,7 @@ import com.runyuanj.authorization.entity.User;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,17 @@ import java.util.Map;
 @RestController
 @Slf4j
 public class LoginController {
+
+    @GetMapping("/hello")
+    public Result hello() {
+        return Result.success("hello! authentication = " + SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    @PostMapping("/login")
+    public Result login() {
+
+        return Result.success();
+    }
 
     @GetMapping("/user")
     @ResponseBody

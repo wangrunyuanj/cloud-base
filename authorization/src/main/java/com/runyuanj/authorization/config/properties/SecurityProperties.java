@@ -28,13 +28,13 @@ public class SecurityProperties  {
     private String loginPageHtml = "signin";
 
     private String[] matchers = new String[]{"/auth/requrie",
-
+            "/login",
             "/auth/toLogin",
             "/auth/logout",
             "/images/**",
             "/api/**",
             "/auth/token",
-            // "/logout",
+            "/logout",
             "/js/**",
             "/iview/**",
             "/css/**"
