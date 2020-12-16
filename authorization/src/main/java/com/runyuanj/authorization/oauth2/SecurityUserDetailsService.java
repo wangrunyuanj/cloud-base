@@ -1,5 +1,6 @@
 package com.runyuanj.authorization.oauth2;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.runyuanj.authorization.entity.Role;
 import com.runyuanj.authorization.entity.User;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -75,12 +77,13 @@ public class SecurityUserDetailsService implements UserDetailsService {
         // 查询user的所有角色,
         JSONObject jsonObject = serviceFeign.queryRolesByUserId(user.getId());
         if (Result.isJsonSuccess(jsonObject)) {
-            JSONObject data = jsonObject.getJSONObject("data");
+            log.info("result: {}", jsonObject.toJSONString());
+            JSONArray data = jsonObject.getJSONArray("data");
             if (data != null) {
-                HashSet<Role> rolesSet = data.toJavaObject(HashSet.class);
-                if (!rolesSet.isEmpty()) {
-                    log.info("user:{},roles:{}", user.getUsername(), rolesSet);
-                    return rolesSet.stream().map(role -> new SimpleGrantedAuthority(role.getCode())).collect(toSet());
+                List<Role> rolesList = data.toJavaList(Role.class);
+                if (!rolesList.isEmpty()) {
+                    // log.info("user:{},roles:{}", user.getUsername(), rolesList);
+                    return rolesList.stream().map(role -> new SimpleGrantedAuthority(role.getCode())).collect(toSet());
                 }
             }
         }

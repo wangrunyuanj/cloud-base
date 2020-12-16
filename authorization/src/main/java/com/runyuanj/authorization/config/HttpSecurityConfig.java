@@ -97,7 +97,9 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         //.antMatchers("/login").hasRole("user")
                 )
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                //.csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                // 关闭csrf
+                .csrf().disable()
                 .oauth2Login(o -> o.failureHandler((request, response, exception) -> {
                     request.getSession().setAttribute("error.message", exception.getMessage());
                     handler.onAuthenticationFailure(request, response, exception);

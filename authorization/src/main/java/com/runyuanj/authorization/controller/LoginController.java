@@ -15,12 +15,6 @@ import java.util.Map;
 @Slf4j
 public class LoginController {
 
-    @PostMapping("/login")
-    public Result login(@RequestBody User user) {
-        log.info("username: {}, password: {}", user.getUsername(), user.getPassword());
-        return Result.success();
-    }
-
     @GetMapping("/user")
     @ResponseBody
     public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
