@@ -5,18 +5,22 @@ import com.runyuanj.common.exception.type.DbErrorType;
 import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartException;
 
 import static com.runyuanj.common.exception.type.NullPointerErrorType.NULL_POINTER;
 
+// @ControllerAdvice
+// @Order(100)
 @Slf4j
-public class ExceptionHandlerAdvice {
+public class MiddleExceptionHandlerAdvice {
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public Result illegalArgumentException(IllegalArgumentException e) {
@@ -55,21 +59,5 @@ public class ExceptionHandlerAdvice {
         return Result.fail(NULL_POINTER);
     }
 
-    @ExceptionHandler(value = {BaseException.class})
-    public Result baseException(BaseException ex) {
-        log.error("base exception:{}", ex.getMessage());
-        return Result.fail(ex.getErrorType());
-    }
 
-    @ExceptionHandler(value = {Exception.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Result exception() {
-        return Result.fail();
-    }
-
-    @ExceptionHandler(value = {Throwable.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Result throwable() {
-        return Result.fail();
-    }
 }
