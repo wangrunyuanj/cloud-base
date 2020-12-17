@@ -66,7 +66,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         // 不用security来管理
-        web.ignoring().antMatchers("/login", "/logout", "/jwt");
+        web.ignoring().antMatchers("/logout", "/jwt");
     }
 
 /*    @Bean

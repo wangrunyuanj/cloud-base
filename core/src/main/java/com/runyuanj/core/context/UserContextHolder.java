@@ -1,70 +1,30 @@
 package com.runyuanj.core.context;
 
-import com.google.common.collect.Maps;
-
-import java.util.Map;
-import java.util.Optional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 /**
  * @author runyuan
  */
 public class UserContextHolder {
 
-    private ThreadLocal<Map<String, String>> threadLocal;
-
-    private UserContextHolder() {
-        this.threadLocal = new ThreadLocal<>();
-    }
-
-    /**
-     * 创建实例
-     *
-     * @return
-     */
-    public static UserContextHolder getInstance() {
-        return SingletonHolder.sInstance;
-    }
-
-    /**
-     * 静态内部类单例模式
-     * 单例初使化
-     */
-    private static class SingletonHolder {
-        private static final UserContextHolder sInstance = new UserContextHolder();
-    }
-
-    /**
-     * 用户上下文中放入信息
-     *
-     * @param map
-     */
-    public void setContext(Map<String, String> map) {
-        threadLocal.set(map);
-    }
-
-    /**
-     * 获取上下文中的信息
-     *
-     * @return
-     */
-    public Map<String, String> getContext() {
-        return threadLocal.get();
+    public static UserDetails userDetails() {
+        Assert.notNull(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), "用户未认证");
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     /**
      * 获取上下文中的用户名
-     *
+     * @param allowAnonymous 是否允许匿名. 允许: 匿名用户返回anonymous, 否则返回null
      * @return
      */
-    public String getUsername() {
-        return Optional.ofNullable(threadLocal.get()).orElse(Maps.newHashMap()).get("user_name");
-    }
-
-    /**
-     * 清空上下文
-     */
-    public void clear() {
-        threadLocal.remove();
+    public static String getUsername(boolean allowAnonymous) {
+        String username = userDetails().getUsername();
+        if ("anonymous".equalsIgnoreCase(username) && !allowAnonymous) {
+            return null;
+        }
+        return username;
     }
 
 }

@@ -9,6 +9,7 @@ spring:
     user:
       name: admin
       password: 12345678
+    strategy: MODE_THREADLOCAL # 默认MODE_THREADLOCAL
   redis:
     host: ${REDIS_HOST:10.0.4.138}
     port: ${REDIS_PORT:8086}

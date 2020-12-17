@@ -3,6 +3,9 @@ package com.runyuanj.authorization.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -28,15 +31,13 @@ import static org.springframework.security.oauth2.client.web.reactive.function.c
 public class OAuth2Configuration {
 
     @Bean
-    public WebClient rest(ClientRegistrationRepository clients, OAuth2AuthorizedClientRepository authz) {
-        ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 =
-                new ServletOAuth2AuthorizedClientExchangeFilterFunction(clients, authz);
-        return WebClient.builder()
-                .filter(oauth2).build();
+    public WebClient webClient(ClientRegistrationRepository clients, OAuth2AuthorizedClientRepository authz) {
+        ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 = new ServletOAuth2AuthorizedClientExchangeFilterFunction(clients, authz);
+        return WebClient.builder().filter(oauth2).build();
     }
 
     @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService(WebClient rest) {
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService(WebClient webClient) {
         DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
         return request -> {
             OAuth2User user = delegate.loadUser(request);
@@ -47,11 +48,13 @@ public class OAuth2Configuration {
             OAuth2AuthorizedClient client = new OAuth2AuthorizedClient
                     (request.getClientRegistration(), user.getName(), request.getAccessToken());
             String url = user.getAttribute("organizations_url");
-            List<Map<String, Object>> orgs = rest
-                    .get().uri(url)
+            List<Map<String, Object>> orgs = webClient.get().uri(url)
                     .attributes(oauth2AuthorizedClient(client))
+                    // 执行Http请求并解析body
                     .retrieve()
+                    // 提取body转成Mono
                     .bodyToMono(List.class)
+                    // 在收到下一个信号前一直阻塞
                     .block();
 
             if (orgs.stream().anyMatch(org -> "spring-projects".equals(org.get("login")))) {

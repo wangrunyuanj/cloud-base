@@ -9,10 +9,14 @@ import org.apache.ibatis.reflection.MetaObject;
 import java.sql.Date;
 import java.time.ZonedDateTime;
 
+/**
+ *
+ * @author Administrator
+ */
 public class PoMetaObjectHandler implements MetaObjectHandler {
 
     private String getCurrentUsername() {
-        return StringUtils.defaultIfBlank(UserContextHolder.getInstance().getUsername(), BasePo.DEFAULT_USERNAME);
+        return StringUtils.defaultIfBlank(UserContextHolder.getUsername(false), BasePo.DEFAULT_USERNAME);
     }
 
     @Override
