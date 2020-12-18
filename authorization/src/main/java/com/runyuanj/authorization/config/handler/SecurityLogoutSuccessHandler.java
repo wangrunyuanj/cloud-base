@@ -15,7 +15,9 @@ import java.io.IOException;
 public class SecurityLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-        log.info("logout success");
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws IOException, ServletException {
+        log.info("logout success! {}", authentication.getPrincipal());
+        // response.setHeader();
     }
 }

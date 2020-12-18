@@ -12,6 +12,11 @@ import java.time.ZonedDateTime;
 
 import static com.runyuanj.common.exception.type.SystemErrorType.SYSTEM_ERROR;
 
+/**
+ * TODO
+ * code type 改成 int, 通用性更好
+ * @param <T>
+ */
 @Data
 @AllArgsConstructor
 public class Result<T> implements Serializable {

@@ -7,17 +7,16 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.runyuanj.authorization.exception.AuthErrorType.AUTH_FAILED;
 
 @Slf4j
-//@Order(5)
+@Order(5)
 @ControllerAdvice
 public class AuthExceptionHandlerAdvice extends MiddleExceptionHandlerAdvice {
 
     @ExceptionHandler(value = BadCredentialsException.class)
-    public Result badCredentialsException(BadCredentialsException e) {
+    public Result badCredentialsException(Exception e) {
         log.error("BadCredentialsException: {}", e.getMessage());
         return Result.fail(AUTH_FAILED);
     }
