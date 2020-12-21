@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "org", fallback = ServiceFeign.ServiceFeignFallback.class)
-public interface ServiceFeign {
+@FeignClient(value = "org", fallback = OrgServiceFeign.OrgServiceFeignFallback.class)
+public interface OrgServiceFeign {
 
     /**
      * 请求用户信息
@@ -30,7 +30,7 @@ public interface ServiceFeign {
     JSONObject queryRolesByUserId(@PathVariable("userId") String userId);
 
 
-    class ServiceFeignFallback {
+    class OrgServiceFeignFallback {
         JSONObject getUserByUniqueId(String uniqueId) {
             return JSONObject.parseObject(JSON.toJSONString(Result.fail()));
         }

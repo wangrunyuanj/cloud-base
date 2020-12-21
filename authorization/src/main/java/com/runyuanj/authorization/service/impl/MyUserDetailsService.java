@@ -1,10 +1,10 @@
-package com.runyuanj.authorization.oauth2;
+package com.runyuanj.authorization.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.runyuanj.authorization.entity.Role;
 import com.runyuanj.authorization.entity.User;
-import com.runyuanj.authorization.service.ServiceFeign;
+import com.runyuanj.authorization.service.OrgServiceFeign;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import static java.util.stream.Collectors.toSet;
@@ -29,10 +28,10 @@ import static java.util.stream.Collectors.toSet;
  */
 @Slf4j
 @Service("userDetailsService")
-public class SecurityUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private ServiceFeign serviceFeign;
+    private OrgServiceFeign orgServiceFeign;
 
     /**
      * 加载用户信息
@@ -43,7 +42,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String uniqueId) throws UsernameNotFoundException {
-        JSONObject json = serviceFeign.getUserByUniqueId(uniqueId);
+        JSONObject json = orgServiceFeign.getUserByUniqueId(uniqueId);
         User user = null;
         if (Result.isJsonSuccess(json)) {
             JSONObject data = json.getJSONObject("data");
@@ -76,7 +75,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
      */
     protected Collection<? extends GrantedAuthority> obtainGrantedAuthorities(User user) {
         // 查询user的所有角色,
-        JSONObject jsonObject = serviceFeign.queryRolesByUserId(user.getId());
+        JSONObject jsonObject = orgServiceFeign.queryRolesByUserId(user.getId());
         if (Result.isJsonSuccess(jsonObject)) {
             log.info("result: {}", jsonObject.toJSONString());
             JSONArray data = jsonObject.getJSONArray("data");

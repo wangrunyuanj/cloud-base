@@ -1,7 +1,9 @@
 package com.runyuanj.authorization.config;
 
-import com.runyuanj.authorization.config.handler.SecurityAuthenticationFailureHandler;
+import com.runyuanj.authorization.handler.SecurityAuthenticationFailureHandler;
 import com.runyuanj.authorization.filter.MyUsernamePasswordAuthenticationFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -9,6 +11,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 
+
+@Slf4j
+@Configuration
 public class JsonLoginConfiguration<T extends JsonLoginConfiguration<T, B>, B extends HttpSecurityBuilder<B>> extends AbstractHttpConfigurer<T, B> {
 
     private MyUsernamePasswordAuthenticationFilter authFilter;

@@ -87,6 +87,13 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <!-- jwt认证 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
         <!-- OAuth2 和 js -->
         <dependency>
             <groupId>org.springframework.security</groupId>

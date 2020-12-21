@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.config.properties;
+package com.runyuanj.authorization.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
