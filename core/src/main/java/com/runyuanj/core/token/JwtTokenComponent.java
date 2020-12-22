@@ -1,52 +1,81 @@
-package com.runyuanj.authorization.token;
+package com.runyuanj.core.token;
 
+import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Administrator
+ */
 @Component
 @Slf4j
-public class TokenComponent {
+public class JwtTokenComponent {
+
+    private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     @Value("${jwt_secret:runyuanj}")
     public String jwtSecret;
 
     public String generalToken(String id, String subject, long ttlMillis) {
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        JwtBuilder builder = generate(ttlMillis)
+                .setId(id)
+                .setSubject(subject);
+        return builder.compact();
+    }
+
+    public String generalToken(UserDetails userDetails, long ttlMillis) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", userDetails.getUsername());
+
+        JwtBuilder builder = generate(ttlMillis)
+                .setId(userDetails.getUsername())
+                .setSubject(JSON.toJSONString(map));
+
+        return builder.compact();
+    }
+
+    public JwtBuilder generate(long ttlMillis) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         SecretKey key = this.generalKey();
-        JwtBuilder builder = Jwts.builder().setId(id).setIssuedAt(now).setSubject(subject).signWith(signatureAlgorithm, key);
+        JwtBuilder builder = Jwts.builder()
+                .setIssuedAt(now)
+                .signWith(signatureAlgorithm, key);
+
         if (ttlMillis >= 0L) {
             long expMillis = nowMillis + ttlMillis;
             Date exp = new Date(expMillis);
             builder.setExpiration(exp);
         }
-
-        return builder.compact();
+        return builder;
     }
 
     public Claims parseToken(String jwt) {
         SecretKey key = this.generalKey();
-        Claims claims = (Claims)Jwts.parser().setSigningKey(key).parseClaimsJws(jwt).getBody();
-        return claims;
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(jwt).getBody();
     }
 
     public String parseTokenToJson(String jwt) {
         SecretKey key = this.generalKey();
         Jws<Claims> jwtParser = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt);
         if (jwtParser != null) {
-            Claims claims = (Claims)jwtParser.getBody();
+            Claims claims = jwtParser.getBody();
             return claims.getSubject();
         } else {
             return "";
@@ -64,8 +93,8 @@ public class TokenComponent {
     }
 
     public static void main(String[] args) throws Exception {
-        String token = (new TokenComponent()).generalToken("1", "zhangsan", System.currentTimeMillis());
-        Claims claims = (new TokenComponent()).parseToken(token);
+        String token = (new JwtTokenComponent()).generalToken("1", "zhangsan", System.currentTimeMillis());
+        Claims claims = (new JwtTokenComponent()).parseToken(token);
         System.out.println(token);
         System.out.println(claims.getSubject());
     }

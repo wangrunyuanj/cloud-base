@@ -17,6 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+/**
+ * 具体的执行身份认证的过滤器
+ * 拦截POST /login接口, 获取用户名密码, 验证用户信息
+ * 不需要单独写/login接口. 但是返回值需要在请求头中加上token信息
+ *
+ * @author Administrator
+ */
 public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private boolean postOnly = true;
@@ -34,12 +41,10 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
      * <p>
      * The implementation should do one of the following:
      * <ol>
-     * <li>Return a populated authentication token for the authenticated user, indicating
-     * successful authentication</li>
-     * <li>Return null, indicating that the authentication process is still in progress.
-     * Before returning, the implementation should perform any additional work required to
-     * complete the process.</li>
-     * <li>Throw an <tt>AuthenticationException</tt> if the authentication process fails</li>
+     * <li>返回一个当前用户的完整的authentication token, 代表认证成功</li>
+     * <li>返回null，表示身份验证过程仍在进行中。
+     * 在返回前，需要完成认证所需的所有工作</li>
+     * <li>如果身份验证过程失败，则引发AuthenticationException</li>
      * </ol>
      *
      * @param request  from which to extract parameters and perform the authentication
@@ -78,6 +83,8 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
         //封装到token中提交
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
 
+        // 由ProviderManager进行验证
+        // 实际通过AuthenticationProvider的实现类执行authenticate(authRequest)
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 

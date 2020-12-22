@@ -3,6 +3,9 @@ package com.runyuanj.authorization.exception;
 import com.runyuanj.common.ErrorType;
 import lombok.Getter;
 
+/**
+ * @author runyu
+ */
 @Getter
 public enum AuthErrorType implements ErrorType {
 
@@ -10,7 +13,9 @@ public enum AuthErrorType implements ErrorType {
     INVALID_CLIENT("Auth-0002", "无效client_id"),
     INVALID_GRANT("Auth-0003", "无效授权"),
     INVALID_SCOPE("Auth-0004", "无效scope"),
-    INVALID_TOKEN("Auth-0005", "无效token"),
+    EMPTY_TOKEN("Auth-0005", "空token"),
+    INVALID_TOKEN("Auth-0006", "无效token"),
+    EXPIRED_TOKEN("Auth-0007", "过期的token"),
     INSUFFICIENT_SCOPE("Auth-0010", "授权不足"),
     REDIRECT_URI_MISMATCH("Auth-0020", "redirect url不匹配"),
     ACCESS_DENIED("Auth-0030", "拒绝访问"),

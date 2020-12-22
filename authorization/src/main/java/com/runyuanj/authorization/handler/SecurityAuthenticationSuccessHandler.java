@@ -1,9 +1,11 @@
 package com.runyuanj.authorization.handler;
 
-import com.runyuanj.authorization.service.JwtTokenService;
+import com.runyuanj.core.token.JwtTokenComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,25 +13,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 认证成功后处理方法
+ * 登录成功后处理方法
  *
  * @author Administrator
  */
 @Slf4j
+@Service
 public class SecurityAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private JwtTokenService jwtTokenService;
+    private JwtTokenComponent tokenComponent;
 
-    public SecurityAuthenticationSuccessHandler(JwtTokenService jwtTokenService) {
-        this.jwtTokenService = jwtTokenService;
+    public SecurityAuthenticationSuccessHandler(JwtTokenComponent tokenComponent) {
+        this.tokenComponent = tokenComponent;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
         log.info("authentication success! {}", request.getPathInfo());
-        // 如果是外部服务, 没有请求头, 则为其加上Authorization
-        // String token = jwtTokenService.getUserJwt((UserDetails) authentication.getPrincipal());
+        String token = tokenComponent.generalToken((UserDetails) authentication.getPrincipal());
         // response.setHeader("Authorization", token);
     }
 }

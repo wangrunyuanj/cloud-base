@@ -1,6 +1,8 @@
 package com.runyuanj.authorization.config;
 
 import com.runyuanj.authorization.properties.SecurityProperties;
+import com.runyuanj.authorization.service.WhiteListFilterService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -43,6 +45,8 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationFailureHandler securityAuthenticationFailureHandler;
     @Autowired
     private LogoutSuccessHandler securityLogoutSuccessHandler;
+    @Autowired
+    private WhiteListFilterService whiteListFilterService;
 
     @Qualifier("userDetailsService")
     @Autowired
@@ -51,7 +55,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         // 不用security来管理
-        web.ignoring().antMatchers("/logout", "/jwt");
+        web.ignoring().antMatchers(whiteListFilterService.getWhiteListPath());
     }
 
     @Bean
