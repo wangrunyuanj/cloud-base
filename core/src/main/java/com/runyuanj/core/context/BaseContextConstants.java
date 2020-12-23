@@ -11,7 +11,7 @@ public class BaseContextConstants {
      */
     public static final String JWT_KEY_NAME = "name";
     /**
-     * JWT中封装的 token 类型
+     * JWT中封装的 filter 类型
      */
     public static final String JWT_KEY_TOKEN_TYPE = "token_type";
     /**
@@ -26,7 +26,7 @@ public class BaseContextConstants {
 
 
     /**
-     * JWT token 签名
+     * JWT filter 签名
      * <p>
      * 签名密钥长度至少32位
      */
@@ -44,7 +44,7 @@ public class BaseContextConstants {
     /**
      * User信息 认证请求头
      */
-    public static final String BEARER_HEADER_KEY = "token";
+    public static final String BEARER_HEADER_KEY = "filter";
     /**
      * User信息 认证请求头前缀
      */
@@ -90,7 +90,7 @@ public class BaseContextConstants {
 //    public static final String TENANT = JWT_KEY_TENANT;
 
     /**
-     * token
+     * filter
      */
     @Deprecated
     public static final String TOKEN_NAME = BEARER_HEADER_KEY;

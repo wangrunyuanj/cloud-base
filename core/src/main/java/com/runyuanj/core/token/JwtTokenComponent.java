@@ -1,27 +1,21 @@
 package com.runyuanj.core.token;
 
 import com.alibaba.fastjson.JSON;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Administrator
  */
-@Component
 @Slf4j
 public class JwtTokenComponent {
 

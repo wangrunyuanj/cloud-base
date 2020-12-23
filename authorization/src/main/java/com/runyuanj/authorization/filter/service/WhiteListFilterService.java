@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.service;
+package com.runyuanj.authorization.filter.service;
 
 public interface WhiteListFilterService {
 

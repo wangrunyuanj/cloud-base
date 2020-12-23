@@ -1,8 +1,9 @@
 package com.runyuanj.authorization.config;
 
+import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
+import com.runyuanj.authorization.filter.service.WhiteListFilterService;
+import com.runyuanj.authorization.handler.SimpleLoginAuthenticationFailureHandler;
 import com.runyuanj.authorization.properties.SecurityProperties;
-import com.runyuanj.authorization.service.WhiteListFilterService;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +16,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -40,10 +39,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SecurityProperties securityProperties;
     @Autowired
-    private AuthenticationSuccessHandler securityAuthenticationSuccessHandler;
-    @Autowired
-    private AuthenticationFailureHandler securityAuthenticationFailureHandler;
-    @Autowired
     private LogoutSuccessHandler securityLogoutSuccessHandler;
     @Autowired
     private WhiteListFilterService whiteListFilterService;
@@ -51,6 +46,8 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("userDetailsService")
     @Autowired
     private UserDetailsService securityUserDetailsService;
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -62,7 +59,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","HEAD", "OPTION"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "HEAD", "OPTION"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.addExposedHeader("Authorization");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -90,10 +87,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         SimpleUrlAuthenticationFailureHandler handler = new SimpleUrlAuthenticationFailureHandler("/");
 
+        // 配置不同的url使用不同的过滤器链
         // Ant Pattern: spring里的url匹配算法 *: 0或多个字符  **: 匹配0级或多级路径  ?: 单个字符  {spring:[a-z]+}: 按照正则匹配[a-z]+，并且将其作为路径变量，变量名为"spring"
         http.antMatcher("/**")
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers(securityProperties.getMatchers()).permitAll()
+                                .antMatchers(securityProperties.getMatchers()).permitAll()
                         //.anyRequest().authenticated()
                         //.antMatchers("/login").hasRole("user")
                 )
@@ -101,12 +99,17 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 // 关闭csrf
                 .csrf().disable()
+                // 配置oauth2登录失败处理方法
                 .oauth2Login(o -> o.failureHandler((request, response, exception) -> {
+                    /*response.setStatus(401); // 返回错误结果
+                    response.getWriter().write(JSON.toJSONString(Result.fail(AuthErrorType.UNAUTHORIZED)).toCharArray());*/
+
+                    // 重定向到失败页面
                     request.getSession().setAttribute("error.message", exception.getMessage());
                     handler.onAuthenticationFailure(request, response, exception);
                 }))
                 // .addFilterBefore()
-                // FormLoginConfigurer
+                // 表单登录, 非json登录. FormLoginConfigurer
                 .formLogin(formLogin -> formLogin
                         // 默认username
                         .usernameParameter("username")
@@ -120,8 +123,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         // 登录成功处理器
                         //.successHandler(securityAuthenticationSuccessHandler)
                         // 登录失败处理器
-                        //.failureHandler(securityAuthenticationFailureHandler)
-                        )
+                        .failureHandler(new SimpleLoginAuthenticationFailureHandler()))
                 //.logout(logout -> logout.logoutSuccessUrl("/logout").permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/").permitAll())
                 .userDetailsService(securityUserDetailsService)

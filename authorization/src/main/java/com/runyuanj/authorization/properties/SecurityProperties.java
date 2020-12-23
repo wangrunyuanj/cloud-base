@@ -33,7 +33,7 @@ public class SecurityProperties  {
             "/auth/logout",
             "/images/**",
             "/api/**",
-            "/auth/token",
+            "/auth/filter",
             "/logout",
             "/js/**",
             "/iview/**",

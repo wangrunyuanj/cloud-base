@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
+ * org服务的Role
+ *
  * @author Administrator
  */
 @Data

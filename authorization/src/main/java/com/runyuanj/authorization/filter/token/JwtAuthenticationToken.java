@@ -1,11 +1,12 @@
-package com.runyuanj.authorization.token;
+package com.runyuanj.authorization.filter.token;
 
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 /**
+ * 封装 jwt filter
+ *
  * @author runyu
  */
 @Slf4j
@@ -16,7 +17,6 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     public JwtAuthenticationToken(String token) {
         super(AuthorityUtils.NO_AUTHORITIES);
         this.token = token;
-        this.setAuthenticated(true);
     }
 
     @Override
@@ -25,12 +25,12 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     }
 
     /**
-     * 拿到的是JSONObject
+     * 用户信息
      *
      * @return
      */
     @Override
     public Object getPrincipal() {
-        return JSON.parseObject(token);
+        return token;
     }
 }

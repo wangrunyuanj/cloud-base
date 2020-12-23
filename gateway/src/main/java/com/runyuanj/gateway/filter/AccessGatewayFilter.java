@@ -34,13 +34,13 @@ public class AccessGatewayFilter implements GlobalFilter {
     private static final String BEARER = "Bearer ";
 
     /**
-     * jwt token 密钥，主要用于token解析，签名验证
+     * jwt filter 密钥，主要用于token解析，签名验证
      */
     @Value("${spring.security.oauth2.jwt.signingKey}")
     private String signingKey;
 
-    private static final String X_CLIENT_TOKEN_USER = "x-client-token-user";
-    private static final String X_CLIENT_TOKEN = "x-client-token";
+    private static final String X_CLIENT_TOKEN_USER = "x-client-filter-user";
+    private static final String X_CLIENT_TOKEN = "x-client-filter";
 
     @Autowired
     private IPermissionService permissionService;
@@ -102,7 +102,7 @@ public class AccessGatewayFilter implements GlobalFilter {
             token = new ObjectMapper().writeValueAsString(getJwt(authentication).getBody());
             return token;
         } catch (JsonProcessingException e) {
-            log.error("token json error:{}", e.getMessage());
+            log.error("filter json error:{}", e.getMessage());
         }
         return token;
     }

@@ -1,23 +1,24 @@
 package com.runyuanj.authorization.filter;
 
 import com.runyuanj.authorization.exception.AuthErrorType;
-import com.runyuanj.authorization.token.JwtAuthenticationToken;
+import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
+import com.runyuanj.authorization.filter.provider.JwtAuthenticationProvider;
+import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
 import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.common.response.Result;
 import com.runyuanj.core.token.JwtTokenComponent;
-import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,10 +26,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 从用户请求头中获取认证token, 验证token是否有效, 如果有效, 添加到ThreadLocal中. 如果没有或无效, 不做处理
- * 该filter在权限控制模块之前, 不需要担心权限问题
+ * 该filter用来验证用户token, 在权限控制过滤器之前, 不需要担心权限问题.
+ * 下一个权限过滤器根据资源权限和用户权限, 判断是否验证通过.
  *
  * @author Administrator
  */
@@ -39,11 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenComponent jwtTokenComponent;
 
-    private AuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+    /**
+     * 无论验证是否成功, 都不会进入到failureHandler.
+     */
     private AuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
 
     private AuthenticationManager authenticationManager;
-
 
     private RequestMatcher requiresAuthenticationRequestMatcher;
 
@@ -51,6 +56,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 拦截所有不在白名单的请求
         // 拦截header中带Authorization的请求
         //拦截header中带Authorization的请求
+        List<AuthenticationProvider> providers = new ArrayList<>();
+        providers.add(new JwtAuthenticationProvider());
+        this.authenticationManager = new JwtAuthenticationManager(providers);
         this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
     }
 
@@ -60,8 +68,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * See {@link #shouldNotFilterAsyncDispatch()} for details.
      * <p>Provides HttpServletRequest and HttpServletResponse arguments instead of the
      * default ServletRequest and ServletResponse ones.
-     *  基于jwt的认证方式.
-     *   验证token是否合法
+     * 基于jwt的认证方式.
+     * 验证token是否合法
      *
      * @param request
      * @param response
@@ -83,24 +91,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.error("Jwt Token is empty");
                 result = Result.fail(AuthErrorType.EMPTY_TOKEN);
             } else {
+                // 如果抛出异常, 代表校验失败
                 try {
-                    // 解析成功, 代表验证通过
-                    String json = jwtTokenComponent.parseTokenToJson(token);
-                    JwtAuthenticationToken authToken = new JwtAuthenticationToken(json);
-                    this.getAuthenticationManager().authenticate(authToken);
-                } catch (ExpiredJwtException e1) {
-                    result = Result.fail(AuthErrorType.EXPIRED_TOKEN);
-                } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-                    result = Result.fail(AuthErrorType.INVALID_TOKEN);
+                    // 此处不对token解析.
+                    JwtAuthenticationToken authToken = new JwtAuthenticationToken(token);
+                    // 验证token  JwtAuthenticationManager.authenticate() -> JwtAuthenticationProvider.authenticate()
+                    Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
+                    // 将用户的认证信息存到ThreadLocal, 用来进行下一步的权限认证. 因此, authentication必须能够取出用户的唯一ID.
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 } catch (Exception e) {
                     result = Result.fail(SystemErrorType.SYSTEM_ERROR);
                 }
+                result = Result.success();
             }
-
+            if (result.isFail()) {
+                log.info("token验证失败, code: {}, message: {}, request path: {}", result.getCode(), result.getData(), request.getPathInfo());
+            }
+        // 当检验失败时不做处理, catch异常, 继续下一步权限校验
         } catch (Exception e) {
-            log.info("error token in header, Path: {}", request.getPathInfo());
+            log.info("error filter in header, request path: {}", request.getPathInfo());
         }
-
+        // 下一步权限认证将从redis取出资源权限信息和用户权限信息, 进行比对校验.
         filterChain.doFilter(request, response);
     }
 
@@ -117,19 +128,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authenticationManager;
     }
 
-    /**
-     * Sets the strategy used to handle a successful authentication. By default a
-     * {@link SavedRequestAwareAuthenticationSuccessHandler} is used.
-     */
-    public void setAuthenticationSuccessHandler(
-            AuthenticationSuccessHandler successHandler) {
-        Assert.notNull(successHandler, "successHandler cannot be null");
-        this.successHandler = successHandler;
-    }
 
-    public void setAuthenticationFailureHandler(
-            AuthenticationFailureHandler failureHandler) {
-        Assert.notNull(failureHandler, "failureHandler cannot be null");
-        this.failureHandler = failureHandler;
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 }

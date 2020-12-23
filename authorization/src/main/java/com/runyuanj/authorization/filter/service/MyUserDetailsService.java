@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.service.impl;
+package com.runyuanj.authorization.filter.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;

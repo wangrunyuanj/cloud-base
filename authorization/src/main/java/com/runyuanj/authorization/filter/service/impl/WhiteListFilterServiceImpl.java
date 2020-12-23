@@ -1,6 +1,6 @@
-package com.runyuanj.authorization.service.impl;
+package com.runyuanj.authorization.filter.service.impl;
 
-import com.runyuanj.authorization.service.WhiteListFilterService;
+import com.runyuanj.authorization.filter.service.WhiteListFilterService;
 import com.runyuanj.authorization.utils.MyCollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

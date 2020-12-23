@@ -20,15 +20,15 @@ public class UserInterceptor implements HandlerInterceptor {
      * "自定义key:"value"
      * }
      */
-    public static final String X_CLIENT_TOKEN_USER = "x-client-token-user";
+    public static final String X_CLIENT_TOKEN_USER = "x-client-filter-user";
     /**
      * 服务间调用的认证token
      */
-    public static final String X_CLIENT_TOKEN = "x-client-token";
+    public static final String X_CLIENT_TOKEN = "x-client-filter";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //从网关获取并校验,通过校验就可信任x-client-token-user中的信息
+        //从网关获取并校验,通过校验就可信任x-client-filter-user中的信息
         checkToken(request.getHeader(X_CLIENT_TOKEN));
         String userInfoString = StringUtils.defaultIfBlank(request.getHeader(X_CLIENT_TOKEN_USER), "{}");
         //UserContextHolder.getInstance().setContext(new ObjectMapper().readValue(userInfoString, Map.class));
@@ -36,7 +36,7 @@ public class UserInterceptor implements HandlerInterceptor {
     }
 
     private void checkToken(String token) {
-        //TODO 从网关获取并校验,通过校验就可信任x-client-token-user中的信息
+        //TODO 从网关获取并校验,通过校验就可信任x-client-filter-user中的信息
         log.debug("//TODO 校验token:{}", token);
     }
 

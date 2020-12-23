@@ -30,7 +30,7 @@ public class PermissionService implements IPermissionService {
     private static final String BEARER = "Bearer ";
 
     /**
-     * jwt token 密钥，主要用于token解析，签名验证
+     * jwt filter 密钥，主要用于token解析，签名验证
      */
     @Value("${spring.security.oauth2.jwt.signingKey}")
     private String signingKey;
@@ -58,7 +58,7 @@ public class PermissionService implements IPermissionService {
 
         // 如果请求未携带token信息, 直接拒绝
         if (StringUtils.isBlank(authentication) || !authentication.startsWith(BEARER)) {
-            log.error("user token is null");
+            log.error("user filter is null");
             return Boolean.FALSE;
         }
 
@@ -77,7 +77,7 @@ public class PermissionService implements IPermissionService {
             getJwt(authentication);
             invalid = Boolean.FALSE;
         } catch (SignatureException | ExpiredJwtException | MalformedJwtException ex) {
-            log.error("user token error :{}", ex.getMessage());
+            log.error("user filter error :{}", ex.getMessage());
         }
         return invalid;
     }
