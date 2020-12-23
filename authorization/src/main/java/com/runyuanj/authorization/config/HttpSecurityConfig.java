@@ -131,7 +131,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         // 默认username
                         .usernameParameter("username")
                         // 默认password
-                        .passwordParameter("password")// 登录页面
+                        .passwordParameter("password")
                         //.loginPage(securityProperties.getLoginPage())
                         // 登录错误页面
                         //.failureUrl(securityProperties.getFailureUrl())
