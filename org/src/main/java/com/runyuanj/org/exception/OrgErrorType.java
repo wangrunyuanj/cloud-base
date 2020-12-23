@@ -2,6 +2,7 @@ package com.runyuanj.org.exception;
 
 import com.runyuanj.common.ErrorType;
 import lombok.Getter;
+import static com.runyuanj.common.constant.ErrorCodeConstants.ORG_ERROR_CODE_PRE;
 
 /**
  * @author Administrator
@@ -10,19 +11,19 @@ import lombok.Getter;
 @Getter
 public enum OrgErrorType implements ErrorType {
 
-    USER_NOT_FOUND("Org_0100", "用户未找到！"),
-    ROLE_NOT_FOUND("Org_200", "角色未找到！");
+    USER_NOT_FOUND(ORG_ERROR_CODE_PRE + 0100, "用户未找到！"),
+    ROLE_NOT_FOUND(ORG_ERROR_CODE_PRE + 0200, "角色未找到！");
 
     /**
      * 错误类型码
      */
-    private String code;
+    private int code;
     /**
      * 错误类型描述信息
      */
     private String msg;
 
-    OrgErrorType(String code, String mesg) {
+    OrgErrorType(int code, String mesg) {
         this.code = code;
         this.msg = mesg;
     }

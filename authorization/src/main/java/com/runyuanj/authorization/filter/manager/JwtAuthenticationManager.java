@@ -1,7 +1,6 @@
 package com.runyuanj.authorization.filter.manager;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
@@ -47,9 +46,9 @@ public class JwtAuthenticationManager implements AuthenticationManager {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        // 需要做额外的异常try catch处理
+        // 需要做额外的异常处理, 抛出 DisabledException, LockedException, BadCredentialsException异常
         AuthenticationException exception;
-        Authentication result;
+        Authentication result = null;
 
         for (AuthenticationProvider provider : providers) {
             boolean supports = provider.supports(authentication.getClass());
@@ -59,6 +58,7 @@ public class JwtAuthenticationManager implements AuthenticationManager {
             result = provider.authenticate(authentication);
             break;
         }
-        return authentication;
+
+        return result;
     }
 }

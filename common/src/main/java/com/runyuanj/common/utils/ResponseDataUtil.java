@@ -64,9 +64,6 @@ public class ResponseDataUtil {
         if (response == null) {
             throw new ResponseException(NON_RESPONSE);
         }
-        if (response.getCode() == null) {
-            throw new ResponseException(ERROR_FORMAT);
-        }
         if (response.isFail()) {
             throw new ResponseException(TARGET_SERVICE_ERROR, "Service Error!"
                     + " Error Code: " + response.getCode()

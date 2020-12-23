@@ -1,8 +1,7 @@
 package com.runyuanj.authorization.filter.provider;
 
-import com.runyuanj.authorization.exception.AuthErrorType;
-import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
+import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
 import com.runyuanj.common.response.Result;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -11,8 +10,15 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import static com.runyuanj.common.exception.type.AuthErrorType.EXPIRED_TOKEN;
+import static com.runyuanj.common.exception.type.AuthErrorType.INVALID_TOKEN;
+import static com.runyuanj.common.exception.type.SystemErrorType.SYSTEM_ERROR;
 
 /**
  * 从redis中取token, 如果存在, 则验证通过. 不存在则验证失败
@@ -44,21 +50,29 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        Authentication auth;
+        // 必须抛出 DisabledException, LockedException, BadCredentialsException异常
         Result result;
         try {
-            String authResult = tokenAuthenticationService.validate((String) authentication.getCredentials());
+            String token = (String) authentication.getCredentials();
 
+            UserDetails userDetails = tokenAuthenticationService.validate(token);
+
+            SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(token, userDetails));
             // 封装到AuthenticationToken
-            return new JwtAuthenticationToken(authResult);
-        } catch (
-                ExpiredJwtException e1) {
-            result = Result.fail(AuthErrorType.EXPIRED_TOKEN);
-        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            result = Result.fail(AuthErrorType.INVALID_TOKEN);
+            authentication.setAuthenticated(true);
+            return authentication;
+        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e1) {
+            log.info("authenticate failed. code: {}, message: {}", INVALID_TOKEN.getCode(), INVALID_TOKEN.getMsg());
+            throw new BadCredentialsException(INVALID_TOKEN.getMsg());
+        } catch (ExpiredJwtException e2) {
+            log.info("authenticate failed. code: {}, message: {}", EXPIRED_TOKEN.getCode(), EXPIRED_TOKEN.getMsg());
+            throw new BadCredentialsException(EXPIRED_TOKEN.getMsg());
+        } catch (Exception e) {
+            throw new BadCredentialsException("token校验异常, 请联系管理员");
+        } finally {
+            log.info("authenticate failed. code: {}, message: {}", SYSTEM_ERROR.getCode(), SYSTEM_ERROR.getMsg());
+            authentication.setAuthenticated(false);
         }
-
-        return null;
     }
 
     /**

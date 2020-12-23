@@ -2,14 +2,15 @@ package com.runyuanj.cloud.cache.exception;
 
 import com.runyuanj.common.ErrorType;
 import lombok.AllArgsConstructor;
+import static com.runyuanj.common.constant.ErrorCodeConstants.CACHE_ERROR_CODE_PRE;
 
 @AllArgsConstructor
 public enum CacheErrorType implements ErrorType {
 
-    CLASS_NOT_FOUND("Cache_0002", "未找到指定类"),
-    CACHE_NOT_FOUND("Cache_0001", "缓存未找到");
+    CLASS_NOT_FOUND(CACHE_ERROR_CODE_PRE + 0002, "未找到指定类"),
+    CACHE_NOT_FOUND(CACHE_ERROR_CODE_PRE + 0001, "缓存未命中");
 
-    private String code;
+    private int code;
 
     private String msg;
 
@@ -18,8 +19,8 @@ public enum CacheErrorType implements ErrorType {
      * @return type code
      */
     @Override
-    public String getCode() {
-        return null;
+    public int getCode() {
+        return this.code;
     }
 
     /**
@@ -27,6 +28,6 @@ public enum CacheErrorType implements ErrorType {
      */
     @Override
     public String getMsg() {
-        return null;
+        return this.msg;
     }
 }

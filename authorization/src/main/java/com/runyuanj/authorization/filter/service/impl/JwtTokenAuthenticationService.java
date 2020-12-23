@@ -7,6 +7,7 @@ import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import com.runyuanj.core.token.JwtTokenComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +34,7 @@ public class JwtTokenAuthenticationService implements TokenAuthenticationService
      */
     @Override
     public UserDetails validate(String token) {
-
+        // 必须抛出 DisabledException, LockedException, BadCredentialsException异常
         // 解析成功代表token正常
         String json = jwtTokenComponent.parseTokenToJson(token);
 
@@ -42,8 +43,9 @@ public class JwtTokenAuthenticationService implements TokenAuthenticationService
             return new MyUser(user.getString("username"),
                     null,
                     user.getJSONArray("authorities").toJavaList(GrantedAuthority.class));
+        } else {
+            throw new DisabledException("token 已过期");
         }
-        return null;
     }
 
     private boolean validateFromRedis(String token) {

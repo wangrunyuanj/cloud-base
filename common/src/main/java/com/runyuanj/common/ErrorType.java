@@ -13,7 +13,7 @@ public interface ErrorType {
     /**
      * @return type code
      */
-    String getCode();
+    int getCode();
 
     /**
      * @return type message

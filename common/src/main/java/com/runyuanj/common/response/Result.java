@@ -23,10 +23,10 @@ public class Result<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String SUCCESS_CODE = "0";
+    public static final int SUCCESS_CODE = 0;
     public static final String SUCCESS_MSG = "success";
 
-    private String code;
+    private int code;
 
     private String message;
 
@@ -34,17 +34,17 @@ public class Result<T> implements Serializable {
 
     private T data;
 
-    private Result(String code) {
+    private Result(int code) {
         this.code = code;
         this.time = ZonedDateTime.now().toInstant();
     }
 
-    private Result(String code, String message) {
+    private Result(int code, String message) {
         this(code);
         this.message = message;
     }
 
-    public Result(String code, String message, T data) {
+    public Result(int code, String message, T data) {
         this(code, message);
         this.data = data;
     }
@@ -120,7 +120,7 @@ public class Result<T> implements Serializable {
     }
 
     public static boolean isJsonSuccess(JSONObject responseEntity) {
-        if (responseEntity != null && SUCCESS_CODE.equals(responseEntity.getString("code"))) {
+        if (responseEntity != null && SUCCESS_CODE == responseEntity.getIntValue("code")) {
             return true;
         }
         return false;
@@ -132,7 +132,7 @@ public class Result<T> implements Serializable {
      * @return true/false
      */
     public boolean isSuccess() {
-        return SUCCESS_CODE.equals(this.code);
+        return SUCCESS_CODE == this.code;
     }
 
     /**
