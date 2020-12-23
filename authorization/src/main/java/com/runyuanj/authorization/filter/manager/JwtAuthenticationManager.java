@@ -46,19 +46,25 @@ public class JwtAuthenticationManager implements AuthenticationManager {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        // 需要做额外的异常处理, 抛出 DisabledException, LockedException, BadCredentialsException异常
+        // 需要做额外的异常处理, 处理DisabledException, LockedException, BadCredentialsException等异常
+        // 不需要在校验失败时返回错误. 而是继续进行下一步资源权限校验
         AuthenticationException exception;
         Authentication result = null;
 
-        for (AuthenticationProvider provider : providers) {
-            boolean supports = provider.supports(authentication.getClass());
-            if (!supports) {
-                continue;
+        try {
+            for (AuthenticationProvider provider : providers) {
+                boolean supports = provider.supports(authentication.getClass());
+                if (!supports) {
+                    continue;
+                }
+                result = provider.authenticate(authentication);
+                if (result != null) {
+                    break;
+                }
             }
-            result = provider.authenticate(authentication);
-            break;
+        } catch (AuthenticationException e) {
+            exception = e;
         }
-
         return result;
     }
 }

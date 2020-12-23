@@ -40,7 +40,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
      * {@link AuthenticationManager#authenticate(Authentication)}
      * .
      *
-     * @param authentication the authentication request object.
+     * @param authentication the JwtAuthenticationToken 包含了token
      * @return a fully authenticated object including credentials. May return
      * <code>null</code> if the <code>AuthenticationProvider</code> is unable to support
      * authentication of the passed <code>Authentication</code> object. In such a case,
@@ -50,28 +50,24 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        // 必须抛出 DisabledException, LockedException, BadCredentialsException异常
-        Result result;
+        // 此处不适合抛出 DisabledException, LockedException, BadCredentialsException异常
+        Authentication result;
         try {
             String token = (String) authentication.getCredentials();
 
             UserDetails userDetails = tokenAuthenticationService.validate(token);
-
-            SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(token, userDetails));
-            // 封装到AuthenticationToken
-            authentication.setAuthenticated(true);
-            return authentication;
+            // 封装到JwtAuthenticationToken.
+            result = new JwtAuthenticationToken(token, userDetails);
+            // 不应设置isAuthenticated = true.
+            return result;
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e1) {
             log.info("authenticate failed. code: {}, message: {}", INVALID_TOKEN.getCode(), INVALID_TOKEN.getMsg());
-            throw new BadCredentialsException(INVALID_TOKEN.getMsg());
         } catch (ExpiredJwtException e2) {
             log.info("authenticate failed. code: {}, message: {}", EXPIRED_TOKEN.getCode(), EXPIRED_TOKEN.getMsg());
-            throw new BadCredentialsException(EXPIRED_TOKEN.getMsg());
         } catch (Exception e) {
-            throw new BadCredentialsException("token校验异常, 请联系管理员");
+            log.error("token校验异常, 请联系管理员", e);
         } finally {
-            log.info("authenticate failed. code: {}, message: {}", SYSTEM_ERROR.getCode(), SYSTEM_ERROR.getMsg());
-            authentication.setAuthenticated(false);
+            return null;
         }
     }
 

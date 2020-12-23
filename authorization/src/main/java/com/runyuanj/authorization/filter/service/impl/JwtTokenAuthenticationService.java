@@ -7,7 +7,9 @@ import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import com.runyuanj.core.token.JwtTokenComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,9 +35,10 @@ public class JwtTokenAuthenticationService implements TokenAuthenticationService
      * @return
      */
     @Override
-    public UserDetails validate(String token) {
-        // 必须抛出 DisabledException, LockedException, BadCredentialsException异常
-        // 解析成功代表token正常
+    public UserDetails validate(String token) throws AuthenticationException {
+        // 应抛出 DisabledException, LockedException, BadCredentialsException等异常
+        // 解析成功不代表token有效
+        // 无论是否过期, 都应该得到解析结果. 因此token不应设置过期时间. 而是从redis获取.
         String json = jwtTokenComponent.parseTokenToJson(token);
 
         if (validateFromRedis(token)) {
@@ -44,11 +47,18 @@ public class JwtTokenAuthenticationService implements TokenAuthenticationService
                     null,
                     user.getJSONArray("authorities").toJavaList(GrantedAuthority.class));
         } else {
-            throw new DisabledException("token 已过期");
+            throw new BadCredentialsException("token 已过期");
         }
     }
 
-    private boolean validateFromRedis(String token) {
+    /**
+     * 验证token是否有效
+     *
+     * @param token
+     * @return
+     * @throws DisabledException
+     */
+    private boolean validateFromRedis(String token) throws DisabledException {
         return true;
     }
 }

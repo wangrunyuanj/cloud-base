@@ -103,7 +103,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             // 当检验失败时不做处理, catch异常, 继续下一步权限校验
         } catch (Exception e) {
-            log.info("error filter in header, request path: {}", request.getPathInfo());
+            log.info("error filter in header, request path: {}", request.getPathInfo(), e);
         }
         // 下一步权限认证将从redis取出资源权限信息和用户权限信息, 进行比对校验.
         filterChain.doFilter(request, response);
