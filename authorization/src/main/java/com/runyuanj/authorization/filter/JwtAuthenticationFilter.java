@@ -7,11 +7,13 @@ import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -32,9 +34,11 @@ import java.util.List;
  *
  * @author Administrator
  */
+@Order()
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private AuthenticationSuccessHandler successHandler;
     /**
      * 无论验证是否成功, 都不会进入到failureHandler.
      */
@@ -149,5 +153,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     public void setFailureHandler(AuthenticationFailureHandler failureHandler) {
         this.failureHandler = failureHandler;
+    }
+
+    public void setAuthenticationSuccessHandler(AuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
     }
 }

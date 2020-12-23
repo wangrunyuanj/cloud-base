@@ -1,8 +1,10 @@
 package com.runyuanj.authorization.config;
 
+import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import com.runyuanj.authorization.filter.service.WhiteListFilterService;
 import com.runyuanj.authorization.handler.SimpleLoginAuthenticationFailureHandler;
+import com.runyuanj.authorization.handler.TokenAuthenticationSuccessHandler;
 import com.runyuanj.authorization.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
@@ -48,6 +51,8 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService securityUserDetailsService;
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
+    @Autowired
+    private TokenAuthenticationSuccessHandler tokenAuthenticationSuccessHandler;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -61,7 +66,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "HEAD", "OPTION"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.addExposedHeader("Authorization");
+        // configuration.addExposedHeader("cors");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -89,16 +94,23 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 配置不同的url使用不同的过滤器链
         // Ant Pattern: spring里的url匹配算法 *: 0或多个字符  **: 匹配0级或多级路径  ?: 单个字符  {spring:[a-z]+}: 按照正则匹配[a-z]+，并且将其作为路径变量，变量名为"spring"
-        http.antMatcher("/**")
+        http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                                .antMatchers(securityProperties.getMatchers()).permitAll()
-                        //.anyRequest().authenticated()
-                        //.antMatchers("/login").hasRole("user")
+                        // 静态资源访问无需认证
+                        .antMatchers("/image/**").permitAll()
+                        .antMatchers("/*/admin/**").hasRole("ADMIN")
+                        .antMatchers("/*/fin/**").hasRole("FIN")
+                        // 匹配every的不需要认证
+                        .antMatchers(securityProperties.getMatchers()).permitAll()
+                        // 其他的请求都需要认证
+                        .anyRequest().authenticated()
                 )
-                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                //.csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                // 关闭csrf
+                // 关闭csrf，因为不使用session
                 .csrf().disable()
+                .sessionManagement().disable()  //禁用session
+
+                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+
                 // 配置oauth2登录失败处理方法
                 .oauth2Login(o -> o.failureHandler((request, response, exception) -> {
                     /*response.setStatus(401); // 返回错误结果
@@ -108,6 +120,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                     request.getSession().setAttribute("error.message", exception.getMessage());
                     handler.onAuthenticationFailure(request, response, exception);
                 }))
+
                 // .addFilterBefore()
                 // 表单登录, 非json登录. FormLoginConfigurer
                 .formLogin(formLogin -> formLogin
@@ -124,74 +137,14 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         //.successHandler(securityAuthenticationSuccessHandler)
                         // 登录失败处理器
                         .failureHandler(new SimpleLoginAuthenticationFailureHandler()))
+
                 //.logout(logout -> logout.logoutSuccessUrl("/logout").permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/").permitAll())
                 .userDetailsService(securityUserDetailsService)
-                // 启动跨域支持
-                .cors()
+                // 在LogoutFilter类之前, 添加过滤器
+                .addFilterBefore(new JwtAuthenticationFilter(), LogoutFilter.class)
+        // 启动跨域支持
+        // .cors(cors -> cors.addObjectPostProcessor(null));
         ;
-
-
-        /*http.formLogin() //指定采用form方式登录
-                // 登录页面
-                .loginPage(securityProperties.getLoginPage())
-                // 登录错误页面
-                .failureUrl(securityProperties.getFailureUrl())
-                // 拦截的登录处理URL
-                .loginProcessingUrl(securityProperties.getLoginProcessingUrl())
-                // 登录成功处理器
-                .successHandler(securityAuthenticationSuccessHandler)
-                // 登录失败处理器
-                .failureHandler(securityAuthenticationFailureHandler)
-                .and()
-                .logout(l -> l.logoutSuccessUrl("/").permitAll())//登出相关配置
-                //.logoutUrl(securityProperties.getLogoutUrl())
-                // 登出的url
-                //.logoutSuccessUrl(securityProperties.getLoginPage())
-                // 登出成功后跳转的url
-                //.permitAll()
-                .invalidateHttpSession(true)
-                // 是session失效
-                .deleteCookies(SESSION_NAME)
-                // 登出成功的处理器
-                .logoutSuccessHandler(securityLogoutSuccessHandler)
-                .and()
-                .authorizeRequests()//权限
-                .antMatchers(securityProperties.getMatchers())
-                // 不拦截这些请求
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .userDetailsService(securityUserDetailsService)
-                // 指定userdetailsService
-                .headers()
-                .frameOptions()
-                .disable()
-                .and()
-                .csrf()
-                .disable();//禁用跨域*/
-
-        /*// @formatter:off
-        http.antMatcher("/**")
-                .authorizeRequests(a -> a
-                        .antMatchers("/", "/error", "/webjars/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .exceptionHandling(e -> e
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                )
-                .csrf(c -> c
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                )
-                .logout(l -> l
-                        .logoutSuccessUrl("/").permitAll()
-                )
-                .oauth2Login(o -> o
-                        .failureHandler((request, response, exception) -> {
-                            request.getSession().setAttribute("error.message", exception.getMessage());
-                            handler.onAuthenticationFailure(request, response, exception);
-                        })
-                );*/
     }
 }

@@ -3,7 +3,6 @@ package com.runyuanj.authorization.filter.token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -41,6 +40,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     /**
      * 用户基础信息与权限
+     * token本身没有权限, 但是在完成权限校验后就能获取到用户的角色信息
      *
      * @return
      */
