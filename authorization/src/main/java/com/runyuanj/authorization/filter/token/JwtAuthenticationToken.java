@@ -15,10 +15,12 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     private String token;
     private UserDetails userDetails;
+    private String resourcePath;
 
-    public JwtAuthenticationToken(String token) {
+    public JwtAuthenticationToken(String token, String resourcePath) {
         super(AuthorityUtils.NO_AUTHORITIES);
         this.token = token;
+        this.resourcePath = resourcePath;
         this.userDetails = null;
     }
 
@@ -47,5 +49,13 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public Object getPrincipal() {
         return userDetails;
+    }
+
+    public String getResourcePath() {
+        return resourcePath;
+    }
+
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
     }
 }

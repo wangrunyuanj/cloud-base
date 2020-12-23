@@ -1,6 +1,7 @@
 package com.runyuanj.authorization.config;
 
 import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
+import com.runyuanj.authorization.filter.ResourcePermissionFilter;
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import com.runyuanj.authorization.filter.service.WhiteListFilterService;
 import com.runyuanj.authorization.handler.SimpleLoginAuthenticationFailureHandler;
@@ -17,11 +18,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AnonymousConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -108,7 +113,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 关闭csrf，因为不使用session
                 .csrf().disable()
                 .sessionManagement().disable()  //禁用session
-
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
 
                 // 配置oauth2登录失败处理方法
@@ -143,6 +147,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(securityUserDetailsService)
                 // 在LogoutFilter类之前, 添加过滤器
                 .addFilterBefore(new JwtAuthenticationFilter(), LogoutFilter.class)
+                .addFilterAfter(new ResourcePermissionFilter(), BasicAuthenticationFilter.class)
         // 启动跨域支持
         // .cors(cors -> cors.addObjectPostProcessor(null));
         ;

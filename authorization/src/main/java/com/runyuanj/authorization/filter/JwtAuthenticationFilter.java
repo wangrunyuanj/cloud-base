@@ -34,11 +34,11 @@ import java.util.List;
  *
  * @author Administrator
  */
-@Order()
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private AuthenticationSuccessHandler successHandler;
+
     /**
      * 无论验证是否成功, 都不会进入到failureHandler.
      */
@@ -92,7 +92,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 如果抛出异常, 代表校验失败
                 try {
                     // 此处不对token解析.
-                    Authentication authToken = new JwtAuthenticationToken(token);
+                    Authentication authToken = new JwtAuthenticationToken(token, request.getPathInfo());
                     // 验证token  JwtAuthenticationManager.authenticate() -> JwtAuthenticationProvider.authenticate()
                     Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
                     // 将用户的认证信息存到ThreadLocal, 用来进行下一步的权限认证. 因此, authentication必须能够取出用户的唯一ID.
