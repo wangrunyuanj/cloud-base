@@ -5,6 +5,8 @@ import com.runyuanj.authorization.filter.manager.ResourcePermissionAuthenticatio
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -64,9 +66,12 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
-        getAuthenticationManager().authenticate(SecurityContextHolder.getContext().getAuthentication());
-
+        try {
+            // 缺少权限的抛出异常
+            getAuthenticationManager().authenticate(SecurityContextHolder.getContext().getAuthentication());
+        } catch (AuthenticationException e) {
+            failureHandler.onAuthenticationFailure(request, response, e);
+        }
     }
 
     protected AuthenticationManager getAuthenticationManager() {

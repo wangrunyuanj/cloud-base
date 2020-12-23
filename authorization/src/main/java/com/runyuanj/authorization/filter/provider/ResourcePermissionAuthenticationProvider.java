@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Permission;
 import java.util.List;
+import java.util.Set;
 
+import static com.runyuanj.authorization.utils.Constants.NONE_URL;
 import static com.runyuanj.common.exception.type.AuthErrorType.EXPIRED_TOKEN;
 import static com.runyuanj.common.exception.type.AuthErrorType.INVALID_TOKEN;
 
@@ -52,10 +55,16 @@ public class ResourcePermissionAuthenticationProvider implements AuthenticationP
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
         try {
-            List<Permission> resourcePermissions = permissionAuthenticationService.loadResourcePermissions(token.getResourcePath());
-            List<Permission> userPermissions = permissionAuthenticationService.loadUserPermissions(token);
+            ConfigAttribute configAttribute = permissionAuthenticationService.loadResourcePermissions(token.getRequest());
 
-            boolean hasPermission = permissionAuthenticationService.hasPermission(resourcePermissions, userPermissions);
+            if (NONE_URL.equals(configAttribute.getAttribute())) {
+                log.info("url未在资源池中找到. requestPath: {}, method: {}", token.getRequest().getPathInfo(), token.getRequest().getMethod());
+                return null;
+            }
+
+            Set<Resource> userPermissions = permissionAuthenticationService.loadUserPermissions(token);
+
+            boolean hasPermission = permissionAuthenticationService.hasPermission(configAttribute, userPermissions);
             if (hasPermission) {
                 return authentication;
             }

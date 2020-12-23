@@ -5,10 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author runyu
@@ -19,13 +17,13 @@ public class SimpleAuthenticationFailureHandler implements AuthenticationFailure
     /**
      * Called when an authentication attempt fails.
      *
-     * @param request   the request during which the authentication attempt occurred.
-     * @param response  the response.
-     * @param exception the exception which was thrown to reject the authentication
+     * @param request  the request during which the authentication attempt occurred.
+     * @param response the response.
+     * @param e        the exception which was thrown to reject the authentication
      */
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.info("authentication failed, {}", request.getPathInfo());
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) {
+        log.info("authentication failed, {}", request.getPathInfo(), e);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 }

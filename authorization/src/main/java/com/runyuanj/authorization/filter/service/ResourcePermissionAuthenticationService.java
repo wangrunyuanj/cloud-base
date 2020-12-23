@@ -1,9 +1,13 @@
 package com.runyuanj.authorization.filter.service;
 
+import com.runyuanj.core.auth.Resource;
+import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Permission;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -15,10 +19,10 @@ public interface ResourcePermissionAuthenticationService {
     /**
      * 获取用户访问的资源对应的权限
      *
-     * @param resourcePath
+     * @param request
      * @return
      */
-    List<Permission> loadResourcePermissions(String resourcePath);
+    ConfigAttribute loadResourcePermissions(HttpServletRequest request);
 
     /**
      * 获取用户拥有的权限
@@ -26,13 +30,15 @@ public interface ResourcePermissionAuthenticationService {
      * @param authentication
      * @return
      */
-    List<Permission> loadUserPermissions(Authentication authentication);
+    Set<Resource> loadUserPermissions(Authentication authentication);
 
     /**
      * 判断是否拥有权限
-     * @param resourcePermissions
-     * @param userPermissions
+     * 缺少权限则抛出异常
+     *
+     * @param configAttribute
+     * @param userResources
      * @return
      */
-    boolean hasPermission(List<Permission> resourcePermissions, List<Permission> userPermissions);
+    boolean hasPermission(ConfigAttribute configAttribute, Set<Resource> userResources);
 }

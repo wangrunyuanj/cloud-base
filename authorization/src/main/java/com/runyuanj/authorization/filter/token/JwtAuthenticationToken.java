@@ -5,6 +5,8 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 封装 jwt filter
  *
@@ -15,12 +17,12 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     private String token;
     private UserDetails userDetails;
-    private String resourcePath;
+    private HttpServletRequest request;
 
-    public JwtAuthenticationToken(String token, String resourcePath) {
+    public JwtAuthenticationToken(String token, HttpServletRequest request) {
         super(AuthorityUtils.NO_AUTHORITIES);
         this.token = token;
-        this.resourcePath = resourcePath;
+        this.request = request;
         this.userDetails = null;
     }
 
@@ -51,11 +53,8 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         return userDetails;
     }
 
-    public String getResourcePath() {
-        return resourcePath;
+    public HttpServletRequest getRequest() {
+        return request;
     }
 
-    public void setResourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
-    }
 }

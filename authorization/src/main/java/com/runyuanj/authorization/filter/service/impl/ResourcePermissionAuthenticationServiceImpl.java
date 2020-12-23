@@ -1,33 +1,40 @@
 package com.runyuanj.authorization.filter.service.impl;
 
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
+import com.runyuanj.authorization.service.ResourceService;
+import com.runyuanj.core.auth.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Permission;
-import java.util.Collections;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 /**
  * 从Redis或Authentication中获取权限信息
+ *
  * @author runyu
  */
 @Slf4j
 @Service
 public class ResourcePermissionAuthenticationServiceImpl implements ResourcePermissionAuthenticationService {
 
+    @Autowired
+    private ResourceService resourceService;
+
     /**
-     * 资源对应的权限需要从本地缓存一部分
-     * 获取用户访问的资源对应的权限
+     * 资源对应的权限需要缓存在本地
+     * 获取用户访问的资源信息
      *
-     * @param resourcePath
+     * @param request
      * @return
      */
     @Override
-    public List<Permission> loadResourcePermissions(String resourcePath) {
-
-        return Collections.emptyList();
+    public ConfigAttribute loadResourcePermissions(HttpServletRequest request) {
+        // 获取request请求的资源信息
+        return resourceService.findConfigAttributes(request);
     }
 
     /**
@@ -37,21 +44,28 @@ public class ResourcePermissionAuthenticationServiceImpl implements ResourcePerm
      * @return
      */
     @Override
-    public List<Permission> loadUserPermissions(Authentication authentication) {
-
-        return Collections.emptyList();
+    public Set<Resource> loadUserPermissions(Authentication authentication) {
+        // ((JwtAuthenticationToken)authentication).getPrincipal().getUsername()
+        Set<Resource> userResources = findResourcesByUsername(null);
+        return userResources;
     }
 
     /**
      * 判断是否拥有权限
      *
-     * @param resourcePermissions
-     * @param userPermissions
+     * @param configAttribute
+     * @param userResources
      * @return
      */
     @Override
-    public boolean hasPermission(List<Permission> resourcePermissions, List<Permission> userPermissions) {
-        log.info("resource has permission");
-        return true;
+    public boolean hasPermission(ConfigAttribute configAttribute, Set<Resource> userResources) {
+        return userResources.stream().anyMatch(resource -> resource.getCode().equals(configAttribute.getAttribute()));
+    }
+
+    private Set<com.runyuanj.core.auth.Resource> findResourcesByUsername(String username) {
+        // 用户被授予的角色资源
+        Set<com.runyuanj.core.auth.Resource> resources = resourceService.queryByUserName(username);
+        log.debug("用户被授予角色的资源数量是:{}, 资源集合信息为:{}", resources.size(), resources);
+        return resources;
     }
 }

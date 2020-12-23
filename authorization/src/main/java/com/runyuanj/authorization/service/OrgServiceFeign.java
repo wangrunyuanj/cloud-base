@@ -29,13 +29,27 @@ public interface OrgServiceFeign {
     @GetMapping(value = "/role/user/{userId}")
     JSONObject queryRolesByUserId(@PathVariable("userId") String userId);
 
+    @GetMapping("/resource/all")
+    JSONObject queryAll();
+
+    @GetMapping("/resource/user/{username}")
+    JSONObject queryByUsername(@PathVariable("username") String username);
 
     class OrgServiceFeignFallback {
+
         JSONObject getUserByUniqueId(String uniqueId) {
             return JSONObject.parseObject(JSON.toJSONString(Result.fail()));
         }
 
         JSONObject queryRolesByUserId(String userId) {
+            return JSONObject.parseObject(JSON.toJSONString(Result.fail()));
+        }
+
+        JSONObject queryAll() {
+            return JSONObject.parseObject(JSON.toJSONString(Result.fail()));
+        }
+
+        JSONObject queryByUsername(String username) {
             return JSONObject.parseObject(JSON.toJSONString(Result.fail()));
         }
     }
