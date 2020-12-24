@@ -66,9 +66,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             log.info("authenticate failed. code: {}, message: {}", EXPIRED_TOKEN.getCode(), EXPIRED_TOKEN.getMsg());
         } catch (Exception e) {
             log.error("token校验异常, 请联系管理员", e);
-        } finally {
-            return null;
         }
+        return null;
     }
 
     /**

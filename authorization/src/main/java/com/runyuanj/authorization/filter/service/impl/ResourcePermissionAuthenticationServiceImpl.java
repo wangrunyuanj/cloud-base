@@ -1,7 +1,7 @@
 package com.runyuanj.authorization.filter.service.impl;
 
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
-import com.runyuanj.authorization.service.ResourceService;
+import com.runyuanj.authorization.service.ResourcePermissionService;
 import com.runyuanj.core.auth.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.Set;
 public class ResourcePermissionAuthenticationServiceImpl implements ResourcePermissionAuthenticationService {
 
     @Autowired
-    private ResourceService resourceService;
+    private ResourcePermissionService resourcePermissionService;
 
     /**
      * 资源对应的权限需要缓存在本地
@@ -34,7 +34,7 @@ public class ResourcePermissionAuthenticationServiceImpl implements ResourcePerm
     @Override
     public ConfigAttribute loadResourcePermissions(HttpServletRequest request) {
         // 获取request请求的资源信息
-        return resourceService.findConfigAttributes(request);
+        return resourcePermissionService.findConfigAttributes(request);
     }
 
     /**
@@ -64,7 +64,7 @@ public class ResourcePermissionAuthenticationServiceImpl implements ResourcePerm
 
     private Set<com.runyuanj.core.auth.Resource> findResourcesByUsername(String username) {
         // 用户被授予的角色资源
-        Set<com.runyuanj.core.auth.Resource> resources = resourceService.queryByUserName(username);
+        Set<com.runyuanj.core.auth.Resource> resources = resourcePermissionService.queryByUserName(username);
         log.debug("用户被授予角色的资源数量是:{}, 资源集合信息为:{}", resources.size(), resources);
         return resources;
     }

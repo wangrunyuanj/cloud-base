@@ -96,14 +96,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // 验证token  JwtAuthenticationManager.authenticate() -> JwtAuthenticationProvider.authenticate()
                     Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
                     // 将用户的认证信息存到ThreadLocal, 用来进行下一步的权限认证. 因此, authentication必须能够取出用户的唯一ID.
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    result = Result.success();
+                    if (authentication != null) {
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        result = Result.success();
+                    } else {
+                        result = Result.fail(AuthErrorType.INVALID_TOKEN, "authentication result is null");
+                    }
                 } catch (Exception e) {
                     result = Result.fail(SystemErrorType.SYSTEM_ERROR);
                 }
             }
             if (result.isFail()) {
-                log.info("token验证失败, code: {}, message: {}, request path: {}", result.getCode(), result.getData(), request.getPathInfo());
+                log.info("token验证失败, code: {}, message: {}, request path: {}", result.getCode(), result.getMessage(), request.getPathInfo());
             }
             // 当检验失败时不做处理, catch异常, 继续下一步权限校验
         } catch (Exception e) {

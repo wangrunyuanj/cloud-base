@@ -1,9 +1,12 @@
 package com.runyuanj.authorization.filter.manager;
 
+import com.runyuanj.authorization.filter.provider.JwtAuthenticationProvider;
+import com.runyuanj.authorization.filter.provider.LoginAuthenticationProvider;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +17,8 @@ import java.util.List;
 public class JwtAuthenticationManager implements AuthenticationManager {
 
     private List<AuthenticationProvider> providers;
+    private AuthenticationProvider authenticationProvider;
+
 
     public JwtAuthenticationManager(List<AuthenticationProvider> providers) {
         this.providers = providers;
@@ -66,5 +71,9 @@ public class JwtAuthenticationManager implements AuthenticationManager {
             exception = e;
         }
         return result;
+    }
+
+    public void addProvider(AuthenticationProvider provider) {
+        this.providers.add(provider);
     }
 }

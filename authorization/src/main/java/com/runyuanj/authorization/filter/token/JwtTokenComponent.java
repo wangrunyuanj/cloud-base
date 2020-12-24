@@ -5,14 +5,13 @@ import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Administrator
@@ -89,7 +88,14 @@ public class JwtTokenComponent {
     }
 
     public static void main(String[] args) throws Exception {
-        String token = (new JwtTokenComponent()).generalToken("1", "zhangsan", System.currentTimeMillis());
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", "admin");
+        map.put("password", "12345678");
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        SimpleGrantedAuthority admin = new SimpleGrantedAuthority("ADMIN");
+        authorities.add(admin);
+        map.put("authorities", authorities);
+        String token = (new JwtTokenComponent()).generalToken("1", JSON.toJSONString(map), System.currentTimeMillis());
         Claims claims = (new JwtTokenComponent()).parseToken(token);
         System.out.println(token);
         System.out.println(claims.getSubject());

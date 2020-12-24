@@ -1,6 +1,7 @@
 package com.runyuanj.authorization.filter.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.runyuanj.authorization.entity.MyUser;
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
@@ -13,6 +14,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 具体实现类. 验证token是否有效
@@ -42,9 +45,11 @@ public class JwtTokenAuthenticationService implements TokenAuthenticationService
 
         if (validateFromRedis(token)) {
             JSONObject user = JSON.parseObject(json);
+            JSONArray authorities = user.getJSONArray("authorities");
+            List<GrantedAuthority> grantedAuthorities = authorities.toJavaList(GrantedAuthority.class);
             return new MyUser(user.getString("username"),
-                    null,
-                    user.getJSONArray("authorities").toJavaList(GrantedAuthority.class));
+                    "",
+                    grantedAuthorities);
         } else {
             throw new BadCredentialsException("token 已过期");
         }

@@ -2,11 +2,15 @@ package com.runyuanj.authorization.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.runyuanj.authorization.filter.manager.LoginAuthenticationManager;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
@@ -91,4 +95,5 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
     public void setPostOnly(boolean postOnly) {
         this.postOnly = postOnly;
     }
+
 }

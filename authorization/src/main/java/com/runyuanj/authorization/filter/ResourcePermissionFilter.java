@@ -43,9 +43,9 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
 
     private RequestMatcher requiresAuthenticationRequestMatcher;
 
-    public ResourcePermissionFilter() {
+    public ResourcePermissionFilter(AuthenticationManager authenticationManager) {
         // 拦截所有不在白名单的请求
-        this.authenticationManager = new ResourcePermissionAuthenticationManager(providers);
+        this.authenticationManager = authenticationManager;
         this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
     }
 
