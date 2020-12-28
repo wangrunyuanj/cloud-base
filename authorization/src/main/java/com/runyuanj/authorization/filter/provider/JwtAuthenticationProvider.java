@@ -57,7 +57,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
             UserDetails userDetails = tokenAuthenticationService.validate(token);
             // 封装到JwtAuthenticationToken.
-            result = new JwtAuthenticationToken(token, userDetails);
+            ((JwtAuthenticationToken) authentication).setDetails(userDetails);
+            result = authentication;
             // 不应设置isAuthenticated = true.
             return result;
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e1) {

@@ -70,9 +70,8 @@ public class ResourcePermissionAuthenticationProvider implements AuthenticationP
             }
         } catch (Exception e) {
             log.error("token校验异常, 请联系管理员", e);
-        } finally {
-            return null;
         }
+        return null;
     }
 
     /**

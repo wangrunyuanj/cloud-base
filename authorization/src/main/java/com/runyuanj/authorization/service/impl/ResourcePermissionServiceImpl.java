@@ -14,12 +14,10 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.runyuanj.authorization.utils.Constants.NONE_URL;
@@ -111,6 +109,13 @@ public class ResourcePermissionServiceImpl implements ResourcePermissionService 
         if (localConfigAttributes.isEmpty()) {
             loadResource();
         }
+        log.info("localConfigAttributes size: {}", localConfigAttributes.size());
+        for (RequestMatcher requestMatcher : localConfigAttributes.keySet()) {
+            System.out.println(requestMatcher);
+            if (((AntPathRequestMatcher) requestMatcher).matches(request)) {
+
+            }
+        }
         return localConfigAttributes.keySet().stream().filter(requestMatcher -> requestMatcher.matches(request))
                 .map(requestMatcher -> localConfigAttributes.get(requestMatcher))
                 .peek(urlConfig -> log.debug("url在资源池中配置：{}", urlConfig.getAttribute()))
@@ -126,13 +131,15 @@ public class ResourcePermissionServiceImpl implements ResourcePermissionService 
      */
     @Override
     public Set<Resource> queryByUserName(String username) {
-        username = "admin";
+        // username = "admin";
         JSONObject response = orgServiceFeign.queryByUsername(username);
         if (Result.isJsonSuccess(response)) {
             JSONArray data = response.getJSONArray("data");
-            return data.stream().map(resource -> JSON.parseObject(JSON.toJSONString(resource), Resource.class)).collect(toSet());
+            if (data != null) {
+                return data.stream().map(resource -> JSON.parseObject(JSON.toJSONString(resource), Resource.class)).collect(toSet());
+            }
         }
-        return new HashSet<>();
+        return Collections.emptySet();
     }
 
     /**

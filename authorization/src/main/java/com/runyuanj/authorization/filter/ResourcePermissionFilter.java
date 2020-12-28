@@ -2,8 +2,11 @@ package com.runyuanj.authorization.filter;
 
 import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
 import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
+import com.runyuanj.common.exception.type.AuthErrorType;
+import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,16 +71,20 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
-        Authentication result;
+        Result result;
+        Authentication authResult;
         try {
             // 缺少权限的抛出异常
-            result = getAuthenticationManager().authenticate(SecurityContextHolder.getContext().getAuthentication());
+            authResult = getAuthenticationManager().authenticate(SecurityContextHolder.getContext().getAuthentication());
+            if (authResult == null) {
+               throw new DisabledException("缺少权限");
+            }
         } catch (AuthenticationException e) {
             failureHandler.onAuthenticationFailure(request, response, e);
             return;
         }
-        successHandler.onAuthenticationSuccess(request, response, filterChain, result);
+
+        successHandler.onAuthenticationSuccess(request, response, filterChain, authResult);
     }
 
     protected AuthenticationManager getAuthenticationManager() {

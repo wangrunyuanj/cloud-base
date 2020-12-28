@@ -7,6 +7,7 @@ import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -30,6 +31,12 @@ public class SimpleAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException {
         log.info("authentication failed, {}", request.getPathInfo(), e);
-        ResponseUtils.writeResponseJson(response, 401, Result.fail(AuthErrorType.AUTHORIZATION_FAILED));
+        Result result;
+        if (e instanceof DisabledException) {
+            result = Result.fail(AuthErrorType.METHOD_NOT_ALLOWED);
+        } else {
+            result = Result.fail(AuthErrorType.AUTHORIZATION_FAILED);
+        }
+        ResponseUtils.writeResponseJson(response, 401, result);
     }
 }
