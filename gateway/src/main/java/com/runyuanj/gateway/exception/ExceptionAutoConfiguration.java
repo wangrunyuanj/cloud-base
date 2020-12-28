@@ -24,14 +24,14 @@ import java.util.List;
 /**
  * 为webflux注入自定义的 ErrorWebExceptionHandler
  */
-@Configuration
+/*@Configuration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @ConditionalOnClass(WebFluxConfigurer.class)
 @AutoConfigureBefore(WebFluxAutoConfiguration.class)
-@EnableConfigurationProperties({ServerProperties.class, ResourceProperties.class})
+@EnableConfigurationProperties({ServerProperties.class, ResourceProperties.class})*/
 public class ExceptionAutoConfiguration {
 
-    private ServerProperties serverProperties;
+   /* private ServerProperties serverProperties;
 
     private ApplicationContext applicationContext;
 
@@ -63,5 +63,5 @@ public class ExceptionAutoConfiguration {
         exceptionHandler.setMessageWriters(this.serverCodecConfigurer.getWriters());
         exceptionHandler.setMessageReaders(this.serverCodecConfigurer.getReaders());
         return exceptionHandler;
-    }
+    }*/
 }

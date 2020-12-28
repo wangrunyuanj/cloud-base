@@ -11,6 +11,7 @@ import com.runyuanj.authorization.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -39,10 +40,9 @@ import static org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.B
  * @EnableGlobalMethodSecurity 为controller层方法添加权限控制:
  * @PreAuthorize("hasAuthority('course_teachplan_add')")
  */
-//@Configuration
 @EnableWebSecurity
-/*@Order(-1)*/
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@ComponentScan(basePackages = { "com.runyuanj.authorization.**"})
 public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

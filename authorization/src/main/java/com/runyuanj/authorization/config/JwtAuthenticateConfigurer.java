@@ -6,6 +6,7 @@ import com.runyuanj.authorization.filter.provider.JwtAuthenticationProvider;
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,6 +22,7 @@ import java.util.List;
  * @author runyu
  */
 @Configuration
+@ComponentScan(basePackages = { "com.runyuanj.authorization.**"})
 public class JwtAuthenticateConfigurer {
 
     private AuthenticationSuccessHandler authenticationSuccessHandler;

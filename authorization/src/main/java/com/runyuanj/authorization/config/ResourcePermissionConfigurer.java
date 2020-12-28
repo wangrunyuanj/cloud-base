@@ -9,6 +9,7 @@ import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
 import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,13 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@ComponentScan(basePackages = { "com.runyuanj.authorization.**"})
 public class ResourcePermissionConfigurer {
 
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private AuthenticationFailureHandler authenticationFailureHandler;
     private RequestMatcher requestMatcher;
     private List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
     private ResourcePermissionAuthenticationService resourcePermissionAuthenticationService;

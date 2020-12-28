@@ -309,6 +309,6 @@
         <module>core</module>
         <module>log</module>
         <module>cache</module>
-        <module>authentication</module>
+        <module>authorization</module>
     </modules>
 </project>

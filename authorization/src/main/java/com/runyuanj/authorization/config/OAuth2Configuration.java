@@ -1,18 +1,24 @@
 package com.runyuanj.authorization.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -24,10 +30,12 @@ import java.util.Map;
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
 /**
+ *
  * @author Administrator
  */
 @Configuration
 @Slf4j
+@ComponentScan(basePackages = { "com.runyuanj.authorization.**"})
 public class OAuth2Configuration {
 
     @Bean
@@ -63,5 +71,33 @@ public class OAuth2Configuration {
 
             throw new OAuth2AuthenticationException(new OAuth2Error("invalid_token", "无效token", ""));
         };
+    }
+
+    @Bean
+    public ClientRegistrationRepository clientRegistrationRepository() {
+        return new InMemoryClientRegistrationRepository(githubClientRegistration());
+    }
+
+    @Value("${spring.security.oauth2.client.registration.github.client-id}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.github.client-secret}")
+    private String clientSecret;
+
+    private ClientRegistration githubClientRegistration() {
+        return ClientRegistration.withRegistrationId("github")  // (1)
+                .clientId(clientId)  // (2)
+                .clientSecret(clientSecret)  // (3)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.POST)  // (4)
+                .redirectUriTemplate("{baseUrl}/login/oauth2/code/{registrationId}")  // (5)
+                .clientName("AAA")       // (6)
+                .tokenUri("http://your.provider.com/oauth/token")  // (7)
+                .authorizationUri("http://your.provider.com/oauth/authorize")  // (8)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)  // (9)
+                .scope("api")  // (10)
+                .userNameAttributeName("username")  // (11)
+                .userInfoUri("http://your.provider.com/api/v3/user")  // (12)
+                .jwkSetUri("")  // (13)
+                .build();
     }
 }
