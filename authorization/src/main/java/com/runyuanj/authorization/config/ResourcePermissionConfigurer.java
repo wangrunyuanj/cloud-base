@@ -3,10 +3,8 @@ package com.runyuanj.authorization.config;
 import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
 import com.runyuanj.authorization.filter.ResourcePermissionFilter;
 import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
-import com.runyuanj.authorization.filter.provider.JwtAuthenticationProvider;
 import com.runyuanj.authorization.filter.provider.ResourcePermissionAuthenticationProvider;
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
-import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
 import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,8 @@ public class ResourcePermissionConfigurer {
     @Autowired
     private ResourcePermissionAuthenticationService resourcePermissionAuthenticationService;
 
-    public ResourcePermissionConfigurer() {}
+    public ResourcePermissionConfigurer() {
+    }
 
     public ResourcePermissionFilter toResourcePermissionFilter() {
         AuthenticationManager authenticationManager = new JwtAuthenticationManager(authenticationProviders);

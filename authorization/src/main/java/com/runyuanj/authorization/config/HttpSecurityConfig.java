@@ -4,7 +4,9 @@ import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
 import com.runyuanj.authorization.filter.MyUsernamePasswordAuthenticationFilter;
 import com.runyuanj.authorization.filter.ResourcePermissionFilter;
 import com.runyuanj.authorization.filter.service.WhiteListFilterService;
-import com.runyuanj.authorization.handler.*;
+import com.runyuanj.authorization.handler.DefaultLogoutSuccessHandler;
+import com.runyuanj.authorization.handler.JsonLoginFailureHandler;
+import com.runyuanj.authorization.handler.JsonLoginSuccessHandler;
 import com.runyuanj.authorization.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +19,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -25,7 +29,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
+
+import static org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.BCryptVersion.$2B;
 
 /**
  * @author Administrator
@@ -56,6 +63,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         // 不用security来管理
         web.ignoring().antMatchers(whiteListFilterService.getWhiteListPath());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder($2B, 4, new SecureRandom());
     }
 
     @Bean
@@ -95,7 +107,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
         MyUsernamePasswordAuthenticationFilter filter = new MyUsernamePasswordAuthenticationFilter(defaultManager);
         filter.setAuthenticationSuccessHandler(new JsonLoginSuccessHandler());
-        filter.setAuthenticationFailureHandler(new JsonLogiuFailureHandler());
+        filter.setAuthenticationFailureHandler(new JsonLoginFailureHandler());
 
         // providerManager.getProviders().add();
 
@@ -140,9 +152,9 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         // 拦截的登录处理URL
                         //.loginProcessingUrl(securityProperties.getLoginProcessingUrl())
                         // 登录成功处理器
-                        //.successHandler(securityAuthenticationSuccessHandler)
+                        .successHandler(new JsonLoginSuccessHandler())
                         // 登录失败处理器
-                        .failureHandler(new SimpleLoginAuthenticationFailureHandler()))
+                        .failureHandler(new JsonLoginFailureHandler()))
 
                 //.logout(logout -> logout.logoutSuccessUrl("/logout").permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/").permitAll().logoutSuccessHandler(new DefaultLogoutSuccessHandler()))
@@ -154,5 +166,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         // 启动跨域支持
         // .cors(cors -> cors.addObjectPostProcessor(null));
         ;
+    }
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder($2B, 4, new SecureRandom());
+        String encode = passwordEncoder.encode("12345678");
+        System.out.println(encode);
     }
 }
