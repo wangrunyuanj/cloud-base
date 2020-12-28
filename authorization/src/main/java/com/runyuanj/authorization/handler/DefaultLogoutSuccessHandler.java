@@ -10,14 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * logout成功后处理
+ *
+ * @author runyu
+ */
 @Component
 @Slf4j
-public class SecurityLogoutSuccessHandler implements LogoutSuccessHandler {
+public class DefaultLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
         log.info("logout success! {}", authentication.getPrincipal());
-        // response.setHeader();
     }
 }

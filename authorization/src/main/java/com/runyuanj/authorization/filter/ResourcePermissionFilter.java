@@ -1,10 +1,9 @@
 package com.runyuanj.authorization.filter;
 
-import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
-import com.runyuanj.authorization.filter.manager.ResourcePermissionAuthenticationManager;
+import com.runyuanj.authorization.handler.DoNothingAuthenticationSuccessHandler;
+import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,8 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 拦截请求判断是否对路径拥有权限
@@ -33,11 +30,9 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
     /**
      * 不会进入到successHandler.
      */
-    private AuthenticationSuccessHandler successHandler;
+    private AuthenticationSuccessHandler successHandler = new DoNothingAuthenticationSuccessHandler();
 
-    private AuthenticationFailureHandler failureHandler;
-
-    private List<AuthenticationProvider> providers = new ArrayList<>();
+    private AuthenticationFailureHandler failureHandler = new SimpleAuthenticationFailureHandler();
 
     private AuthenticationManager authenticationManager;
 
@@ -53,7 +48,7 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
     /**
      * 所有经过该过滤器的请求都应该被处理
      * 验证不通过则转到失败处理流程
-     *
+     * <p>
      * Same contract as for {@code doFilter}, but guaranteed to be
      * just invoked once per request within a single request thread.
      * See {@link #shouldNotFilterAsyncDispatch()} for details.
@@ -66,12 +61,21 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        if (!requiresAuthentication(request, response)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Authentication result;
         try {
             // 缺少权限的抛出异常
-            getAuthenticationManager().authenticate(SecurityContextHolder.getContext().getAuthentication());
+            result = getAuthenticationManager().authenticate(SecurityContextHolder.getContext().getAuthentication());
         } catch (AuthenticationException e) {
             failureHandler.onAuthenticationFailure(request, response, e);
+            return;
         }
+        successHandler.onAuthenticationSuccess(request, response, filterChain, result);
     }
 
     protected AuthenticationManager getAuthenticationManager() {
@@ -80,6 +84,15 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
 
     public void setFailureHandler(AuthenticationFailureHandler failureHandler) {
         this.failureHandler = failureHandler;
+    }
+
+    public void setSuccessHandler(AuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
+    }
+
+    protected boolean requiresAuthentication(HttpServletRequest request,
+                                             HttpServletResponse response) {
+        return requiresAuthenticationRequestMatcher.matches(request);
     }
 
 }

@@ -1,19 +1,15 @@
 package com.runyuanj.authorization.filter;
 
-import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
 import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
 import com.runyuanj.common.exception.type.AuthErrorType;
 import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -37,26 +33,18 @@ import java.util.List;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private AuthenticationSuccessHandler successHandler;
-
-    /**
-     * 无论验证是否成功, 都不会进入到failureHandler.
-     */
-    private AuthenticationFailureHandler failureHandler;
-
     private List<AuthenticationProvider> providers = new ArrayList<>();
 
     private AuthenticationManager authenticationManager;
 
     private RequestMatcher requiresAuthenticationRequestMatcher;
 
-    public JwtAuthenticationFilter() {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, RequestMatcher requestMatcher) {
         // 拦截所有不在白名单的请求
         // 拦截header中带Authorization的请求
-        //拦截header中带Authorization的请求
-        // providers.add(new JwtAuthenticationProvider());
-        this.authenticationManager = new JwtAuthenticationManager(providers);
-        this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
+        // 拦截header中带Authorization的请求
+        this.authenticationManager = authenticationManager;
+        this.requiresAuthenticationRequestMatcher = requestMatcher;;
     }
 
     /**
@@ -80,10 +68,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        Result result;
         try {
             //从头中获取token并封装后提交给AuthenticationManager
             String token = getJwtToken(request);
-            Result result;
             // token为空, 继续进行权限认证
             if (StringUtils.isEmpty(token)) {
                 log.error("Jwt Token is empty");
@@ -106,12 +94,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     result = Result.fail(SystemErrorType.SYSTEM_ERROR);
                 }
             }
-            if (result.isFail()) {
-                log.info("token验证失败, code: {}, message: {}, request path: {}", result.getCode(), result.getMessage(), request.getPathInfo());
-            }
             // 当检验失败时不做处理, catch异常, 继续下一步权限校验
         } catch (Exception e) {
-            log.info("error filter in header, request path: {}", request.getPathInfo(), e);
+            log.error("请求头校验异常", e);
+            result = new Result(SystemErrorType.SYSTEM_ERROR, "error filter in header, " + e.getMessage());
+        }
+        if (result.isFail()) {
+            log.info("token验证失败, code: {}, message: {}, request path: {}", result.getCode(), result.getMessage(), request.getPathInfo());
         }
         // 下一步权限认证将从redis取出资源权限信息和用户权限信息, 进行比对校验.
         filterChain.doFilter(request, response);
@@ -134,10 +123,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    public void addProviders(AuthenticationProvider provider) {
-        this.providers.add(provider);
-    }
-
     private String getJwtToken(HttpServletRequest request) {
         return request.getHeader("Authorization");
     }
@@ -150,16 +135,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authenticationManager;
     }
 
-
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-    public void setFailureHandler(AuthenticationFailureHandler failureHandler) {
-        this.failureHandler = failureHandler;
-    }
-
-    public void setAuthenticationSuccessHandler(AuthenticationSuccessHandler successHandler) {
-        this.successHandler = successHandler;
-    }
 }

@@ -4,39 +4,33 @@ import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
 import com.runyuanj.authorization.filter.MyUsernamePasswordAuthenticationFilter;
 import com.runyuanj.authorization.filter.ResourcePermissionFilter;
 import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
-import com.runyuanj.authorization.filter.manager.ResourcePermissionAuthenticationManager;
 import com.runyuanj.authorization.filter.provider.JwtAuthenticationProvider;
 import com.runyuanj.authorization.filter.provider.ResourcePermissionAuthenticationProvider;
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import com.runyuanj.authorization.filter.service.WhiteListFilterService;
+import com.runyuanj.authorization.handler.DefaultLogoutSuccessHandler;
+import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
 import com.runyuanj.authorization.handler.SimpleLoginAuthenticationFailureHandler;
 import com.runyuanj.authorization.handler.TokenAuthenticationSuccessHandler;
 import com.runyuanj.authorization.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.AnonymousConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -58,8 +52,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private SecurityProperties securityProperties;
-    @Autowired
-    private LogoutSuccessHandler securityLogoutSuccessHandler;
     @Autowired
     private WhiteListFilterService whiteListFilterService;
 
@@ -112,22 +104,21 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         SimpleUrlAuthenticationFailureHandler handler = new SimpleUrlAuthenticationFailureHandler("/");
 
-
-        JwtAuthenticationProvider provider = new JwtAuthenticationProvider(tokenAuthenticationService);
         ResourcePermissionAuthenticationProvider permissionAuthenticationProvider = new ResourcePermissionAuthenticationProvider(resourcePermissionAuthenticationService);
 
         List<AuthenticationProvider> providerList = new ArrayList<>();
-        providerList.add(provider);
+
         providerList.add(permissionAuthenticationProvider);
+
         JwtAuthenticationManager jwtAuthenticationManager = new JwtAuthenticationManager(providerList);
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter();
-        jwtAuthenticationFilter.setAuthenticationManager(jwtAuthenticationManager);
 
-        ResourcePermissionAuthenticationManager resourcePermissionAuthenticationManager = new ResourcePermissionAuthenticationManager(providerList);
-        ResourcePermissionFilter resourcePermissionFilter = new ResourcePermissionFilter(resourcePermissionAuthenticationManager);
+        ResourcePermissionFilter resourcePermissionFilter = new ResourcePermissionFilter(jwtAuthenticationManager);
+        resourcePermissionFilter.setFailureHandler(new SimpleAuthenticationFailureHandler());
 
-        MyUsernamePasswordAuthenticationFilter filter = new MyUsernamePasswordAuthenticationFilter();
-        //filter.setAuthenticationManager(authenticationManager);
+        // filter.setAuthenticationManager(authenticationManager);
+
+        // 默认的authenticationManager
+        AuthenticationManager defaultManager = authenticationManager();
 
 
         // 配置不同的url使用不同的过滤器链
@@ -176,11 +167,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         .failureHandler(new SimpleLoginAuthenticationFailureHandler()))
 
                 //.logout(logout -> logout.logoutSuccessUrl("/logout").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/").permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/").permitAll().logoutSuccessHandler(new DefaultLogoutSuccessHandler()))
                 .userDetailsService(securityUserDetailsService)
                 // 在LogoutFilter类之前, 添加过滤器
-                .addFilterBefore(new MyUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, LogoutFilter.class)
+                .addFilterBefore(new MyUsernamePasswordAuthenticationFilter(defaultManager), LogoutFilter.class)
+                // .addFilterBefore(new JwtAuthenticateConfigurer().authenticationProvider(tokenAuthenticationService).requestMatcher(jwtAuthorizationMatcher).toJwtAuthenticationFilter(), LogoutFilter.class)
                 .addFilterAfter(resourcePermissionFilter, BasicAuthenticationFilter.class)
         // 启动跨域支持
         // .cors(cors -> cors.addObjectPostProcessor(null));

@@ -1,5 +1,9 @@
 package com.runyuanj.authorization.handler;
 
+import com.runyuanj.authorization.utils.ResponseUtils;
+import com.runyuanj.common.exception.type.AuthErrorType;
+import com.runyuanj.common.exception.type.SystemErrorType;
+import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -14,8 +18,8 @@ import java.io.IOException;
 public class SimpleLoginAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        log.info("authentication failed, {}", httpServletRequest.getPathInfo());
-        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+        log.info("authentication failed, {}", request.getPathInfo());
+        ResponseUtils.writeResponseJson(response, 401, Result.fail(AuthErrorType.USERNAME_PASSWORD_AUTH_FAILED));
     }
 }

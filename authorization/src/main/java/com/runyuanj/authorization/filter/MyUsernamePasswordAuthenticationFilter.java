@@ -2,15 +2,12 @@ package com.runyuanj.authorization.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.runyuanj.authorization.filter.manager.LoginAuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
@@ -26,6 +23,9 @@ import java.nio.charset.Charset;
  * 拦截POST /login接口, 获取用户名密码, 验证用户信息
  * 不需要单独写/login接口. 但是返回值需要在请求头中加上token信息
  *
+ * 成功 -> successHandler
+ * 失败 -> failHandler
+ *
  * @author Administrator
  */
 public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -35,9 +35,10 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
     /**
      * 拦截Post请求的login
      */
-    public MyUsernamePasswordAuthenticationFilter() {
+    public MyUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
         //拦截url为 "/login" 的POST请求
         super(new AntPathRequestMatcher("/login", "POST"));
+        super.setAuthenticationManager(authenticationManager);
     }
 
     /**
@@ -60,6 +61,8 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
+        Authentication result = null;
+
         if (postOnly && !request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException(
                     "Authentication method not supported: " + request.getMethod());
@@ -68,7 +71,7 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
         //从json中获取username和password
         String body = StreamUtils.copyToString(request.getInputStream(), Charset.forName("UTF-8"));
         String username = null, password = null;
-        if(StringUtils.hasText(body)) {
+        if (StringUtils.hasText(body)) {
             JSONObject jsonObj = JSON.parseObject(body);
             username = jsonObj.getString("username");
             password = jsonObj.getString("password");
@@ -91,9 +94,4 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
         // 实际通过AuthenticationProvider的实现类执行authenticate(authRequest)
         return this.getAuthenticationManager().authenticate(authRequest);
     }
-
-    public void setPostOnly(boolean postOnly) {
-        this.postOnly = postOnly;
-    }
-
 }
