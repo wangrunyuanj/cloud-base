@@ -1,9 +1,14 @@
 package com.runyuanj.authorization.config;
 
 import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
+import com.runyuanj.authorization.filter.ResourcePermissionFilter;
 import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
 import com.runyuanj.authorization.filter.provider.JwtAuthenticationProvider;
+import com.runyuanj.authorization.filter.provider.ResourcePermissionAuthenticationProvider;
+import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
+import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
+import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +22,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author runyu
- */
 @Configuration
-public class JwtAuthenticateConfigurer {
+public class ResourcePermissionConfigurer {
 
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private AuthenticationFailureHandler authenticationFailureHandler;
@@ -30,41 +32,42 @@ public class JwtAuthenticateConfigurer {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
+    private ResourcePermissionAuthenticationService resourcePermissionAuthenticationService;
 
-    public JwtAuthenticateConfigurer() {
-    }
+    public ResourcePermissionConfigurer() {}
 
-    public JwtAuthenticationFilter toJwtAuthenticationFilter() {
+    public ResourcePermissionFilter toResourcePermissionFilter() {
         AuthenticationManager authenticationManager = new JwtAuthenticationManager(authenticationProviders);
-        return new JwtAuthenticationFilter(authenticationManager, requestMatcher);
+        return new ResourcePermissionFilter(authenticationManager, requestMatcher, authenticationSuccessHandler, authenticationFailureHandler);
     }
 
-    public JwtAuthenticateConfigurer authenticationSuccessHandler(AuthenticationSuccessHandler authenticationSuccessHandler) {
+    public ResourcePermissionConfigurer authenticationSuccessHandler(AuthenticationSuccessHandler authenticationSuccessHandler) {
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         return this;
     }
 
-    public JwtAuthenticateConfigurer authenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
+    public ResourcePermissionConfigurer authenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
         this.authenticationFailureHandler = authenticationFailureHandler;
         return this;
     }
 
-    public JwtAuthenticateConfigurer requestMatcher(RequestMatcher requestMatcher) {
+    public ResourcePermissionConfigurer requestMatcher(RequestMatcher requestMatcher) {
         this.requestMatcher = requestMatcher;
         return this;
     }
 
-    public JwtAuthenticateConfigurer authenticationProvider(TokenAuthenticationService tokenAuthenticationService) {
-        AuthenticationProvider provider = new JwtAuthenticationProvider(tokenAuthenticationService);
+    public ResourcePermissionConfigurer authenticationProvider(ResourcePermissionAuthenticationService resourcePermissionAuthenticationService) {
+        AuthenticationProvider provider = new ResourcePermissionAuthenticationProvider(resourcePermissionAuthenticationService);
         this.authenticationProviders.add(provider);
         return this;
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return this.authenticationProvider(tokenAuthenticationService)
+    public ResourcePermissionFilter resourcePermissionFilter() {
+        return this.authenticationProvider(resourcePermissionAuthenticationService)
                 .requestMatcher(new RequestHeaderRequestMatcher("Authorization"))
-                .toJwtAuthenticationFilter();
+                .authenticationSuccessHandler(new EmptyAuthenticationSuccessHandler())
+                .authenticationFailureHandler(new SimpleAuthenticationFailureHandler())
+                .toResourcePermissionFilter();
     }
 }

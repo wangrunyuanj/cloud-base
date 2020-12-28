@@ -1,6 +1,6 @@
 package com.runyuanj.authorization.filter;
 
-import com.runyuanj.authorization.handler.DoNothingAuthenticationSuccessHandler;
+import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
 import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,7 +9,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,18 +29,21 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
     /**
      * 不会进入到successHandler.
      */
-    private AuthenticationSuccessHandler successHandler = new DoNothingAuthenticationSuccessHandler();
+    private AuthenticationSuccessHandler successHandler;
 
-    private AuthenticationFailureHandler failureHandler = new SimpleAuthenticationFailureHandler();
+    private AuthenticationFailureHandler failureHandler;
 
     private AuthenticationManager authenticationManager;
 
-    private RequestMatcher requiresAuthenticationRequestMatcher;
+    private RequestMatcher requestMatcher;
 
-    public ResourcePermissionFilter(AuthenticationManager authenticationManager) {
+    public ResourcePermissionFilter(AuthenticationManager authenticationManager, RequestMatcher requestMatcher,
+                                    AuthenticationSuccessHandler successHandler, AuthenticationFailureHandler failureHandler) {
         // 拦截所有不在白名单的请求
         this.authenticationManager = authenticationManager;
-        this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
+        this.requestMatcher = requestMatcher;
+        this.successHandler = successHandler;
+        this.failureHandler = failureHandler;
     }
 
 
@@ -79,20 +81,13 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
     }
 
     protected AuthenticationManager getAuthenticationManager() {
-        return authenticationManager;
+        return this.authenticationManager;
     }
 
-    public void setFailureHandler(AuthenticationFailureHandler failureHandler) {
-        this.failureHandler = failureHandler;
-    }
-
-    public void setSuccessHandler(AuthenticationSuccessHandler successHandler) {
-        this.successHandler = successHandler;
-    }
 
     protected boolean requiresAuthentication(HttpServletRequest request,
                                              HttpServletResponse response) {
-        return requiresAuthenticationRequestMatcher.matches(request);
+        return requestMatcher.matches(request);
     }
 
 }

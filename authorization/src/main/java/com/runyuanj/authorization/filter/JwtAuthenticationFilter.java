@@ -33,8 +33,6 @@ import java.util.List;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private List<AuthenticationProvider> providers = new ArrayList<>();
-
     private AuthenticationManager authenticationManager;
 
     private RequestMatcher requiresAuthenticationRequestMatcher;
@@ -104,23 +102,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         // 下一步权限认证将从redis取出资源权限信息和用户权限信息, 进行比对校验.
         filterChain.doFilter(request, response);
-    }
-
-    /**
-     * Calls the {@code initFilterBean()} method that might
-     * contain custom initialization of a subclass.
-     * <p>Only relevant in case of initialization as bean, where the
-     * standard {@code init(FilterConfig)} method won't be called.
-     *
-     * @see #initFilterBean()
-     * @see #init(FilterConfig)
-     */
-    @Override
-    public void afterPropertiesSet() throws ServletException {
-        super.afterPropertiesSet();
-        if (providers.isEmpty()) {
-            throw new RuntimeException("providers 不能为空");
-        }
     }
 
     private String getJwtToken(HttpServletRequest request) {
