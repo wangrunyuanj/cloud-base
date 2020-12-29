@@ -33,14 +33,22 @@ public class JwtTokenComponent {
         return builder.compact();
     }
 
+    /**
+     * 生成token
+     * 是否需要自定义subject包含的属性
+     *
+     * @param userDetails
+     * @param ttlMillis
+     * @return
+     */
     public String generalToken(UserDetails userDetails, long ttlMillis) {
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("username", userDetails.getUsername());
+        // Map<String, Object> map = new HashMap<>();
+        // map.put("username", userDetails.getUsername());
 
         JwtBuilder builder = generate(ttlMillis)
                 .setId(userDetails.getUsername())
-                .setSubject(JSON.toJSONString(map));
+                .setSubject(JSON.toJSONString(userDetails));
 
         return builder.compact();
     }

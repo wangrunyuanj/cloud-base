@@ -19,17 +19,11 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private UserDetails userDetails;
     private HttpServletRequest request;
 
-    public JwtAuthenticationToken(String token, HttpServletRequest request) {
+    public JwtAuthenticationToken(String token, HttpServletRequest request, UserDetails userDetails) {
         super(AuthorityUtils.NO_AUTHORITIES);
         this.token = token;
         this.request = request;
-        this.userDetails = null;
-    }
-
-    public JwtAuthenticationToken(String token, UserDetails userDetails) {
-        super(AuthorityUtils.NO_AUTHORITIES);
         this.userDetails = userDetails;
-        this.token = token;
     }
 
     /**

@@ -3,10 +3,13 @@ package com.runyuanj.authorization.config;
 import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
 import com.runyuanj.authorization.filter.MyUsernamePasswordAuthenticationFilter;
 import com.runyuanj.authorization.filter.ResourcePermissionFilter;
+import com.runyuanj.authorization.filter.builder.JwtAuthenticateFilterBuilder;
+import com.runyuanj.authorization.filter.builder.ResourcePermissionFilterBuilder;
+import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
 import com.runyuanj.authorization.filter.service.WhiteListFilterService;
-import com.runyuanj.authorization.handler.DefaultLogoutSuccessHandler;
-import com.runyuanj.authorization.handler.JsonLoginFailureHandler;
-import com.runyuanj.authorization.handler.JsonLoginSuccessHandler;
+import com.runyuanj.authorization.filter.service.impl.JwtTokenAuthenticationService;
+import com.runyuanj.authorization.filter.token.JwtTokenComponent;
+import com.runyuanj.authorization.handler.*;
 import com.runyuanj.authorization.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +29,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -55,9 +59,12 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService securityUserDetailsService;
 
     @Autowired
-    private ResourcePermissionFilter resourcePermissionFilter;
+    private ResourcePermissionAuthenticationService resourcePermissionAuthenticationService;
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private JwtTokenAuthenticationService jwtTokenAuthenticationService;
+    @Autowired
+    private JwtTokenComponent jwtTokenComponent;
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -102,12 +109,26 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         SimpleUrlAuthenticationFailureHandler handler = new SimpleUrlAuthenticationFailureHandler("/");
 
+        RequestHeaderRequestMatcher authorizationHeaderMatcher = new RequestHeaderRequestMatcher("Authorization");
+
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticateFilterBuilder()
+                .authenticationProvider(jwtTokenAuthenticationService)
+                .requestMatcher(authorizationHeaderMatcher)
+                .build();
+
+        ResourcePermissionFilter resourcePermissionFilter = new ResourcePermissionFilterBuilder()
+                .authenticationProvider(resourcePermissionAuthenticationService)
+                .requestMatcher(authorizationHeaderMatcher)
+                .authenticationSuccessHandler(new EmptyAuthenticationSuccessHandler())
+                .authenticationFailureHandler(new SimpleAuthenticationFailureHandler())
+                .build();
+
         // 默认的authenticationManager
         AuthenticationManager defaultManager = authenticationManager();
 
-        MyUsernamePasswordAuthenticationFilter filter = new MyUsernamePasswordAuthenticationFilter(defaultManager);
-        filter.setAuthenticationSuccessHandler(new JsonLoginSuccessHandler());
-        filter.setAuthenticationFailureHandler(new JsonLoginFailureHandler());
+        MyUsernamePasswordAuthenticationFilter loginFilter = new MyUsernamePasswordAuthenticationFilter(defaultManager);
+        loginFilter.setAuthenticationSuccessHandler(new JsonLoginSuccessHandler(jwtTokenComponent));
+        loginFilter.setAuthenticationFailureHandler(new JsonLoginFailureHandler());
 
         // providerManager.getProviders().add();
 
@@ -152,7 +173,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         // 拦截的登录处理URL
                         //.loginProcessingUrl(securityProperties.getLoginProcessingUrl())
                         // 登录成功处理器
-                        .successHandler(new JsonLoginSuccessHandler())
+                        .successHandler(new JsonLoginSuccessHandler(jwtTokenComponent))
                         // 登录失败处理器
                         .failureHandler(new JsonLoginFailureHandler()))
 
@@ -160,7 +181,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout(logout -> logout.logoutSuccessUrl("/").permitAll().logoutSuccessHandler(new DefaultLogoutSuccessHandler()))
                 .userDetailsService(securityUserDetailsService)
                 // 在LogoutFilter类之前, 添加过滤器
-                .addFilterBefore(filter, LogoutFilter.class)
+                .addFilterBefore(loginFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, LogoutFilter.class)
                 .addFilterAfter(resourcePermissionFilter, BasicAuthenticationFilter.class)
         // 启动跨域支持

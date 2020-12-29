@@ -7,21 +7,16 @@ import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 从用户请求头中获取认证token, 验证token是否有效, 如果有效, 添加到ThreadLocal中. 如果没有或无效, 不做处理
@@ -42,7 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 拦截header中带Authorization的请求
         // 拦截header中带Authorization的请求
         this.authenticationManager = authenticationManager;
-        this.requiresAuthenticationRequestMatcher = requestMatcher;;
+        this.requiresAuthenticationRequestMatcher = requestMatcher;
+        ;
     }
 
     /**
@@ -78,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 如果抛出异常, 代表校验失败
                 try {
                     // 此处不对token解析.
-                    Authentication authToken = new JwtAuthenticationToken(token, request);
+                    Authentication authToken = new JwtAuthenticationToken(token, request, null);
                     // 验证token  JwtAuthenticationManager.authenticate() -> JwtAuthenticationProvider.authenticate()
                     Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
                     // 将用户的认证信息存到ThreadLocal, 用来进行下一步的权限认证. 因此, authentication必须能够取出用户的唯一ID.

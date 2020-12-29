@@ -18,7 +18,6 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
 
-
         return null;
     }
 
