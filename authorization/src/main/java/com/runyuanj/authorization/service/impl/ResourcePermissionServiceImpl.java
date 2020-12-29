@@ -3,6 +3,7 @@ package com.runyuanj.authorization.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.runyuanj.authorization.entity.Role;
 import com.runyuanj.authorization.service.OrgServiceFeign;
 import com.runyuanj.authorization.service.ResourcePermissionService;
 import com.runyuanj.common.response.Result;
@@ -20,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.runyuanj.authorization.utils.Constants.NONE_URL;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -70,21 +70,21 @@ public class ResourcePermissionServiceImpl implements ResourcePermissionService 
      */
     @Override
     public synchronized void loadResource() {
-        Set<Resource> resources = getOrgResources();
+        Set<Resource> resources = this.getOrgResources();
         if (resources == null) {
             log.error("get org resources error");
             resources = new HashSet<>();
         }
         Map<RequestMatcher, SecurityConfig> temResources = resources.stream().collect(Collectors.toMap(
                 resource -> this.requestMatcher(resource.getUrl(), resource.getMethod()),
-                resource -> new SecurityConfig(resource.getCode())
+                resource -> new SecurityConfig(resource.getRoles())
         ));
         localConfigAttributes.putAll(temResources);
     }
 
     private Set<Resource> getOrgResources() {
         try {
-            JSONObject responseEntity = orgServiceFeign.queryAll();
+            JSONObject responseEntity = orgServiceFeign.queryAllResourceRoles();
             if (Result.isJsonSuccess(responseEntity)) {
                 JSONArray jsonArray = responseEntity.getJSONArray("data");
                 return jsonArray.stream()
@@ -109,18 +109,11 @@ public class ResourcePermissionServiceImpl implements ResourcePermissionService 
         if (localConfigAttributes.isEmpty()) {
             loadResource();
         }
-        log.info("localConfigAttributes size: {}", localConfigAttributes.size());
-        for (RequestMatcher requestMatcher : localConfigAttributes.keySet()) {
-            System.out.println(requestMatcher);
-            if (((AntPathRequestMatcher) requestMatcher).matches(request)) {
-
-            }
-        }
         return localConfigAttributes.keySet().stream().filter(requestMatcher -> requestMatcher.matches(request))
                 .map(requestMatcher -> localConfigAttributes.get(requestMatcher))
-                .peek(urlConfig -> log.debug("url在资源池中配置：{}", urlConfig.getAttribute()))
+                .peek(roles -> log.debug("url在资源池中配置：{}", roles.getAttribute()))
                 .findFirst()
-                .orElse(new SecurityConfig(NONE_URL));
+                .orElse(new SecurityConfig("EMPTY"));
     }
 
     /**
@@ -137,6 +130,24 @@ public class ResourcePermissionServiceImpl implements ResourcePermissionService 
             JSONArray data = response.getJSONArray("data");
             if (data != null) {
                 return data.stream().map(resource -> JSON.parseObject(JSON.toJSONString(resource), Resource.class)).collect(toSet());
+            }
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * 根据用户Id查询角色Code
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public Set<String> queryRolesByUserId(String userId) {
+        JSONObject response = orgServiceFeign.queryRolesByUserId(userId);
+        if (Result.isJsonSuccess(response)) {
+            JSONArray data = response.getJSONArray("data");
+            if (data != null) {
+                return data.stream().map(role -> JSON.parseObject(JSON.toJSONString(role), Role.class).getCode()).collect(toSet());
             }
         }
         return Collections.emptySet();

@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.runyuanj.common.exception.type.SystemErrorType;
+import com.runyuanj.core.utils.BeanUtils;
 import com.runyuanj.org.entity.param.ResourceQueryParam;
 import com.runyuanj.org.entity.po.Resource;
 import com.runyuanj.org.entity.po.Role;
 import com.runyuanj.org.entity.po.RoleResource;
 import com.runyuanj.org.entity.po.User;
+import com.runyuanj.org.entity.vo.ResourceRolesVo;
 import com.runyuanj.org.mapper.ResourceMapper;
 import com.runyuanj.org.service.IResourceService;
 import com.runyuanj.org.service.IRoleResourceService;
@@ -21,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -94,5 +98,34 @@ public class ResourceService extends ServiceImpl<ResourceMapper, Resource> imple
         Set<String> resourceIds = roleResources.stream().map(roleResource -> roleResource.getResourceId()).collect(Collectors.toSet());
         //根据resourceId列表查询出resource对象
         return (List<Resource>) this.listByIds(resourceIds);
+    }
+
+    @Override
+    public List<ResourceRolesVo> getAllResourceRoles() {
+        long l = System.currentTimeMillis();
+        System.out.println(l);
+        List<Resource> resources = this.list();
+        List<Role> roles = roleService.getAll();
+        List<ResourceRolesVo> rList = new ArrayList<>();
+        resources.stream().forEach(resource -> {
+            ResourceRolesVo r = new ResourceRolesVo();
+            BeanUtils.copyProperties(resource, r);
+            // TODO 换成联表查询
+            Set<String> roleIds = roleResourceService.queryByResourceId(resource.getId());
+            List<String> roleCodeList = new ArrayList<>();
+            roles.stream().forEach(role -> {
+               roleIds.stream().forEach(roleId -> {
+                   if (roleId.equals(role.getId())) {
+                       roleCodeList.add(role.getCode());
+                   }
+               });
+            });
+            String roleCodes = StringUtils.join(roleCodeList, ",");
+            r.setRoles(roleCodes);
+            rList.add(r);
+        });
+        long e = System.currentTimeMillis();
+        System.out.println(e - l);
+        return rList;
     }
 }

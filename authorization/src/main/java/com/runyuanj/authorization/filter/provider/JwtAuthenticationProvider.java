@@ -51,10 +51,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         // 此处不适合抛出 DisabledException, LockedException, BadCredentialsException异常
-        Authentication result;
+        Authentication result = null;
+        String token = (String) authentication.getCredentials();
         try {
-            String token = (String) authentication.getCredentials();
-
             UserDetails userDetails = tokenAuthenticationService.validate(token);
             // 封装到JwtAuthenticationToken.
             ((JwtAuthenticationToken) authentication).setDetails(userDetails);
@@ -65,10 +64,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             log.info("authenticate failed. code: {}, message: {}", INVALID_TOKEN.getCode(), INVALID_TOKEN.getMsg());
         } catch (ExpiredJwtException e2) {
             log.info("authenticate failed. code: {}, message: {}", EXPIRED_TOKEN.getCode(), EXPIRED_TOKEN.getMsg());
+            result = authentication;
         } catch (Exception e) {
             log.error("token校验异常, 请联系管理员", e);
         }
-        return null;
+        return result;
     }
 
     /**

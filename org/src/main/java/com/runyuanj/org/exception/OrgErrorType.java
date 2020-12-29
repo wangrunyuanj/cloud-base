@@ -11,8 +11,8 @@ import static com.runyuanj.common.constant.ErrorCodeConstants.ORG_ERROR_CODE_PRE
 @Getter
 public enum OrgErrorType implements ErrorType {
 
-    USER_NOT_FOUND(ORG_ERROR_CODE_PRE + 0100, "用户未找到！"),
-    ROLE_NOT_FOUND(ORG_ERROR_CODE_PRE + 0200, "角色未找到！");
+    USER_NOT_FOUND(ORG_ERROR_CODE_PRE + 1100, "用户未找到！"),
+    ROLE_NOT_FOUND(ORG_ERROR_CODE_PRE + 1200, "角色未找到！");
 
     /**
      * 错误类型码

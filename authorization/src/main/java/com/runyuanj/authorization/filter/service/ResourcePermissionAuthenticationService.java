@@ -36,9 +36,17 @@ public interface ResourcePermissionAuthenticationService {
      * 判断是否拥有权限
      * 缺少权限则抛出异常
      *
-     * @param configAttribute
-     * @param userResources
+     * @param resourceRoles
+     * @param userRoles
      * @return
      */
-    boolean hasPermission(ConfigAttribute configAttribute, Set<Resource> userResources);
+    boolean hasPermission(List<String> resourceRoles, Set<String> userRoles);
+
+    /**
+     * 根据用户Id查询角色Id
+     *
+     * @param userId
+     * @return
+     */
+    Set<String> loadUserRoles(String userId);
 }

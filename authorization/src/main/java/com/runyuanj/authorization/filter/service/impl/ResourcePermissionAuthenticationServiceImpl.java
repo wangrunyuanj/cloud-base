@@ -3,7 +3,9 @@ package com.runyuanj.authorization.filter.service.impl;
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
 import com.runyuanj.authorization.service.ResourcePermissionService;
 import com.runyuanj.core.auth.Resource;
+import io.jsonwebtoken.lang.Collections;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
@@ -11,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,13 +59,24 @@ public class ResourcePermissionAuthenticationServiceImpl implements ResourcePerm
     /**
      * 判断是否拥有权限
      *
-     * @param configAttribute
-     * @param userResources
+     * @param resourceRoles
+     * @param userRoles
      * @return
      */
     @Override
-    public boolean hasPermission(ConfigAttribute configAttribute, Set<Resource> userResources) {
-        return userResources.stream().anyMatch(resource -> resource.getCode().equals(configAttribute.getAttribute()));
+    public boolean hasPermission(List<String> resourceRoles, Set<String> userRoles) {
+        return userRoles.stream().anyMatch(role -> resourceRoles.stream().anyMatch(roleCode -> role.equals(roleCode)));
+    }
+
+    /**
+     * 根据用户Id查询角色Id
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public Set<String> loadUserRoles(String userId) {
+        return resourcePermissionService.queryRolesByUserId(userId);
     }
 
     private Set<com.runyuanj.core.auth.Resource> findResourcesByUsername(String username) {

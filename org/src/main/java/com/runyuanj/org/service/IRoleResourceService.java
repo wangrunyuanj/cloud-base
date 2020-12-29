@@ -39,4 +39,12 @@ public interface IRoleResourceService {
      * @return 角色资源关系集合
      */
     List<RoleResource> queryByRoleIds(Set<String> roleIds);
+
+    /**
+     * 根据资源id查询对应的角色id
+     *
+     * @param resourceId
+     * @return
+     */
+    Set<String> queryByResourceId(String resourceId);
 }

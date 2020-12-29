@@ -2,10 +2,12 @@ package com.runyuanj.authorization.filter.token;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 /**
  * 封装 jwt filter
@@ -19,8 +21,9 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private UserDetails userDetails;
     private HttpServletRequest request;
 
-    public JwtAuthenticationToken(String token, HttpServletRequest request, UserDetails userDetails) {
-        super(AuthorityUtils.NO_AUTHORITIES);
+    public JwtAuthenticationToken(String token, HttpServletRequest request, UserDetails userDetails,
+                                  Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
         this.token = token;
         this.request = request;
         this.userDetails = userDetails;

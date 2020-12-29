@@ -44,4 +44,12 @@ public interface ResourcePermissionService {
      * @return
      */
     Set<Resource> queryByUserName(String username);
+
+    /**
+     * 根据用户Id查询角色Id
+     *
+     * @param userId
+     * @return
+     */
+    Set<String> queryRolesByUserId(String userId);
 }

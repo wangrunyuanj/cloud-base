@@ -7,7 +7,9 @@ import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -74,18 +76,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 如果抛出异常, 代表校验失败
                 try {
                     // 此处不对token解析.
-                    Authentication authToken = new JwtAuthenticationToken(token, request, null);
+                    Authentication authToken = new JwtAuthenticationToken(token, request, null, null);
                     // 验证token  JwtAuthenticationManager.authenticate() -> JwtAuthenticationProvider.authenticate()
                     Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
                     // 将用户的认证信息存到ThreadLocal, 用来进行下一步的权限认证. 因此, authentication必须能够取出用户的唯一ID.
                     if (authentication != null) {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                        result = Result.success();
+                        if (authentication.getDetails() == null) {
+                            // TODO 判断是否需要更新token
+                            result = Result.fail(AuthErrorType.EXPIRED_TOKEN);
+                        } else {
+                            result = Result.success();
+                        }
                     } else {
                         result = Result.fail(AuthErrorType.INVALID_TOKEN, "authentication result is null");
                     }
                 } catch (Exception e) {
-                    result = Result.fail(SystemErrorType.SYSTEM_ERROR);
+                    result = Result.fail(AuthErrorType.SERVER_ERROR);
                 }
             }
             // 当检验失败时不做处理, catch异常, 继续下一步权限校验

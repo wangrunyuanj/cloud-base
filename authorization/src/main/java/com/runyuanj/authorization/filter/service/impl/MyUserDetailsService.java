@@ -2,6 +2,7 @@ package com.runyuanj.authorization.filter.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.runyuanj.authorization.entity.MyUser;
 import com.runyuanj.authorization.entity.Role;
 import com.runyuanj.authorization.entity.User;
 import com.runyuanj.authorization.service.OrgServiceFeign;
@@ -55,9 +56,9 @@ public class MyUserDetailsService implements UserDetailsService {
         }
         log.info("load user by username :{}", user.toString());
         // 将数据库的User组装成Spring Security默认的实现类User
-        return new org.springframework.security.core.userdetails.User(
+        return new MyUser(
+                user.getId(),
                 uniqueId,
-                //user.getUsername(),
                 user.getPassword(),
                 user.getEnabled(),
                 user.getAccountNonExpired(),

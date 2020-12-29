@@ -7,8 +7,8 @@ import static com.runyuanj.common.constant.ErrorCodeConstants.CACHE_ERROR_CODE_P
 @AllArgsConstructor
 public enum CacheErrorType implements ErrorType {
 
-    CLASS_NOT_FOUND(CACHE_ERROR_CODE_PRE + 0002, "未找到指定类"),
-    CACHE_NOT_FOUND(CACHE_ERROR_CODE_PRE + 0001, "缓存未命中");
+    CLASS_NOT_FOUND(CACHE_ERROR_CODE_PRE + 1002, "未找到指定类"),
+    CACHE_NOT_FOUND(CACHE_ERROR_CODE_PRE + 1001, "缓存未命中");
 
     private int code;
 

@@ -45,7 +45,7 @@ jetcache:
       keyConvertor: fastjson
       valueEncoder: kryo
       valueDecoder: kryo
-      expireAfterWriteInMillis: 1000 # 以毫秒为单位指定超时时间的全局配置
+      expireAfterWriteInMillis: 2000 # 以毫秒为单位指定超时时间的全局配置
       poolConfig:
         minIdle: 5
         maxIdle: 20

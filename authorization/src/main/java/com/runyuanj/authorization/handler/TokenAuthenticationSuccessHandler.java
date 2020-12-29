@@ -35,7 +35,6 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
             String newToken = refreshTokenService.refreshToken(authentication);
             response.setHeader("Authentication", newToken);
         }
-        // response.setHeader("Authorization", filter);
     }
 
 }

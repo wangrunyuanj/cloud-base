@@ -85,4 +85,6 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> implements IRoleS
         queryWrapper.eq(StringUtils.isNotBlank(roleQueryParam.getCode()), "code", roleQueryParam.getCode());
         return this.page(page, queryWrapper);
     }
+
+
 }

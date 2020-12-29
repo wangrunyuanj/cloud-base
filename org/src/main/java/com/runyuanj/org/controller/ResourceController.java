@@ -55,6 +55,11 @@ public class ResourceController {
         return Result.success(resourceService.getAll());
     }
 
+    @GetMapping(value = "/all/roles")
+    public Result queryAllResourceRoles() {
+        return Result.success(resourceService.getAllResourceRoles());
+    }
+
     @PostMapping(value = "/conditions")
     public Result query(@Valid @RequestBody ResourceQueryForm resourceQueryForm) {
         log.debug("query with name:{}", resourceQueryForm);

@@ -10,7 +10,7 @@ import static com.runyuanj.common.constant.ErrorCodeConstants.NULL_POINTER_ERROR
 @Getter
 public enum NullPointerErrorType implements ErrorType {
 
-    NULL_POINTER(NULL_POINTER_ERROR_CODE_PRE + 0000, "空指针异常");
+    NULL_POINTER(NULL_POINTER_ERROR_CODE_PRE + 1000, "空指针异常");
 
     NullPointerErrorType(int code, String msg) {
         this.code = code;

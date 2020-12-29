@@ -40,8 +40,8 @@ public class JsonLoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // String token = (String) authentication.getCredentials();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        log.info("userDetails: {}", JSON.toJSONString(userDetails));
-        String token = jwtTokenComponent.generalToken(userDetails, 60 * 60 * 24 * 30);
+        log.info("myUserDetails: {}", JSON.toJSONString(userDetails));
+        String token = jwtTokenComponent.generalToken(userDetails, 1000 * 60 * 60 * 24);
         ResponseUtils.writeResponseJson(response, 200, Result.success(token));
     }
 }

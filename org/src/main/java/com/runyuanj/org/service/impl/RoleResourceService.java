@@ -53,4 +53,17 @@ public class RoleResourceService extends ServiceImpl<RoleResourceMapper, RoleRes
         queryWrapper.in("role_id", roleIds);
         return this.list(queryWrapper);
     }
+
+    /**
+     * 根据资源id查询对应的角色id
+     *
+     * @param resourceId
+     * @return
+     */
+    @Override
+    public Set<String> queryByResourceId(String resourceId) {
+        QueryWrapper<RoleResource> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("resource_id", resourceId);
+        return this.list(queryWrapper).stream().map(RoleResource::getRoleId).collect(Collectors.toSet());
+    }
 }

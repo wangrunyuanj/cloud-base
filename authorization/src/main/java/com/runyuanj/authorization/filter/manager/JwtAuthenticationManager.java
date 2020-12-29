@@ -29,10 +29,12 @@ public class JwtAuthenticationManager extends ProviderManager {
 
         try {
             for (AuthenticationProvider provider : getProviders()) {
+
                 boolean supports = provider.supports(authentication.getClass());
                 if (!supports) {
                     continue;
                 }
+
                 result = provider.authenticate(authentication);
                 if (result != null) {
                     break;
@@ -40,6 +42,7 @@ public class JwtAuthenticationManager extends ProviderManager {
             }
         } catch (AuthenticationException e) {
             exception = e;
+            throw e;
         }
         return result;
     }

@@ -1,32 +1,26 @@
 package com.runyuanj.authorization.filter.provider;
 
+import com.runyuanj.authorization.entity.MyUser;
+import com.runyuanj.authorization.exception.LessAccountException;
+import com.runyuanj.authorization.exception.MethodNotAllowedException;
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
 import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
-import com.runyuanj.core.auth.Resource;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.security.Permission;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static com.runyuanj.authorization.utils.Constants.NONE_URL;
-import static com.runyuanj.common.exception.type.AuthErrorType.EXPIRED_TOKEN;
-import static com.runyuanj.common.exception.type.AuthErrorType.INVALID_TOKEN;
-
 /**
- *
- *
  * @author runyu
  */
 @Slf4j
@@ -54,23 +48,42 @@ public class ResourcePermissionAuthenticationProvider implements AuthenticationP
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
-        try {
-            ConfigAttribute configAttribute = permissionAuthenticationService.loadResourcePermissions(token.getRequest());
 
-            if (NONE_URL.equals(configAttribute.getAttribute())) {
-                log.info("url未在资源池中找到. requestPath: {}, method: {}", token.getRequest().getPathInfo(), token.getRequest().getMethod());
-                return null;
-            }
+        ConfigAttribute configAttribute = permissionAuthenticationService.loadResourcePermissions(token.getRequest());
 
-            Set<Resource> userPermissions = permissionAuthenticationService.loadUserPermissions(token);
-
-            boolean hasPermission = permissionAuthenticationService.hasPermission(configAttribute, userPermissions);
-            if (hasPermission) {
-                return authentication;
-            }
-        } catch (Exception e) {
-            log.error("token校验异常, 请联系管理员", e);
+        if ("EMPTY".equals(configAttribute.getAttribute())) {
+            log.info("未在资源池中找到请求地址. requestPath: {}, method: {}", token.getRequest().getRequestURI(), token.getRequest().getMethod());
+            throw new MethodNotAllowedException("未找到指定资源");
         }
+        // configAttribute只包含角色id
+        // 如果缺少用户信息并且资源允许USER角色访问, 则直接通过
+        String roleCodes = configAttribute.getAttribute();
+        if (StringUtils.isEmpty(roleCodes)) {
+            log.error("请求的资源未被设置权限");
+            return null;
+        }
+        List<String> sourceRoles = Arrays.asList(roleCodes.split(","));
+        MyUser myUser = (MyUser) authentication.getDetails();
+
+        if (myUser == null ) {
+            if (sourceRoles.contains("USER")) {
+                return authentication;
+            } else {
+                throw new LessAccountException("请先注册登录");
+            }
+        }
+
+        Set<String> roles = permissionAuthenticationService.loadUserRoles(myUser.getUserId());
+
+        boolean hasPermission = permissionAuthenticationService.hasPermission(sourceRoles, roles);
+        if (hasPermission) {
+            /**
+             * 必须设置, 否则会被最后一个FilterSecurityInterceptor拦截. 拦截点位于AbstractSecurityInterceptor第229行
+             */
+            SecurityContextHolder.getContext().getAuthentication().setAuthenticated(true);
+            return authentication;
+        }
+
         return null;
     }
 

@@ -14,6 +14,7 @@ import java.util.Collection;
  */
 public class MyUser extends User {
 
+    private String userId;
     private String extend;
 
     /**
@@ -23,8 +24,9 @@ public class MyUser extends User {
      * @param password
      * @param authorities
      */
-    public MyUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public MyUser(String userId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
+        this.userId = userId;
     }
 
     /**
@@ -37,8 +39,9 @@ public class MyUser extends User {
      * @param accountNonLocked
      * @param authorities
      */
-    public MyUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public MyUser(String userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        this.userId = userId;
     }
 
     public String getExtend() {
@@ -47,5 +50,13 @@ public class MyUser extends User {
 
     public void setExtend(String extend) {
         this.extend = extend;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

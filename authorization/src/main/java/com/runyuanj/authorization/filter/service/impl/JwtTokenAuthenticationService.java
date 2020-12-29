@@ -47,7 +47,8 @@ public class JwtTokenAuthenticationService implements TokenAuthenticationService
             JSONObject user = JSON.parseObject(json);
             JSONArray authorities = user.getJSONArray("authorities");
             List<GrantedAuthority> grantedAuthorities = authorities.toJavaList(GrantedAuthority.class);
-            return new MyUser(user.getString("username"),
+            return new MyUser(user.getString("userId"),
+                    user.getString("username"),
                     "",
                     grantedAuthorities);
         } else {

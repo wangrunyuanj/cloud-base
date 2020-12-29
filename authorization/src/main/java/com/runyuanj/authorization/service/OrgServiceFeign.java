@@ -29,8 +29,8 @@ public interface OrgServiceFeign {
     @GetMapping(value = "/role/user/{userId}")
     JSONObject queryRolesByUserId(@PathVariable("userId") String userId);
 
-    @GetMapping("/resource/all")
-    JSONObject queryAll();
+    @GetMapping("/resource/all/roles")
+    JSONObject queryAllResourceRoles();
 
     @GetMapping("/resource/user/{username}")
     JSONObject queryByUsername(@PathVariable("username") String username);
@@ -45,7 +45,7 @@ public interface OrgServiceFeign {
             return JSONObject.parseObject(JSON.toJSONString(Result.fail()));
         }
 
-        JSONObject queryAll() {
+        JSONObject queryAllResourceRoles() {
             return JSONObject.parseObject(JSON.toJSONString(Result.fail()));
         }
 

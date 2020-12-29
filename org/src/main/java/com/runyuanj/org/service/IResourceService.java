@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.runyuanj.org.entity.param.ResourceQueryParam;
 import com.runyuanj.org.entity.po.Resource;
+import com.runyuanj.org.entity.vo.ResourceRolesVo;
 
 import java.util.List;
 
@@ -58,4 +59,12 @@ public interface IResourceService {
      * @param id
      */
     boolean delete(String id);
+
+    /**
+     * 查询所有资源及每个资源对应的角色信息
+     *
+     * @return
+     */
+    List<ResourceRolesVo> getAllResourceRoles();
+
 }

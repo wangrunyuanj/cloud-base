@@ -2,11 +2,14 @@ package com.runyuanj.authorization.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.runyuanj.authorization.entity.MyUser;
+import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
@@ -92,6 +95,9 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
 
         // 由ProviderManager进行验证
         // 实际通过AuthenticationProvider的实现类执行authenticate(authRequest)
-        return this.getAuthenticationManager().authenticate(authRequest);
+        Authentication authenticate = this.getAuthenticationManager().authenticate(authRequest);
+        //
+        MyUser myUser = (MyUser) authenticate.getPrincipal();
+        return new JwtAuthenticationToken(null, null, myUser, authenticate.getAuthorities());
     }
 }

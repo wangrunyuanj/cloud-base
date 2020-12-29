@@ -37,7 +37,7 @@ jetcache:
       keyConvertor: fastjson
       valueEncoder: kryo
       valueDecoder: kryo
-      expireAfterWriteInMillis: 1000 # 以毫秒为单位指定超时时间的全局配置
+      expireAfterWriteInMillis: 2000 # 以毫秒为单位指定超时时间的全局配置
       poolConfig:
         minIdle: 5
         maxIdle: 20
@@ -51,7 +51,11 @@ logging:
     org:
       springframework:
         security: debug
-
+ribbon:
+  # 请求连接的超时时间 默认的时间为 1 秒
+  ConnectTimeout: 3000
+  # 请求处理的超时时间
+  ReadTimeout: 3000
 
 # logging:
 #  level:
