@@ -1,7 +1,5 @@
 package com.runyuanj.authorization.entity;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -30,7 +28,6 @@ public class MyUser extends User {
     }
 
     /**
-     *
      * @param username
      * @param password
      * @param enabled

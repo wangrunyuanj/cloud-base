@@ -5,13 +5,10 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Permission;
 import java.util.List;
 import java.util.Set;
 
 /**
- *
- *
  * @author runyu
  */
 public interface ResourcePermissionAuthenticationService {

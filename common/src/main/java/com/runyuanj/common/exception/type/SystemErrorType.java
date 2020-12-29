@@ -2,8 +2,9 @@ package com.runyuanj.common.exception.type;
 
 import com.runyuanj.common.ErrorType;
 import lombok.Getter;
-import static com.runyuanj.common.constant.ErrorCodeConstants.SYSTEM_ERROR_CODE_PRE;
+
 import static com.runyuanj.common.constant.ErrorCodeConstants.DATE_ERROR_CODE_PRE;
+import static com.runyuanj.common.constant.ErrorCodeConstants.SYSTEM_ERROR_CODE_PRE;
 
 @Getter
 public enum SystemErrorType implements ErrorType {

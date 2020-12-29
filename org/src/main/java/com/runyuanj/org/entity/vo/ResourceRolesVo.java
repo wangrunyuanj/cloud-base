@@ -4,8 +4,6 @@ import com.runyuanj.core.web.entity.vo.BaseVo;
 import com.runyuanj.org.entity.po.Resource;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author runyu
  */

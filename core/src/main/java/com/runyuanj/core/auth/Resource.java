@@ -1,10 +1,7 @@
 package com.runyuanj.core.auth;
 
-import com.runyuanj.core.web.entity.po.BasePo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * 权限资源信息

@@ -20,10 +20,23 @@ import java.util.*;
 @Component
 public class JwtTokenComponent {
 
-    private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
     @Value("${jwt_secret:runyuanj}")
     public String jwtSecret;
+    private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    public static void main(String[] args) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", "admin");
+        map.put("password", "12345678");
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        SimpleGrantedAuthority admin = new SimpleGrantedAuthority("ADMIN");
+        authorities.add(admin);
+        map.put("authorities", authorities);
+        String token = (new JwtTokenComponent()).generalToken("1", JSON.toJSONString(map), System.currentTimeMillis());
+        Claims claims = (new JwtTokenComponent()).parseToken(token);
+        System.out.println(token);
+        System.out.println(claims.getSubject());
+    }
 
     public String generalToken(String id, String subject, long ttlMillis) {
 
@@ -93,19 +106,5 @@ public class JwtTokenComponent {
         byte[] encodedKey = Base64.decodeBase64(this.jwtSecret);
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        map.put("username", "admin");
-        map.put("password", "12345678");
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        SimpleGrantedAuthority admin = new SimpleGrantedAuthority("ADMIN");
-        authorities.add(admin);
-        map.put("authorities", authorities);
-        String token = (new JwtTokenComponent()).generalToken("1", JSON.toJSONString(map), System.currentTimeMillis());
-        Claims claims = (new JwtTokenComponent()).parseToken(token);
-        System.out.println(token);
-        System.out.println(claims.getSubject());
     }
 }

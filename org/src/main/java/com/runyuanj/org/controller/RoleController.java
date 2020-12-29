@@ -52,6 +52,7 @@ public class RoleController {
 
     /**
      * 权限控制
+     *
      * @PreAuthorize("hasAuthority('course_teachplan_add')")
      */
     @GetMapping(value = "/user/{userId}")

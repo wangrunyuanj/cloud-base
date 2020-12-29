@@ -2,6 +2,7 @@ package com.runyuanj.cloud.cache.exception;
 
 import com.runyuanj.common.ErrorType;
 import lombok.AllArgsConstructor;
+
 import static com.runyuanj.common.constant.ErrorCodeConstants.CACHE_ERROR_CODE_PRE;
 
 @AllArgsConstructor

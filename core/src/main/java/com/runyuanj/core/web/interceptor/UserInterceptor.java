@@ -1,14 +1,11 @@
 package com.runyuanj.core.web.interceptor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.runyuanj.core.context.UserContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 @Slf4j
 public class UserInterceptor implements HandlerInterceptor {

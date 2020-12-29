@@ -21,14 +21,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @Slf4j
 public class PermissionService implements IPermissionService {
 
-    @Resource
-    private ServiceFeign serviceFeign;
-
     /**
      * Authorization认证开头是"bearer "
      */
     private static final String BEARER = "Bearer ";
-
+    @Resource
+    private ServiceFeign serviceFeign;
     /**
      * jwt filter 密钥，主要用于token解析，签名验证
      */

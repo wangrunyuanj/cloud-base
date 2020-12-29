@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -65,7 +64,7 @@ public class ResourcePermissionAuthenticationProvider implements AuthenticationP
         List<String> sourceRoles = Arrays.asList(roleCodes.split(","));
         MyUser myUser = (MyUser) authentication.getDetails();
 
-        if (myUser == null ) {
+        if (myUser == null) {
             if (sourceRoles.contains("USER")) {
                 return authentication;
             } else {

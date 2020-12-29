@@ -17,12 +17,6 @@ public class EventDataContent {
     private BinderAwareChannelResolver channelResolver =
             getApplicationContext().getBean(BinderAwareChannelResolver.class);
 
-    private void send(String target, Object object) {
-        this.channelResolver
-                .resolveDestination(target)
-                .send(new GenericMessage(toJSONString(object, new SerializerFeature[]{WriteMapNullValue})));
-    }
-
     private static EventDataContent instance() {
         if (eventDataContent == null) {
             eventDataContent = new EventDataContent();
@@ -41,5 +35,11 @@ public class EventDataContent {
 
     public static void omlog(Object object) {
         instance().send("runyuanj-om-stream", object);
+    }
+
+    private void send(String target, Object object) {
+        this.channelResolver
+                .resolveDestination(target)
+                .send(new GenericMessage(toJSONString(object, new SerializerFeature[]{WriteMapNullValue})));
     }
 }

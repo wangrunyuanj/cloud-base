@@ -34,15 +34,14 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class ResourceServiceImpl implements ResourceService {
 
-    @Autowired
-    private HandlerMappingIntrospector mvcHandlerMappingIntrospector;
-    @Autowired
-    private ServiceFeign serviceFeign;
-
     /**
      * 系统中所有权限集合
      */
     private static final Map<RequestMatcher, ConfigAttribute> localConfigAttributes = new HashMap<>();
+    @Autowired
+    private HandlerMappingIntrospector mvcHandlerMappingIntrospector;
+    @Autowired
+    private ServiceFeign serviceFeign;
 
     /**
      * 动态新增更新权限

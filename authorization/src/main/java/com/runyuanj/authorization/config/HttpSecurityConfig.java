@@ -25,7 +25,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -47,7 +46,7 @@ import static org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.B
  */
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@ComponentScan(basePackages = { "com.runyuanj.authorization.**"})
+@ComponentScan(basePackages = {"com.runyuanj.authorization.**"})
 public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -66,6 +65,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtTokenComponent jwtTokenComponent;
 
+    public static void main(String[] args) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder($2B, 4, new SecureRandom());
+        String encode = passwordEncoder.encode("12345678");
+        System.out.println(encode);
+    }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -78,6 +82,14 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder($2B, 4, new SecureRandom());
     }
 
+/*    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        //直接使用它默认的manager
+        AuthenticationManager manager = super.authenticationManagerBean();
+        return manager;
+    }*/
+
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -89,14 +101,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-/*    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        //直接使用它默认的manager
-        AuthenticationManager manager = super.authenticationManagerBean();
-        return manager;
-    }*/
 
     /**
      * TODO:
@@ -188,11 +192,5 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         // 启动跨域支持
         // .cors(cors -> cors.addObjectPostProcessor(null));
         ;
-    }
-
-    public static void main(String[] args) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder($2B, 4, new SecureRandom());
-        String encode = passwordEncoder.encode("12345678");
-        System.out.println(encode);
     }
 }

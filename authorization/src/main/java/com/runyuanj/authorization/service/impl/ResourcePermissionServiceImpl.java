@@ -15,7 +15,6 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -30,13 +29,12 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class ResourcePermissionServiceImpl implements ResourcePermissionService {
 
-    @Autowired
-    private OrgServiceFeign orgServiceFeign;
-
     /**
      * 系统中所有资源权限集合
      */
     private static final Map<RequestMatcher, ConfigAttribute> localConfigAttributes = new HashMap<>();
+    @Autowired
+    private OrgServiceFeign orgServiceFeign;
 
     @Override
     public void auth() {

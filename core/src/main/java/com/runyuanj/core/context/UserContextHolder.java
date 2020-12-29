@@ -16,6 +16,7 @@ public class UserContextHolder {
 
     /**
      * 获取上下文中的用户名
+     *
      * @param allowAnonymous 是否允许匿名. 允许: 匿名用户返回anonymous, 否则返回null
      * @return
      */

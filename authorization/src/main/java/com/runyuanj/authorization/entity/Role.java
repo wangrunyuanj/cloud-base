@@ -1,6 +1,5 @@
 package com.runyuanj.authorization.entity;
 
-import com.runyuanj.core.web.entity.po.BasePo;
 import com.runyuanj.core.web.entity.vo.BaseVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
  * @author Administrator
  */
 @Data
-@EqualsAndHashCode(callSuper = false )
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class Role extends BaseVo {
     private String code;

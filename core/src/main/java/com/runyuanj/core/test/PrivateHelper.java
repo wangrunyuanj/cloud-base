@@ -23,14 +23,6 @@ public class PrivateHelper {
     }
 
     /**
-     * 静态内部类单例模式
-     * 单例初使化
-     */
-    private static class SingletPrivateHelper {
-        private static final PrivateHelper sInstance = new PrivateHelper();
-    }
-
-    /**
      * @param instance  实例对象
      * @param fieldName 成员变量名
      * @param value     值
@@ -75,6 +67,14 @@ public class PrivateHelper {
     public Object invokePrivateMethod(Object instance, Method method, Object... args) {
         ReflectionUtils.makeAccessible(method);
         return ReflectionUtils.invokeMethod(method, instance, args);
+    }
+
+    /**
+     * 静态内部类单例模式
+     * 单例初使化
+     */
+    private static class SingletPrivateHelper {
+        private static final PrivateHelper sInstance = new PrivateHelper();
     }
 
 

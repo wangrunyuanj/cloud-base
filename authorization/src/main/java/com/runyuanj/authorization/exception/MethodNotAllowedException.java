@@ -24,7 +24,7 @@ public class MethodNotAllowedException extends AuthenticationException {
      * root cause.
      *
      * @param msg the detail message
-    */
+     */
     public MethodNotAllowedException(String msg) {
         super(msg);
     }

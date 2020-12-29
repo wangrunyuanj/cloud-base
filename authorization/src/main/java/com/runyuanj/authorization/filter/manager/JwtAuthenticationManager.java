@@ -1,17 +1,15 @@
 package com.runyuanj.authorization.filter.manager;
 
-import com.runyuanj.authorization.filter.provider.JwtAuthenticationProvider;
-import com.runyuanj.authorization.filter.provider.LoginAuthenticationProvider;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author runyu
- *
+ * <p>
  * 提供验证
  */
 public class JwtAuthenticationManager extends ProviderManager {

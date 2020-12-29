@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "demo.security")
 @Configuration
 @Data
-public class SecurityProperties  {
+public class SecurityProperties {
     /**
      * 跳转登录页面(使用了thymeleaf,写在了controler中,不使用的话,可以直接配置为html)
      */
@@ -15,7 +15,7 @@ public class SecurityProperties  {
 
     /**
      * 失败页面(需要带参数,否则无法从session中取到错误信息)
-      */
+     */
     private String failureUrl = "/auth/login?error=true";
 
     private String loginProcessingUrl = "/auth/login";

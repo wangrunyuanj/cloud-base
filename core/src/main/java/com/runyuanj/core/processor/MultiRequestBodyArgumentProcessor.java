@@ -5,7 +5,6 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +56,7 @@ public class MultiRequestBodyArgumentProcessor {
                 jsonRequestBody = IOUtils.toString(servletRequest.getReader());
                 webRequest.setAttribute("JSON_REQUEST_BODY", jsonRequestBody, 0);
             } catch (IOException e) {
-               throw new RuntimeException(e);
+                throw new RuntimeException(e);
             }
         }
 

@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
@@ -25,7 +24,7 @@ import java.nio.charset.Charset;
  * 具体的执行身份认证的过滤器
  * 拦截POST /login接口, 获取用户名密码, 验证用户信息
  * 不需要单独写/login接口. 但是返回值需要在请求头中加上token信息
- *
+ * <p>
  * 成功 -> successHandler
  * 失败 -> failHandler
  *

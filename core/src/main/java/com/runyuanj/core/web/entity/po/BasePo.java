@@ -14,7 +14,7 @@ import static com.baomidou.mybatisplus.annotation.IdType.ID_WORKER_STR;
 /**
  * 定义所有数据库对象的基础属性, 并在插入和更新时自动填充属性
  * 所有实体类对应的数据库表中都包括这些字段
- *
+ * <p>
  * 所有表单类都应继承该类
  */
 @Data

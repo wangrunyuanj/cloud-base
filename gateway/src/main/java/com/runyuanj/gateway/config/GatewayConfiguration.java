@@ -17,6 +17,7 @@ public class GatewayConfiguration {
 
     /**
      * 路由配置代码版
+     *
      * @param builder
      * @return
      */

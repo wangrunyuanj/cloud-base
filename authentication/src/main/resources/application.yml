@@ -3,8 +3,8 @@ spring:
     host: ${REDIS_HOST:10.0.4.138}
     port: ${REDIS_PORT:8086}
     lettuce:
-        pool:
-          max-active: 300
+      pool:
+        max-active: 300
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:${DATASOURCE_DBTYPE:mysql}://${DATASOURCE_HOST:111.229.218.230}:${DATASOURCE_PORT:3306}/sc_auth?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=GMT

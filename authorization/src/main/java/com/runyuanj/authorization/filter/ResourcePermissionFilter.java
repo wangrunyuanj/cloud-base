@@ -1,16 +1,9 @@
 package com.runyuanj.authorization.filter;
 
 import com.runyuanj.authorization.exception.LessPermissionException;
-import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
-import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
-import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
-import com.runyuanj.common.exception.type.AuthErrorType;
-import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -80,7 +73,7 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
             // 缺少权限的抛出异常
             authResult = getAuthenticationManager().authenticate(SecurityContextHolder.getContext().getAuthentication());
             if (authResult == null) {
-               throw new LessPermissionException("缺少权限");
+                throw new LessPermissionException("缺少权限");
             }
         } catch (AuthenticationException e) {
             failureHandler.onAuthenticationFailure(request, response, e);

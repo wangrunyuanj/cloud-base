@@ -15,7 +15,7 @@ public interface RefreshTokenService {
     /**
      * 判断是否需要刷新token
      *
-     * @param authentication  JwtAuthenticationToken
+     * @param authentication JwtAuthenticationToken
      * @return
      */
     boolean shouldRefresh(Authentication authentication);

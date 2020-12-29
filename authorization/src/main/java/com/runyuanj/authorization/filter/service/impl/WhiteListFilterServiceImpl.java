@@ -15,9 +15,8 @@ import java.util.Set;
 @Slf4j
 public class WhiteListFilterServiceImpl implements WhiteListFilterService {
 
-    private Set<String> paths = new HashSet<>(8);
-
     private static final String DEFAULT_PATHS = "/login, /jwt";
+    private Set<String> paths = new HashSet<>(8);
 
     @Override
     public String getWhiteListPath() {

@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.core.utils.BeanUtils;
 import com.runyuanj.org.entity.param.ResourceQueryParam;
 import com.runyuanj.org.entity.po.Resource;
@@ -114,11 +113,11 @@ public class ResourceService extends ServiceImpl<ResourceMapper, Resource> imple
             Set<String> roleIds = roleResourceService.queryByResourceId(resource.getId());
             List<String> roleCodeList = new ArrayList<>();
             roles.stream().forEach(role -> {
-               roleIds.stream().forEach(roleId -> {
-                   if (roleId.equals(role.getId())) {
-                       roleCodeList.add(role.getCode());
-                   }
-               });
+                roleIds.stream().forEach(roleId -> {
+                    if (roleId.equals(role.getId())) {
+                        roleCodeList.add(role.getCode());
+                    }
+                });
             });
             String roleCodes = StringUtils.join(roleCodeList, ",");
             r.setRoles(roleCodes);

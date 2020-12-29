@@ -3,7 +3,6 @@ package com.runyuanj.authorization.handler;
 import com.alibaba.fastjson.JSON;
 import com.runyuanj.authorization.filter.token.JwtTokenComponent;
 import com.runyuanj.authorization.utils.ResponseUtils;
-import com.runyuanj.common.exception.type.AuthErrorType;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -16,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- *
- *
  * @author runyu
  */
 @Slf4j

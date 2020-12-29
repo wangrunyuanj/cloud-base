@@ -9,6 +9,7 @@ public class Constants {
 
     /**
      * 测试密码加密
+     *
      * @param args
      */
     public static void main(String[] args) {

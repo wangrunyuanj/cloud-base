@@ -15,8 +15,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableCreateCacheAnnotation
 public class OrgApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(OrgApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(OrgApplication.class, args);
+    }
 
 }

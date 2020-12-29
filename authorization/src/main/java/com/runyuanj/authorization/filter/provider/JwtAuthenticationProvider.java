@@ -2,7 +2,6 @@ package com.runyuanj.authorization.filter.provider;
 
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
 import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
-import com.runyuanj.common.response.Result;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -10,15 +9,12 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import static com.runyuanj.common.exception.type.AuthErrorType.EXPIRED_TOKEN;
 import static com.runyuanj.common.exception.type.AuthErrorType.INVALID_TOKEN;
-import static com.runyuanj.common.exception.type.SystemErrorType.SYSTEM_ERROR;
 
 /**
  * 从redis中取token, 如果存在, 则验证通过. 不存在则验证失败

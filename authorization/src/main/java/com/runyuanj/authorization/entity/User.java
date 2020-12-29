@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  * @author Administrator
  */
 @Data
-@EqualsAndHashCode(callSuper = false )
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class User extends BasePo {
     private String name;

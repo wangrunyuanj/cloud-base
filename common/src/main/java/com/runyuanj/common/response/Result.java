@@ -15,17 +15,16 @@ import static com.runyuanj.common.exception.type.SystemErrorType.SYSTEM_ERROR;
 /**
  * TODO
  * code type 改成 int, 通用性更好
+ *
  * @param <T>
  */
 @Data
 @AllArgsConstructor
 public class Result<T> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     public static final int SUCCESS_CODE = 0;
     public static final String SUCCESS_MSG = "success";
-
+    private static final long serialVersionUID = 1L;
     private int code;
 
     private String message;

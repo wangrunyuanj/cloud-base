@@ -1,7 +1,7 @@
 package com.runyuanj.authorization.service.impl;
 
-import com.runyuanj.authorization.service.RefreshTokenService;
 import com.runyuanj.authorization.filter.token.JwtTokenComponent;
+import com.runyuanj.authorization.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

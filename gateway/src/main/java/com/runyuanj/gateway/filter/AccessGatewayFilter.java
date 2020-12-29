@@ -32,16 +32,13 @@ public class AccessGatewayFilter implements GlobalFilter {
      * Authorization认证开头是"bearer "
      */
     private static final String BEARER = "Bearer ";
-
+    private static final String X_CLIENT_TOKEN_USER = "x-client-filter-user";
+    private static final String X_CLIENT_TOKEN = "x-client-filter";
     /**
      * jwt filter 密钥，主要用于token解析，签名验证
      */
     @Value("${spring.security.oauth2.jwt.signingKey}")
     private String signingKey;
-
-    private static final String X_CLIENT_TOKEN_USER = "x-client-filter-user";
-    private static final String X_CLIENT_TOKEN = "x-client-filter";
-
     @Autowired
     private IPermissionService permissionService;
 
