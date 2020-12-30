@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -74,7 +75,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         // 不用security来管理
-        web.ignoring().antMatchers(whiteListFilterService.getWhiteListPath());
+        web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
     @Bean
@@ -140,6 +141,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         // 配置不同的url使用不同的过滤器链
         // Ant Pattern: spring里的url匹配算法 *: 0或多个字符  **: 匹配0级或多级路径  ?: 单个字符  {spring:[a-z]+}: 按照正则匹配[a-z]+，并且将其作为路径变量，变量名为"spring"
         http
+                // 只有login 和 logout需要过滤, 其他直接通过.
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         // 静态资源访问无需认证
                         .antMatchers("/image/**").permitAll()
@@ -148,7 +150,7 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                         // 匹配every的不需要认证
                         .antMatchers(securityProperties.getMatchers()).permitAll()
                         // 其他的请求都需要认证
-                        .anyRequest().authenticated()
+                        // .anyRequest().authenticated()
                 )
                 // 关闭csrf，因为不使用session
                 .csrf().disable()

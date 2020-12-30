@@ -36,7 +36,6 @@ public class SecurityProperties {
             "/logout",
             "/js/**",
             "/view/**",
-            "/css/**",
-            "/*/every/**"
+            "/css/**"
     };
 }
