@@ -25,30 +25,13 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
 
     private static Set<ConfigAttribute> localConfigAttributes = new HashSet<>();
 
-    /**
-     * Accesses the {@code ConfigAttribute}s that apply to a given secure object.
-     *
-     * @param object the object being secured
-     * @return the attributes that apply to the passed in secured object. Should return an
-     * empty collection if there are no applicable attributes.
-     * @throws IllegalArgumentException if the passed object is not of a type supported by
-     *                                  the <code>SecurityMetadataSource</code> implementation
-     */
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
         ConfigAttribute configAttribute = resourcePermissionService.findConfigAttributes(((FilterInvocation) object).getRequest());
         return Arrays.asList(configAttribute);
     }
 
-    /**
-     * If available, returns all of the {@code ConfigAttribute}s defined by the
-     * implementing class.
-     * <p>
-     * This is used by the {@link AbstractSecurityInterceptor} to perform startup time
-     * validation of each {@code ConfigAttribute} configured against it.
-     *
-     * @return the {@code ConfigAttribute}s or {@code null} if unsupported
-     */
+
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {
         return resourcePermissionService.getConfigAttributes();

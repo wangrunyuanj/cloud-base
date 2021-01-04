@@ -227,10 +227,9 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 new AuthenticatedVoter());
         return new UnanimousBased(decisionVoters);
     }
-    public FilterSecurityInterceptor getfilterSecurityInterceptor() {
-        MySecurityMetadataSource source = new MySecurityMetadataSource(rService);
-        FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
-        interceptor.setSecurityMetadataSource(source);
-        return interceptor;
+
+    @Bean
+    public MySecurityMetadataSource mySecurityMetadataSource() {
+        return new MySecurityMetadataSource(rService);
     }
 }
