@@ -1,8 +1,10 @@
 package com.runyuanj.authorization.config;
 
+import com.runyuanj.authorization.filter.MyResourcePermissionFilter;
+import com.runyuanj.authorization.access.MySecurityMetadataSource;
+import com.runyuanj.authorization.access.RoleBasedVoter;
 import com.runyuanj.authorization.filter.JwtAuthenticationFilter;
 import com.runyuanj.authorization.filter.MyUsernamePasswordAuthenticationFilter;
-import com.runyuanj.authorization.filter.ResourcePermissionFilter;
 import com.runyuanj.authorization.filter.builder.JwtAuthenticateFilterBuilder;
 import com.runyuanj.authorization.filter.builder.ResourcePermissionFilterBuilder;
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
@@ -11,12 +13,17 @@ import com.runyuanj.authorization.filter.service.impl.JwtTokenAuthenticationServ
 import com.runyuanj.authorization.filter.token.JwtTokenComponent;
 import com.runyuanj.authorization.handler.*;
 import com.runyuanj.authorization.properties.SecurityProperties;
+import com.runyuanj.authorization.service.ResourcePermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.AuthenticatedVoter;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,10 +33,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
@@ -37,6 +45,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.BCryptVersion.$2B;
 
@@ -46,7 +55,7 @@ import static org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.B
  * @PreAuthorize("hasAuthority('course_teachplan_add')")
  */
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @ComponentScan(basePackages = {"com.runyuanj.authorization.**"})
 public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -65,6 +74,9 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenAuthenticationService jwtTokenAuthenticationService;
     @Autowired
     private JwtTokenComponent jwtTokenComponent;
+    @Autowired
+    private ResourcePermissionService rService;
+
 
     public static void main(String[] args) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder($2B, 4, new SecureRandom());
@@ -72,10 +84,17 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         System.out.println(encode);
     }
 
+    /**
+     * 添加了一个过滤器链.
+     * this.delegate = [{options}]
+     * @param web
+     * @throws Exception
+     */
     @Override
     public void configure(WebSecurity web) throws Exception {
         // 不用security来管理
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
+        // web.addSecurityFilterChainBuilder();
     }
 
     @Bean
@@ -89,6 +108,10 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         //直接使用它默认的manager
         AuthenticationManager manager = super.authenticationManagerBean();
         return manager;
+    }*/
+   /* @Bean
+    public MyResourcePermissionFilter myResourcePermissionFilter() {
+        return new MyResourcePermissionFilter(resourcePermissionAuthenticationService);
     }*/
 
     @Bean
@@ -104,15 +127,15 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * TODO:
-     * 1. 修改为表单登陆
-     * 2. 用户名和密码数据库配置
-     * 3. 自定义登录页和错误页面
-     * 4. 完成登出操作
-     * 5. 记录登陆成功和失败
+     * 登录判断: AuthenticationManager
+     * 权限判断: UnanimousBased. 当所有vote执行完未抛出异常, 且验证通过的数量大于0时, 则拥有权限.
+     *
+     *
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        // super.setObjectPostProcessor(null);
+
         SimpleUrlAuthenticationFailureHandler handler = new SimpleUrlAuthenticationFailureHandler("/");
 
         RequestHeaderRequestMatcher authorizationHeaderMatcher = new RequestHeaderRequestMatcher("Authorization");
@@ -120,13 +143,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticateFilterBuilder()
                 .authenticationProvider(jwtTokenAuthenticationService)
                 .requestMatcher(authorizationHeaderMatcher)
-                .build();
-
-        ResourcePermissionFilter resourcePermissionFilter = new ResourcePermissionFilterBuilder()
-                .authenticationProvider(resourcePermissionAuthenticationService)
-                .requestMatcher(authorizationHeaderMatcher)
-                .authenticationSuccessHandler(new EmptyAuthenticationSuccessHandler())
-                .authenticationFailureHandler(new SimpleAuthenticationFailureHandler())
                 .build();
 
         // 默认的authenticationManager
@@ -139,18 +155,22 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         // providerManager.getProviders().add();
 
         // 配置不同的url使用不同的过滤器链
+        // 配置AuthenticateManager管理的路径
         // Ant Pattern: spring里的url匹配算法 *: 0或多个字符  **: 匹配0级或多级路径  ?: 单个字符  {spring:[a-z]+}: 按照正则匹配[a-z]+，并且将其作为路径变量，变量名为"spring"
         http
                 // 只有login 和 logout需要过滤, 其他直接通过.
                 .authorizeRequests(authorizeRequests -> authorizeRequests
+                        // .withObjectPostProcessor(getfilterSecurityInterceptor())
+                        // UrlMapping
                         // 静态资源访问无需认证
                         .antMatchers("/image/**").permitAll()
                         .antMatchers("/*/admin/**").hasRole("ADMIN")
                         .antMatchers("/*/fin/**").hasRole("FIN")
                         // 匹配every的不需要认证
                         .antMatchers(securityProperties.getMatchers()).permitAll()
-                        // 其他的请求都需要认证
-                        // .anyRequest().authenticated()
+                        .accessDecisionManager(accessDecisionManager())
+                        // 此处通过. 见AuthenticatedVoter.
+                        .anyRequest().permitAll()
                 )
                 // 关闭csrf，因为不使用session
                 .csrf().disable()
@@ -190,9 +210,27 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 在LogoutFilter类之前, 添加过滤器
                 .addFilterBefore(loginFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, LogoutFilter.class)
-                .addFilterAfter(resourcePermissionFilter, BasicAuthenticationFilter.class)
+                // 使用权限验证. 权限认证不该在这里配置. 应该在最后的filter中配置
+                // .addFilterAfter(resourcePermissionFilter, BasicAuthenticationFilter.class)
         // 启动跨域支持
         // .cors(cors -> cors.addObjectPostProcessor(null));
         ;
+    }
+
+    @Bean
+    public AccessDecisionManager accessDecisionManager() {
+        List<AccessDecisionVoter<? extends Object>> decisionVoters
+                = Arrays.asList(
+                new WebExpressionVoter(),
+                // new RoleVoter(),
+                new RoleBasedVoter(),
+                new AuthenticatedVoter());
+        return new UnanimousBased(decisionVoters);
+    }
+    public FilterSecurityInterceptor getfilterSecurityInterceptor() {
+        MySecurityMetadataSource source = new MySecurityMetadataSource(rService);
+        FilterSecurityInterceptor interceptor = new FilterSecurityInterceptor();
+        interceptor.setSecurityMetadataSource(source);
+        return interceptor;
     }
 }

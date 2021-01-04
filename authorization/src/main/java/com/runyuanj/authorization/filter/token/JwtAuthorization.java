@@ -2,6 +2,8 @@ package com.runyuanj.authorization.filter.token;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,13 +16,17 @@ import java.util.Collection;
  * @author runyu
  */
 @Slf4j
-public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+public class JwtAuthorization extends AbstractAuthenticationToken implements AuthenticationTrustResolver {
+
+    private boolean anonymous;
+
+    private boolean rememberMe;
 
     private String token;
     private UserDetails userDetails;
     private HttpServletRequest request;
 
-    public JwtAuthenticationToken(String token, HttpServletRequest request, UserDetails userDetails,
+    public JwtAuthorization(String token, HttpServletRequest request, UserDetails userDetails,
                                   Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.token = token;
@@ -53,4 +59,13 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         return request;
     }
 
+    @Override
+    public boolean isAnonymous(Authentication authentication) {
+        return this.anonymous;
+    }
+
+    @Override
+    public boolean isRememberMe(Authentication authentication) {
+        return this.rememberMe;
+    }
 }

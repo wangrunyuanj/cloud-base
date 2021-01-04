@@ -3,7 +3,7 @@ package com.runyuanj.authorization.filter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.runyuanj.authorization.entity.MyUser;
-import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
+import com.runyuanj.authorization.filter.token.JwtAuthorization;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -97,6 +97,6 @@ public class MyUsernamePasswordAuthenticationFilter extends AbstractAuthenticati
         Authentication authenticate = this.getAuthenticationManager().authenticate(authRequest);
         //
         MyUser myUser = (MyUser) authenticate.getPrincipal();
-        return new JwtAuthenticationToken(null, null, myUser, authenticate.getAuthorities());
+        return new JwtAuthorization(null, null, myUser, authenticate.getAuthorities());
     }
 }

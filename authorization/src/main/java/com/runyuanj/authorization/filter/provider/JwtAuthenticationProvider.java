@@ -1,7 +1,7 @@
 package com.runyuanj.authorization.filter.provider;
 
 import com.runyuanj.authorization.filter.service.TokenAuthenticationService;
-import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
+import com.runyuanj.authorization.filter.token.JwtAuthorization;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -36,7 +36,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
      * {@link AuthenticationManager#authenticate(Authentication)}
      * .
      *
-     * @param authentication the JwtAuthenticationToken 包含了token
+     * @param authentication the JwtAuthorization 包含了token
      * @return a fully authenticated object including credentials. May return
      * <code>null</code> if the <code>AuthenticationProvider</code> is unable to support
      * authentication of the passed <code>Authentication</code> object. In such a case,
@@ -51,8 +51,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String token = (String) authentication.getCredentials();
         try {
             UserDetails userDetails = tokenAuthenticationService.validate(token);
-            // 封装到JwtAuthenticationToken.
-            ((JwtAuthenticationToken) authentication).setDetails(userDetails);
+            // 封装到JwtAuthorization.
+            ((JwtAuthorization) authentication).setDetails(userDetails);
             result = authentication;
             // 不应设置isAuthenticated = true.
             return result;
@@ -89,6 +89,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public boolean supports(Class<?> authentication) {
-        return (JwtAuthenticationToken.class.isAssignableFrom(authentication));
+        return (JwtAuthorization.class.isAssignableFrom(authentication));
     }
 }

@@ -1,6 +1,5 @@
 package com.runyuanj.authorization.filter.builder;
 
-import com.runyuanj.authorization.filter.ResourcePermissionFilter;
 import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
 import com.runyuanj.authorization.filter.provider.ResourcePermissionAuthenticationProvider;
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
@@ -20,11 +19,6 @@ public class ResourcePermissionFilterBuilder {
     private List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
 
     public ResourcePermissionFilterBuilder() {
-    }
-
-    public ResourcePermissionFilter build() {
-        JwtAuthenticationManager jwtAuthenticationManager = new JwtAuthenticationManager(authenticationProviders);
-        return new ResourcePermissionFilter(jwtAuthenticationManager, requestMatcher, authenticationSuccessHandler, authenticationFailureHandler);
     }
 
     public ResourcePermissionFilterBuilder authenticationSuccessHandler(AuthenticationSuccessHandler authenticationSuccessHandler) {

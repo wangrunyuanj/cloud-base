@@ -19,8 +19,8 @@ public class LoginController {
 
     @GetMapping("/hello")
     public Result hello() {
-        UserDetails userDetails = UserContextHolder.userDetails();
-        log.info("userDetails: {}", userDetails);
+        // UserDetails userDetails = UserContextHolder.userDetails();
+        // log.info("userDetails: {}", userDetails);
         return Result.success("hello! authentication = " + SecurityContextHolder.getContext().getAuthentication());
     }
 

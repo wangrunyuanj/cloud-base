@@ -1,15 +1,28 @@
 package com.runyuanj.authorization.filter;
 
+
 import com.runyuanj.authorization.exception.LessPermissionException;
+import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
+import com.runyuanj.authorization.filter.provider.ResourcePermissionAuthenticationProvider;
+import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
+import com.runyuanj.authorization.filter.service.impl.JwtTokenAuthenticationService;
+import com.runyuanj.authorization.filter.token.JwtTokenComponent;
+import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
+import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
+import com.runyuanj.authorization.service.ResourcePermissionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -17,6 +30,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 拦截请求判断是否对路径拥有权限
@@ -24,7 +39,7 @@ import java.io.IOException;
  * @author runyu
  */
 @Slf4j
-public class ResourcePermissionFilter extends OncePerRequestFilter {
+public class MyResourcePermissionFilter extends OncePerRequestFilter {
 
     /**
      * 不会进入到successHandler.
@@ -37,13 +52,15 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
 
     private RequestMatcher requestMatcher;
 
-    public ResourcePermissionFilter(AuthenticationManager authenticationManager, RequestMatcher requestMatcher,
-                                    AuthenticationSuccessHandler successHandler, AuthenticationFailureHandler failureHandler) {
+    public MyResourcePermissionFilter(ResourcePermissionAuthenticationService service) {
+        AuthenticationProvider provider = new ResourcePermissionAuthenticationProvider(service);
+        List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
+        authenticationProviders.add(provider);
         // 拦截所有不在白名单的请求
-        this.authenticationManager = authenticationManager;
-        this.requestMatcher = requestMatcher;
-        this.successHandler = successHandler;
-        this.failureHandler = failureHandler;
+        this.authenticationManager = new JwtAuthenticationManager(authenticationProviders);
+        this.requestMatcher = new RequestHeaderRequestMatcher("Authorization");
+        this.successHandler = new EmptyAuthenticationSuccessHandler();
+        this.failureHandler = new SimpleAuthenticationFailureHandler();
     }
 
 
@@ -97,3 +114,4 @@ public class ResourcePermissionFilter extends OncePerRequestFilter {
     }
 
 }
+

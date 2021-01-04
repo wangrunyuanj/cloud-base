@@ -80,6 +80,14 @@ public class ResourcePermissionServiceImpl implements ResourcePermissionService 
         localConfigAttributes.putAll(temResources);
     }
 
+    @Override
+    public Collection<ConfigAttribute> getConfigAttributes() {
+        if (localConfigAttributes.isEmpty()) {
+            loadResource();
+        }
+        return localConfigAttributes.values();
+    }
+
     private Set<Resource> getOrgResources() {
         try {
             JSONObject responseEntity = orgServiceFeign.queryAllResourceRoles();

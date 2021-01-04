@@ -2,6 +2,8 @@ package com.runyuanj.authorization.exception;
 
 import org.springframework.security.core.AuthenticationException;
 
+import java.lang.reflect.Method;
+
 /**
  * 方法不允许
  *

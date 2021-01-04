@@ -1,6 +1,6 @@
 package com.runyuanj.authorization.filter.provider;
 
-import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
+import com.runyuanj.authorization.filter.token.JwtAuthorization;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -23,7 +23,7 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return (JwtAuthenticationToken.class.isAssignableFrom(authentication));
+        return (JwtAuthorization.class.isAssignableFrom(authentication));
     }
 
     public void setUserDetailService(UserDetailsService userDetailService) {

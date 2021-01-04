@@ -1,6 +1,6 @@
 package com.runyuanj.authorization.filter;
 
-import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
+import com.runyuanj.authorization.filter.token.JwtAuthorization;
 import com.runyuanj.common.exception.type.AuthErrorType;
 import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.common.response.Result;
@@ -32,13 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private RequestMatcher requiresAuthenticationRequestMatcher;
 
+
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, RequestMatcher requestMatcher) {
         // 拦截所有不在白名单的请求
         // 拦截header中带Authorization的请求
         // 拦截header中带Authorization的请求
         this.authenticationManager = authenticationManager;
         this.requiresAuthenticationRequestMatcher = requestMatcher;
-        ;
     }
 
     /**
@@ -74,11 +74,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 如果抛出异常, 代表校验失败
                 try {
                     // 此处不对token解析.
-                    Authentication authToken = new JwtAuthenticationToken(token, request, null, null);
+                    Authentication authToken = new JwtAuthorization(token, request, null, null);
                     // 验证token  JwtAuthenticationManager.authenticate() -> JwtAuthenticationProvider.authenticate()
                     Authentication authentication = this.getAuthenticationManager().authenticate(authToken);
                     // 将用户的认证信息存到ThreadLocal, 用来进行下一步的权限认证. 因此, authentication必须能够取出用户的唯一ID.
                     if (authentication != null) {
+                        authentication.setAuthenticated(true);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         if (authentication.getDetails() == null) {
                             // TODO 判断是否需要更新token

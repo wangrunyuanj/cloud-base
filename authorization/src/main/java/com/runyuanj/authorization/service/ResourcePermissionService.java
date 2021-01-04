@@ -4,6 +4,7 @@ import com.runyuanj.core.auth.Resource;
 import org.springframework.security.access.ConfigAttribute;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Set;
 
 public interface ResourcePermissionService {
@@ -28,6 +29,13 @@ public interface ResourcePermissionService {
      * 加载权限资源数据
      */
     void loadResource();
+
+    /**
+     * 获取所有ConfigAttribute
+     *
+     * @return
+     */
+    Collection<ConfigAttribute> getConfigAttributes();
 
     /**
      * 查询method访问对应对应的资源信息

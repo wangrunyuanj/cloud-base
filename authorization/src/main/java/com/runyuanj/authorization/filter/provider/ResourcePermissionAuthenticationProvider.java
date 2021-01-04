@@ -4,7 +4,7 @@ import com.runyuanj.authorization.entity.MyUser;
 import com.runyuanj.authorization.exception.LessAccountException;
 import com.runyuanj.authorization.exception.MethodNotAllowedException;
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
-import com.runyuanj.authorization.filter.token.JwtAuthenticationToken;
+import com.runyuanj.authorization.filter.token.JwtAuthorization;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.ConfigAttribute;
@@ -46,7 +46,7 @@ public class ResourcePermissionAuthenticationProvider implements AuthenticationP
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
+        JwtAuthorization token = (JwtAuthorization) authentication;
 
         ConfigAttribute configAttribute = permissionAuthenticationService.loadResourcePermissions(token.getRequest());
 
@@ -108,7 +108,7 @@ public class ResourcePermissionAuthenticationProvider implements AuthenticationP
      */
     @Override
     public boolean supports(Class<?> authentication) {
-        return (JwtAuthenticationToken.class.isAssignableFrom(authentication)) ||
+        return (JwtAuthorization.class.isAssignableFrom(authentication)) ||
                 (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
 }
