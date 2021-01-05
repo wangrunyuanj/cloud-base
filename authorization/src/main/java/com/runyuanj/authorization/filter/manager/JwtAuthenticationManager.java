@@ -24,7 +24,6 @@ public class JwtAuthenticationManager extends ProviderManager {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         // 需要做额外的异常处理, 处理DisabledException, LockedException, BadCredentialsException等异常
         // 不需要在校验失败时返回错误. 而是继续进行下一步资源权限校验
-        AuthenticationException exception;
         Authentication result = null;
 
         try {
@@ -41,7 +40,6 @@ public class JwtAuthenticationManager extends ProviderManager {
                 }
             }
         } catch (AuthenticationException e) {
-            exception = e;
             log.info("JwtAuthenticationManager.authenticate cause {}, message: {}", e.getClass().getName(), e.getMessage());
             throw e;
         }
