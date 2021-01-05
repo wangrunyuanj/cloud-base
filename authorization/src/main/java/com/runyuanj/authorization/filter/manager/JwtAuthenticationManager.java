@@ -1,5 +1,6 @@
 package com.runyuanj.authorization.filter.manager;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import java.util.List;
  * <p>
  * 提供验证
  */
+@Slf4j
 public class JwtAuthenticationManager extends ProviderManager {
 
     public JwtAuthenticationManager(List<AuthenticationProvider> providers) {
@@ -40,6 +42,7 @@ public class JwtAuthenticationManager extends ProviderManager {
             }
         } catch (AuthenticationException e) {
             exception = e;
+            log.info("JwtAuthenticationManager.authenticate cause {}, message: {}", e.getClass().getName(), e.getMessage());
             throw e;
         }
         return result;

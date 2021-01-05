@@ -2,27 +2,17 @@ package com.runyuanj.authorization.filter;
 
 
 import com.runyuanj.authorization.exception.LessPermissionException;
-import com.runyuanj.authorization.filter.manager.JwtAuthenticationManager;
-import com.runyuanj.authorization.filter.provider.ResourcePermissionAuthenticationProvider;
-import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
-import com.runyuanj.authorization.filter.service.impl.JwtTokenAuthenticationService;
-import com.runyuanj.authorization.filter.token.JwtTokenComponent;
-import com.runyuanj.authorization.handler.EmptyAuthenticationSuccessHandler;
-import com.runyuanj.authorization.handler.SimpleAuthenticationFailureHandler;
-import com.runyuanj.authorization.service.ResourcePermissionService;
+import com.runyuanj.authorization.handler.token.EmptyAuthenticationSuccessHandler;
+import com.runyuanj.authorization.handler.token.SimpleAuthenticationFailureHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -30,8 +20,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 拦截请求判断是否对路径拥有权限
@@ -52,13 +40,10 @@ public class MyResourcePermissionFilter extends OncePerRequestFilter {
 
     private RequestMatcher requestMatcher;
 
-    public MyResourcePermissionFilter(ResourcePermissionAuthenticationService service) {
-        AuthenticationProvider provider = new ResourcePermissionAuthenticationProvider(service);
-        List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
-        authenticationProviders.add(provider);
+    public MyResourcePermissionFilter(AuthenticationManager authenticationManager, RequestMatcher requestMatcher) {
         // 拦截所有不在白名单的请求
-        this.authenticationManager = new JwtAuthenticationManager(authenticationProviders);
-        this.requestMatcher = new RequestHeaderRequestMatcher("Authorization");
+        this.requestMatcher = requestMatcher;
+        this.authenticationManager = authenticationManager;
         this.successHandler = new EmptyAuthenticationSuccessHandler();
         this.failureHandler = new SimpleAuthenticationFailureHandler();
     }
@@ -93,10 +78,11 @@ public class MyResourcePermissionFilter extends OncePerRequestFilter {
                 throw new LessPermissionException("缺少权限");
             }
         } catch (AuthenticationException e) {
+            log.info("MyResourcePermissionFilter.doFilterInternal cause {}, message: {}", e.getClass().getName(), e.getMessage());
             failureHandler.onAuthenticationFailure(request, response, e);
             return;
         } catch (Exception e) {
-            log.error("exception type: {}", e.getClass().getName());
+            log.error("MyResourcePermissionFilter.doFilterInternal cause {}, message: {}", e.getClass().getName(), e.getMessage());
             failureHandler.onAuthenticationFailure(request, response, new AuthenticationServiceException(e.getMessage()));
             return;
         }

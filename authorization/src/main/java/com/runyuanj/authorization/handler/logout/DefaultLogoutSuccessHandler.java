@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.handler;
+package com.runyuanj.authorization.handler.logout;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

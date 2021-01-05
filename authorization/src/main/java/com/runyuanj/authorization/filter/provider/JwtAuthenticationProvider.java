@@ -57,12 +57,14 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             // 不应设置isAuthenticated = true.
             return result;
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e1) {
-            log.info("authenticate failed. code: {}, message: {}", INVALID_TOKEN.getCode(), INVALID_TOKEN.getMsg());
+            log.info("JwtAuthenticationProvider authenticate failed. code: {}, message: {}, exception: {}",
+                    INVALID_TOKEN.getCode(), INVALID_TOKEN.getMsg(), e1.getClass().getName());
         } catch (ExpiredJwtException e2) {
-            log.info("authenticate failed. code: {}, message: {}", EXPIRED_TOKEN.getCode(), EXPIRED_TOKEN.getMsg());
+            log.info("JwtAuthenticationProvider authenticate failed. code: {}, message: {}, exception: {}",
+                    EXPIRED_TOKEN.getCode(), EXPIRED_TOKEN.getMsg(), e2.getClass().getName());
             result = authentication;
         } catch (Exception e) {
-            log.error("token校验异常, 请联系管理员", e);
+            log.error("JwtAuthenticationProvider token校验异常, 请联系管理员", e);
         }
         return result;
     }

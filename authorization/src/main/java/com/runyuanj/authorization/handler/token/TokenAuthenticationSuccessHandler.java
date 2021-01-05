@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.handler;
+package com.runyuanj.authorization.handler.token;
 
 import com.runyuanj.authorization.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;

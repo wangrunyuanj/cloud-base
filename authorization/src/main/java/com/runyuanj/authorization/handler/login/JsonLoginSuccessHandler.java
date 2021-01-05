@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.handler;
+package com.runyuanj.authorization.handler.login;
 
 import com.alibaba.fastjson.JSON;
 import com.runyuanj.authorization.filter.token.JwtTokenComponent;

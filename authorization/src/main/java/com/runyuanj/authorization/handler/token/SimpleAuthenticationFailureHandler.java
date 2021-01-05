@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.handler;
+package com.runyuanj.authorization.handler.token;
 
 import com.runyuanj.authorization.exception.LessAccountException;
 import com.runyuanj.authorization.exception.LessPermissionException;

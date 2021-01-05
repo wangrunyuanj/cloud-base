@@ -1,4 +1,4 @@
-package com.runyuanj.authorization.handler;
+package com.runyuanj.authorization.handler.token;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
