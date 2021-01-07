@@ -1,0 +1,25 @@
+server:
+  port: 8030
+spring:
+  application:
+    name: authorization
+  kafka:
+    bootstrap-servers: "10.0.4.138:8088"
+    consumer:
+      group-id: "stream"
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+      config:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+        file-extension: yml
+    stream:
+      kafka:
+        binder:
+          brokers: 10.0.4.138
+          defaultBrokerPort: 8088
+          headers: ry
+          healthTimeout: 10
+          requiredAcks: 1
+          minPartitionCount: 1
