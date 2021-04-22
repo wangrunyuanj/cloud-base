@@ -1,5 +1,7 @@
 package com.runyuanj.gateway.config;
 
+import com.runyuanj.gateway.service.IRouteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +11,7 @@ import org.springframework.http.codec.support.DefaultServerCodecConfigurer;
 
 @Configuration
 public class GatewayConfiguration {
+
 
     @Bean
     public ServerCodecConfigurer serverCodecConfigurer() {

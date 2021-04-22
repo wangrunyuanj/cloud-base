@@ -24,6 +24,23 @@ spring:
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:dontcrack123}
   cloud:
+    stream:
+      bindings:
+        input:
+          destination: gatewayconf
+#        output:
+#          destination: gatewayconfig
+      default-binder: kafka
+      kafka:
+        binder:
+          brokers: 10.0.4.138:8088
+    #          required-acks: 1
+#        consumer:
+#          group-id: consumer1
+#        producer:
+#          key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+#          value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+#          client-id: producer1
     gateway:
       httpserver:
         wiretap: true
@@ -53,6 +70,7 @@ jetcache:
       host: ${spring.redis.host}
       port: ${spring.redis.port}
       # password: ${REDIS_PASSWORD:root}
+
 logging:
   level:
     org:
