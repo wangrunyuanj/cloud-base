@@ -1,5 +1,7 @@
 package com.runyuanj.common;
 
+import java.security.InvalidParameterException;
+
 /**
  * TODO
  * 添加一个
@@ -7,17 +9,37 @@ package com.runyuanj.common;
  */
 public interface ErrorType {
 
-
-    // String name();
-
     /**
-     * @return type code
+     * @return error type code
      */
     int getCode();
 
     /**
-     * @return type message
+     * @return error type pre code
+     */
+    int getPreCode();
+
+    /**
+     * @return error type sub code
+     */
+    int getSubCode();
+
+    /**
+     * @return error message
      */
     String getMsg();
+
+    /**
+     * 校验
+     *
+     * @param code
+     * @return
+     */
+    default int validate(int code) {
+        if (code < 0 || code > 9999) {
+            throw new InvalidParameterException("subCode range: 0 ~ 9999");
+        }
+        return code;
+    }
 
 }

@@ -3,6 +3,7 @@ package com.runyuanj.common.exception.type;
 import com.runyuanj.common.ErrorType;
 import lombok.Getter;
 
+import static com.runyuanj.common.constant.ErrorCodeConstants.CACHE_ERROR_CODE_PRE;
 import static com.runyuanj.common.constant.ErrorCodeConstants.NULL_POINTER_ERROR_CODE_PRE;
 
 /**
@@ -11,13 +12,16 @@ import static com.runyuanj.common.constant.ErrorCodeConstants.NULL_POINTER_ERROR
 @Getter
 public enum NullPointerErrorType implements ErrorType {
 
-    NULL_POINTER(NULL_POINTER_ERROR_CODE_PRE + 1000, "空指针异常");
+    NULL_POINTER(1000, "null pointer exception");
 
+    private int preCode = NULL_POINTER_ERROR_CODE_PRE;
+    private int subCode;
     private int code;
     private String msg;
 
-    NullPointerErrorType(int code, String msg) {
-        this.code = code;
+    NullPointerErrorType(int subCode, String msg) {
+        this.subCode = validate(subCode);
+        this.code = preCode + subCode;
         this.msg = msg;
     }
 }
