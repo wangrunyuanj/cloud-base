@@ -1,0 +1,32 @@
+server:
+  port: 8100
+spring:
+  application:
+    # 应用名称
+    name: monitor
+  security:
+    user:
+      name: admin
+      password: 12345678
+  boot:
+    admin:
+      ui:
+        title: Service Monitor
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+      config:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+        file-extension: yml
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+    logfile:
+      enabled: true         #可在线查看日志

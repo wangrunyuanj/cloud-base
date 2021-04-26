@@ -27,7 +27,7 @@ public class JwtAuthorization extends AbstractAuthenticationToken implements Aut
     private HttpServletRequest request;
 
     public JwtAuthorization(String token, HttpServletRequest request, UserDetails userDetails,
-                                  Collection<? extends GrantedAuthority> authorities) {
+                            Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.token = token;
         this.request = request;

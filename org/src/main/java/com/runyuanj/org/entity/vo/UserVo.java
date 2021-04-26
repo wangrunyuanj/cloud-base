@@ -23,6 +23,7 @@ public class UserVo extends BaseVo<User> {
     private String updatedBy;
     private Date createdTime;
     private Date updatedTime;
+
     public UserVo(User user) {
         BeanUtils.copyProperties(user, this);
     }

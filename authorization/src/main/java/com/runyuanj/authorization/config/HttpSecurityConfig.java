@@ -163,15 +163,16 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 // 只有login 和 logout需要过滤, 其他直接通过.
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        // .withObjectPostProcessor(getfilterSecurityInterceptor())
-                        // UrlMapping
-                        // 静态资源访问无需认证
-                        .antMatchers("/image/**").permitAll()
-                        .antMatchers("/*/admin/**").hasRole("ADMIN")
-                        // 财务
-                        .antMatchers("/*/fin/**").hasRole("FIN")
-                        // 匹配every的不需要认证
-                        .antMatchers(securityProperties.getMatchers()).permitAll()
+                                // .withObjectPostProcessor(getfilterSecurityInterceptor())
+                                // UrlMapping
+                                // 静态资源访问无需认证
+                                .antMatchers("/image/**").permitAll()
+                                .antMatchers("/*/admin/**").hasRole("ADMIN")
+                                // 财务
+                                .antMatchers("/*/fin/**").hasRole("FIN")
+                                .antMatchers(new String[] {"/admin/**","/instances/**", "/actuator/**"}).permitAll()
+                                // 匹配every的不需要认证
+                                .antMatchers(securityProperties.getMatchers()).permitAll()
                         // 此处通过. 见AuthenticatedVoter.
                         // .anyRequest().permitAll()
                 )

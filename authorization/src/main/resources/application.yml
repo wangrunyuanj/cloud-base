@@ -1,4 +1,8 @@
 spring:
+  boot:
+    admin:
+      client:
+        url: ${DATASOURCE_HOST:111.229.218.230}:8888 #admin server的地址
   security:
     oauth2:
       client:
@@ -20,7 +24,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:${DATASOURCE_DBTYPE:mysql}://${DATASOURCE_HOST:111.229.218.230}:${DATASOURCE_PORT:3306}/sc_auth?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=GMT
     username: ${DATASOURCE_USERNAME:root}
-    password: ${DATASOURCE_PASSWORD:dontcrack123}
+    password: ${DATASOURCE_PASSWORD:root123!}
 jetcache:
   statIntervalMinutes: 15  # 统一间隔
   areaInCacheName: false  # 设置不把areaName作为Key前缀
@@ -60,3 +64,10 @@ ribbon:
 # logging:
 #  level:
 #    org.springframework.security: DEBUG
+
+# admin
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*' #暴露所有可监控的端点
