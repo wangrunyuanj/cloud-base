@@ -1,11 +1,26 @@
 package com.runyuanj.common.exception;
 
 import com.runyuanj.common.BaseException;
+import com.runyuanj.common.ErrorType;
 
 /**
  * @author Administrator
  */
 public class UncheckedException extends BaseException {
 
-    //TODO 对业务异常的返回码进行校验，规范到一定范围内
+    public UncheckedException() {
+        super();
+    }
+
+    public UncheckedException(ErrorType errorType) {
+        super(errorType);
+    }
+
+    public UncheckedException(ErrorType errorType, String message) {
+        super(errorType, message);
+    }
+
+    public UncheckedException(ErrorType errorType, String message, Throwable cause) {
+        super(errorType, message, cause);
+    }
 }

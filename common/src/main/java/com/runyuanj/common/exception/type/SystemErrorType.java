@@ -3,7 +3,8 @@ package com.runyuanj.common.exception.type;
 import com.runyuanj.common.ErrorType;
 import lombok.Getter;
 
-import static com.runyuanj.common.constant.ErrorCodeConstants.*;
+import static com.runyuanj.common.constant.ErrorCodeConstants.ERROR_CODE_UNIT;
+import static com.runyuanj.common.constant.ErrorCodeConstants.SYSTEM_ERROR_CODE_PRE;
 
 @Getter
 public enum SystemErrorType implements ErrorType {

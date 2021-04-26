@@ -14,15 +14,12 @@ public enum CacheErrorType implements ErrorType {
 
     CacheErrorType(int subCode, String msg) {
         this.subCode = validate(subCode);
-        this.code = preCode * ERROR_CODE_UNIT + this.subCode;
+        this.code = preCode * ERROR_CODE_UNIT + subCode;
         this.msg = msg;
     }
 
     private int preCode = CACHE_ERROR_CODE_PRE;
-
     private int subCode;
-
     private int code;
-
     private String msg;
 }

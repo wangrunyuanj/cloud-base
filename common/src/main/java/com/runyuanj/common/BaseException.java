@@ -9,10 +9,13 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class BaseException extends RuntimeException {
 
     /**
-     * 异常对应的错误类型
+     * 错误类型
      */
     private ErrorType errorType;
 
+    /**
+     * 错误信息
+     */
     private String message;
 
     /**

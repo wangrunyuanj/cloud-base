@@ -3,9 +3,9 @@ package com.runyuanj.common;
 import java.security.InvalidParameterException;
 
 /**
- * TODO
- * 添加一个
- * 添加n * 1000的常量, 定义不同类型的errorType, getCode()参数不同
+ * 定义错误码和错误信息
+ * 错误码由错误类型 + 子码组成
+ * 错误类型见 {@code ErrorCodeConstants}
  */
 public interface ErrorType {
 

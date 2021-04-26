@@ -18,7 +18,7 @@ public enum DbErrorType implements ErrorType {
 
     DbErrorType(int subCode, String msg) {
         this.subCode = validate(subCode);
-        this.code = this.preCode * ERROR_CODE_UNIT + subCode;
+        this.code = preCode * ERROR_CODE_UNIT + subCode;
         this.msg = msg;
     }
 }
