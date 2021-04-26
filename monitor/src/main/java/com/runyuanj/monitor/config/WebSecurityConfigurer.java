@@ -23,7 +23,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
         http.headers().frameOptions().disable()
                 .and().authorizeRequests()
-                .antMatchers(adminContextPath + "/asserts/**",
+                .antMatchers(adminContextPath + "/assets/**",
                         adminContextPath +"/login",
                         adminContextPath + "/actuator/**",
                         adminContextPath + "/instances/**").permitAll()

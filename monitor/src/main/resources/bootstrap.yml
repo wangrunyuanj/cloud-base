@@ -4,6 +4,8 @@ spring:
   application:
     # 应用名称
     name: monitor
+  zipkin:
+    base-url: http://localhost:8100
   security:
     user:
       name: admin

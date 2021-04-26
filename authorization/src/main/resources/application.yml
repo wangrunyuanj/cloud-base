@@ -2,7 +2,10 @@ spring:
   boot:
     admin:
       client:
-        url: ${DATASOURCE_HOST:111.229.218.230}:8888 #admin server的地址
+        # spring-boot-admin Security
+        url: localhost:8100 #admin server的地址
+        username: admin
+        password: admin
   security:
     oauth2:
       client:
