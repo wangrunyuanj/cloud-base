@@ -2,7 +2,7 @@ package com.runyuanj.authorization.handler.login;
 
 import com.alibaba.fastjson.JSON;
 import com.runyuanj.authorization.filter.token.JwtTokenComponent;
-import com.runyuanj.authorization.utils.ResponseUtils;
+import com.runyuanj.authorization.utils.AuthResponseUtils;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -39,6 +39,6 @@ public class JsonLoginSuccessHandler implements AuthenticationSuccessHandler {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         log.info("myUserDetails: {}", JSON.toJSONString(userDetails));
         String token = jwtTokenComponent.generalToken(userDetails, 1000 * 60 * 60 * 24);
-        ResponseUtils.writeResponseJson(response, 200, Result.success(token));
+        AuthResponseUtils.writeResponseJson(response, 200, Result.success(token));
     }
 }

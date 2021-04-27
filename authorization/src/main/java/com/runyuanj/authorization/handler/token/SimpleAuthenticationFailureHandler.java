@@ -3,7 +3,7 @@ package com.runyuanj.authorization.handler.token;
 import com.runyuanj.authorization.exception.LessAccountException;
 import com.runyuanj.authorization.exception.LessPermissionException;
 import com.runyuanj.authorization.exception.MethodNotAllowedException;
-import com.runyuanj.authorization.utils.ResponseUtils;
+import com.runyuanj.authorization.utils.AuthResponseUtils;
 import com.runyuanj.common.exception.type.AuthErrorType;
 import com.runyuanj.common.exception.type.SystemErrorType;
 import com.runyuanj.common.response.Result;
@@ -50,6 +50,6 @@ public class SimpleAuthenticationFailureHandler implements AuthenticationFailure
             log.error("exception type: {}", e.getClass().getName());
             result = Result.fail(SystemErrorType.SYSTEM_ERROR);
         }
-        ResponseUtils.writeResponseJson(response, 401, result);
+        AuthResponseUtils.writeResponseJson(response, 401, result);
     }
 }

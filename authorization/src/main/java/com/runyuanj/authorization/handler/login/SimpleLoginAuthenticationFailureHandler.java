@@ -1,6 +1,6 @@
 package com.runyuanj.authorization.handler.login;
 
-import com.runyuanj.authorization.utils.ResponseUtils;
+import com.runyuanj.authorization.utils.AuthResponseUtils;
 import com.runyuanj.common.exception.type.AuthErrorType;
 import com.runyuanj.common.response.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,6 @@ public class SimpleLoginAuthenticationFailureHandler implements AuthenticationFa
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         log.info("authentication failed, {}", request.getPathInfo());
         log.info("SimpleLoginAuthenticationFailureHandler authException name: {}", e.getClass().getName());
-        ResponseUtils.writeResponseJson(response, 401, Result.fail(AuthErrorType.USERNAME_PASSWORD_AUTH_FAILED));
+        AuthResponseUtils.writeResponseJson(response, 401, Result.fail(AuthErrorType.USERNAME_PASSWORD_AUTH_FAILED));
     }
 }
