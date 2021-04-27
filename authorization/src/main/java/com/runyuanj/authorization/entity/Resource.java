@@ -1,4 +1,4 @@
-package com.runyuanj.core.auth;
+package com.runyuanj.authorization.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

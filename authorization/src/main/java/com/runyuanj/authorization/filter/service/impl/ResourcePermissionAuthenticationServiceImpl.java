@@ -2,7 +2,7 @@ package com.runyuanj.authorization.filter.service.impl;
 
 import com.runyuanj.authorization.filter.service.ResourcePermissionAuthenticationService;
 import com.runyuanj.authorization.service.ResourcePermissionService;
-import com.runyuanj.core.auth.Resource;
+import com.runyuanj.authorization.entity.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -76,9 +76,9 @@ public class ResourcePermissionAuthenticationServiceImpl implements ResourcePerm
         return resourcePermissionService.queryRolesByUserId(userId);
     }
 
-    private Set<com.runyuanj.core.auth.Resource> findResourcesByUsername(String username) {
+    private Set<Resource> findResourcesByUsername(String username) {
         // 用户被授予的角色资源
-        Set<com.runyuanj.core.auth.Resource> resources = resourcePermissionService.queryByUserName(username);
+        Set<Resource> resources = resourcePermissionService.queryByUserName(username);
         log.debug("用户被授予角色的资源数量是:{}, 资源集合信息为:{}", resources.size(), resources);
         return resources;
     }

@@ -10,6 +10,11 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Use cn.hutool.core.bean.BeanUtil.toBean(source, targetClass)
+ *  或 copyProperties(source, target, ...)
+ */
+@Deprecated
 public class BeanUtils {
     public BeanUtils() {
     }

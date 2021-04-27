@@ -140,12 +140,6 @@
                 <version>${spring.cloud.alibaba.version}</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.cloud</groupId>-->
-<!--                <artifactId>spring-cloud-stream</artifactId>-->
-<!--                <version>${spring.cloud.version}</version>-->
-<!--            </dependency>-->
-
             <!-- 网络 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

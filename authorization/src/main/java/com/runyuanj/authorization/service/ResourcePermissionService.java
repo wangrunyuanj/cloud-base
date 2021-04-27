@@ -1,6 +1,6 @@
 package com.runyuanj.authorization.service;
 
-import com.runyuanj.core.auth.Resource;
+import com.runyuanj.authorization.entity.Resource;
 import org.springframework.security.access.ConfigAttribute;
 
 import javax.servlet.http.HttpServletRequest;

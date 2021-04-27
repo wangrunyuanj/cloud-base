@@ -15,7 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.runyuanj.common.exception.type.SystemErrorType.DATE_SCOPE_ERROR;
+import static com.runyuanj.common.exception.type.DateErrorType.DATE_SCOPE_ERROR;
+
 
 /**
  * 描述：日期工具类

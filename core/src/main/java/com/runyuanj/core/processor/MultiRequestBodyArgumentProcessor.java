@@ -1,6 +1,5 @@
 package com.runyuanj.core.processor;
 
-import com.runyuanj.core.annotation.MultiRequestBody;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -10,6 +9,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Deprecated
 public class MultiRequestBodyArgumentProcessor {
     /**
      * Whether the given {@linkplain MethodParameter method parameter} is

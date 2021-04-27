@@ -7,7 +7,7 @@ import com.runyuanj.authorization.entity.Role;
 import com.runyuanj.authorization.service.OrgServiceFeign;
 import com.runyuanj.authorization.service.ResourcePermissionService;
 import com.runyuanj.common.response.Result;
-import com.runyuanj.core.auth.Resource;
+import com.runyuanj.authorization.entity.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;

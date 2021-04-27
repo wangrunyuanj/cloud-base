@@ -1,4 +1,4 @@
-package com.runyuanj.core.annotation;
+package com.runyuanj.core.processor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
