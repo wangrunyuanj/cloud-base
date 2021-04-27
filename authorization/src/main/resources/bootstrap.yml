@@ -7,10 +7,6 @@ spring:
     bootstrap-servers: "10.0.4.138:8088"
     consumer:
       group-id: "authorizationConfig"
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
-      config:
-        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
-        file-extension: yml
+  profiles:
+    # 无条件加载bootstrap-core.yml文件
+    include: core, log, authorization

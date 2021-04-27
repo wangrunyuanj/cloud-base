@@ -1,0 +1,19 @@
+zipkin:
+  base-url: http://localhost:8100
+security:
+  user:
+    name: admin
+    password: 12345678
+
+boot:
+  admin:
+    ui:
+      title: Service Monitor
+
+# 暴露监控端点
+management:
+  endpoint:
+    health:
+      show-details: ALWAYS
+    logfile:
+      enabled: true         #可在线查看日志

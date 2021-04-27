@@ -3,10 +3,5 @@ server:
 spring:
   application:
     name: organization
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
-      config:
-        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
-        file-extension: yml
+  profiles:
+    include: core, log, org

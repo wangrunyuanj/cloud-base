@@ -1,4 +1,4 @@
-package com.runyuanj.org.config;
+package com.runyuanj.core.config;
 
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;

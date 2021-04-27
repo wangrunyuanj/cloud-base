@@ -1,0 +1,45 @@
+spring:
+  boot:
+    # spring-boot-admin
+    admin:
+      client:
+        # spring-boot-admin Security
+        url: localhost:8100 # admin server的地址
+        username: admin
+        password: admin
+  cloud:
+    # nacos config and discovery
+    nacos:
+      discovery:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+      config:
+        server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+        file-extension: yml
+  jackson:
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-request-size: "2MB"
+      max-file-size: "2MB"
+# spring-boot-admin
+management:
+  endpoints:
+    web:
+      # 暴露所有可监控的端点
+      exposure:
+        include: '*'
+
+# ribbon
+ribbon:
+  # 请求连接的超时时间 默认的时间为 1 秒
+  ConnectTimeout: 3000
+  # 请求处理的超时时间
+  ReadTimeout: 3000
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-value: "Y" # 逻辑已删除值(默认为 Y)
+      logic-not-delete-value: "N" # 逻辑未删除值(默认为 N)

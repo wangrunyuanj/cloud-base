@@ -1,0 +1,29 @@
+# global log level
+logging:
+  level:
+    com:
+      runyuanj: debug
+      springboot:
+        cloud: debug
+    java:
+      sql:
+        PreparedStatement: debug
+    org:
+      springframework:
+        cloud:
+          gateway: debug
+        http:
+          server:
+            reactive: debug
+        security: debug
+        web:
+          reactive: debug
+        boot:
+          autoconfigure:
+            web: debug
+    reactor:
+      netty: debug
+    redisratelimiter: debug
+  file:
+    max-size: 1GB
+    path: logs/
