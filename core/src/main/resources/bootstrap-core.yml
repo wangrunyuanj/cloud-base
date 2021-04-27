@@ -36,6 +36,12 @@ ribbon:
   # 请求处理的超时时间
   ReadTimeout: 3000
 
+feign:
+  sentinel:
+    enabled: true
+  okhttp:
+    enabled: true
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
