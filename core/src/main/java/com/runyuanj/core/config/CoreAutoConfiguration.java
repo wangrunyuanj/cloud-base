@@ -10,4 +10,5 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
  */
 @Configuration
 public class CoreAutoConfiguration implements ImportBeanDefinitionRegistrar {
+
 }

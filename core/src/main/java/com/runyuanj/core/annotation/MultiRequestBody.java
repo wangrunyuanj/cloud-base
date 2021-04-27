@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author Administrator
  */
+@Deprecated
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MultiRequestBody {

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class GatewayMessageListener {
 
-//    @StreamListener(Sink.INPUT)
-//    public void receive(Message<String> message) {
-//        // RouteDefinition payload = message.getPayload();
-//        log.info("-------------received message: {}", message.getPayload());
-//        // routeService.save(payload);
-//    }
+    @StreamListener(Sink.INPUT)
+    public void receive(Message<String> message) {
+        // RouteDefinition payload = message.getPayload();
+        log.info("-------------received message: {}", message.getPayload());
+        // routeService.save(payload);
+    }
 }
