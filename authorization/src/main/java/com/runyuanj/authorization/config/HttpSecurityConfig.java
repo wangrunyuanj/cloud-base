@@ -149,13 +149,9 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         // super.setObjectPostProcessor(null);
         RequestHeaderRequestMatcher authorizationHeaderMatcher = new RequestHeaderRequestMatcher("Authorization");
 
-        JwtAuthenticationManager jwtManager = getJwtAuthenticationManager();
-
         MyUsernamePasswordAuthenticationFilter loginFilter = new MyUsernamePasswordAuthenticationFilter(authenticationManager());
         loginFilter.setAuthenticationSuccessHandler(new JsonLoginSuccessHandler(jwtTokenComponent));
         loginFilter.setAuthenticationFailureHandler(new SimpleLoginAuthenticationFailureHandler());
-
-        // providerManager.getProviders().add();
 
         // 配置不同的url使用不同的过滤器链
         // 配置AuthenticateManager管理的路径
@@ -204,19 +200,18 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService)
                 // 在LogoutFilter类之前, 添加过滤器
                 .addFilterBefore(loginFilter, LogoutFilter.class)
-                .addFilterAfter(new JwtAuthenticationFilter(jwtManager, authorizationHeaderMatcher), LogoutFilter.class)
-                // 使用权限验证.
-                .addFilterAfter(new MyResourcePermissionFilter(jwtManager, authorizationHeaderMatcher), BasicAuthenticationFilter.class)
+                // 从Authentication中获取JWT token并使用JwtAuthenticationProvider解析得到用户信息
+                .addFilterAfter(new JwtAuthenticationFilter(getJwtAuthenticationManager(new JwtAuthenticationProvider(jwtTokenAuthenticationService)), authorizationHeaderMatcher), LogoutFilter.class)
+                // 使用ResourcePermissionAuthenticationProvider判断当前用户是否拥有权限
+                .addFilterAfter(new MyResourcePermissionFilter(getJwtAuthenticationManager(new ResourcePermissionAuthenticationProvider(resourcePermissionAuthenticationService)), authorizationHeaderMatcher), BasicAuthenticationFilter.class)
         // 启动跨域支持
         // .cors(cors -> cors.addObjectPostProcessor(null));
         ;
     }
 
-    private JwtAuthenticationManager getJwtAuthenticationManager() {
-        // 默认的authenticationManager
+    private JwtAuthenticationManager getJwtAuthenticationManager(AuthenticationProvider provider) {
         List<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(new JwtAuthenticationProvider(jwtTokenAuthenticationService));
-        providers.add(new ResourcePermissionAuthenticationProvider(resourcePermissionAuthenticationService));
+        providers.add(provider);
         return new JwtAuthenticationManager(providers);
     }
 
