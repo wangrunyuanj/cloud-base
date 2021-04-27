@@ -1,4 +1,4 @@
-package com.runyuanj.core.utils;
+package com.runyuanj.authorization.utils;
 
 
 import com.runyuanj.common.exception.ServiceException;
