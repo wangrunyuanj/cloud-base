@@ -7,7 +7,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 @Configuration
-public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter
+{
 
     private final String adminContextPath;
 

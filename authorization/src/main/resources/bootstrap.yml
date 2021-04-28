@@ -12,5 +12,4 @@ spring:
     include: core, log, authorization
 logging:
   file:
-    path: logs/
-    name: auth.log
+    name: logs/auth.log

@@ -24,23 +24,6 @@ spring:
     username: ${DATASOURCE_USERNAME:root}
     password: ${DATASOURCE_PASSWORD:root123!}
   cloud:
-    stream:
-      bindings:
-        input:
-          destination: gatewayconf
-#        output:
-#          destination: gatewayconfig
-      default-binder: kafka
-      kafka:
-        binder:
-          brokers: 10.0.4.138:8088
-    #          required-acks: 1
-    #        consumer:
-    #          group-id: consumer1
-    #        producer:
-    #          key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-    #          value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-    #          client-id: producer1
     gateway:
       httpserver:
         wiretap: true
@@ -74,18 +57,18 @@ jetcache:
 
 logging:
   level:
-    org:
-      springframework:
-        cloud:
-          gateway: debug
-        http:
-          server:
-            reactive: debug
-        web:
-          reactive: debug
-        boot:
-          autoconfigure:
-            web: debug
-    reactor:
-      netty: debug
-    redisratelimiter: debug
+#    org:
+#      springframework:
+#        cloud:
+#          gateway: debug
+#        http:
+#          server:
+#            reactive: debug
+#        web:
+#          reactive: debug
+#        boot:
+#          autoconfigure:
+#            web: debug
+#    reactor:
+#      netty: debug
+#    redisratelimiter: debug

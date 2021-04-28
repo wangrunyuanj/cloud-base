@@ -2,27 +2,26 @@
 logging:
   level:
     com:
-      runyuanj: debug
-      springboot:
-        cloud: debug
+      runyuanj: info
+#      runyuanj: debug
     java:
       sql:
         PreparedStatement: debug
-    org:
-      springframework:
-        cloud:
-          gateway: debug
-        http:
-          server:
-            reactive: debug
-        security: debug
-        web:
-          reactive: debug
-        boot:
-          autoconfigure:
-            web: debug
+#    org:
+#      springframework:
+#        cloud:
+#          gateway: debug
+#        http:
+#          server:
+#            reactive: debug
+#        security: debug
+#        web:
+#          reactive: debug
+#        boot:
+#          autoconfigure:
+#            web: debug
     reactor:
-      netty: debug
+      netty: info
     redisratelimiter: debug
   file:
     max-size: 1GB

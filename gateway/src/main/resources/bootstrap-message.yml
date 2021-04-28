@@ -1,0 +1,67 @@
+spring:
+  #  kafka:
+  #    bootstrap-servers: "10.0.4.138:8088"
+  #    consumer:
+  #      group-id: "gatewayFilter"
+  rabbitmq:
+    addresses: 111.229.218.230:5672
+    username: guest
+    password: guest
+# spring.cloud.stream.bindings.process-in-0.destination: words
+  cloud:
+      function:
+        # mapping function name
+        definition: uppercaseFunction;process;gateway;input;output
+      bindings:
+        # destination: exchange名称
+        uppercaseFunction-in-0:
+          destination: upercase
+        uppercaseFunction-out-0:
+          destination: process
+        process-in-0:
+          destination: process
+        gateway-in-0:
+          destination: gateway-1
+          group: gatewayGroup
+        input-in-0:
+          destination: inputChannel
+        output-out-0:
+          destination: process
+# RabbitMQ Consumer Properties: spring.cloud.stream.rabbit.bindings.<channelName>.consumer..
+# Rabbit Producer Properties: spring.cloud.stream.rabbit.bindings.<channelName>.producer..
+# default-binder: rabbit
+#      rabbit:
+#        bindings:
+#          process-in-0:
+#            # consumer
+#            consumer:
+#              enable-batching: true
+#              batch-size: 10
+#              receive-timeout: 200
+#          consumer:
+#            batch-mode: true
+# spring.cloud.stream.bindings.<binding name>.destination=myExhange
+# spring.cloud.stream.bindings.<binding name>.group=myQueue
+#spring.cloud.stream.rabbit.bindings.<binding name>.consumer.bindQueue=false
+#spring.cloud.stream.rabbit.bindings.<binding name>.consumer.declareExchange=false
+#spring.cloud.stream.rabbit.bindings.<binding name>.consumer.queueNameGroupOnly=true
+
+# otherway: spring.cloud.stream.rabbit.bindings.<binding name>.consumer.bindingRoutingKey=myRoutingKey
+#        input:
+#          destination: input
+#        output:
+#          destination: gatewayconfig
+# spring.cloud.stream.bindings
+
+# spring.cloud.stream.function.destination
+
+#
+#        binder:
+#          brokers: 10.0.4.138:8088
+#          required-acks: 1
+#        consumer:
+#          group-id: consumer1
+#        producer:
+#          key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+#          value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+#          client-id: producer1

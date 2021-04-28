@@ -3,16 +3,12 @@ server:
 spring:
   application:
     name: gateway
-  kafka:
-    bootstrap-servers: "10.0.4.138:8088"
-    consumer:
-      group-id: "gatewayConfig"
   security:
     oauth2:
       jwt:
         signingKey: runyuanj123
   profiles:
-    include: core, log, gateway, gateway-cli
+    include: core, log, message, gateway, gateway-cli
 
 gate:
   ignore:
@@ -21,5 +17,4 @@ gate:
 
 logging:
   file:
-    path: logs/
-    name: gateway.log
+    name: logs/gateway.log
