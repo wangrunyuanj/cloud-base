@@ -21,4 +21,5 @@ gate:
 
 logging:
   file:
+    path: logs/
     name: gateway.log

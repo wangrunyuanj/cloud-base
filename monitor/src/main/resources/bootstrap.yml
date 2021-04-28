@@ -4,6 +4,9 @@ spring:
   application:
     # 应用名称
     name: monitor
-
   profiles:
-    include: core
+    include: core, log
+logging:
+  file:
+    path: logs/
+    name: org.log

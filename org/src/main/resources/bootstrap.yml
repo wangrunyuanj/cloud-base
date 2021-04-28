@@ -7,4 +7,5 @@ spring:
     include: core, log, org
 logging:
   file:
+    path: logs/
     name: org.log

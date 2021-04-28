@@ -26,4 +26,3 @@ logging:
     redisratelimiter: debug
   file:
     max-size: 1GB
-    path: logs/
