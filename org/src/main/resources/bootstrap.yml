@@ -5,3 +5,6 @@ spring:
     name: organization
   profiles:
     include: core, log, org
+logging:
+  file:
+    name: org.log

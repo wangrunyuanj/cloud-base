@@ -10,3 +10,6 @@ spring:
   profiles:
     # 无条件加载bootstrap-core.yml文件
     include: core, log, authorization
+logging:
+  file:
+    name: auth.log

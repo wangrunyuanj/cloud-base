@@ -7,17 +7,12 @@
 5. 实现了JsonLoginSuccessHandler, SimpleLoginAuthenticationFailureHandler, DefaultLogoutSuccessHandler
 
 ## pom.xml
-1. nacos-discovery
-2. nacos-config
-3. spring-boot-starter-web
-4. actuator // 监控
-5. spring-boot-admin // 监控
-6. security
-7. oauth2-client
-8. openfeign
-9. webflux
-10. jdbc
-11. mysql
-12. core
-13. cache
+1. security
+2. oauth2-client
+3. core
+4. cache
 
+## Stream
+1. @Input(Filter) 更改过滤路径配置
+2. @Input(OrgResources) Org更新resources
+3. @Input(UserPermissionCache) Org更新用户权限, 清除用户权限缓存

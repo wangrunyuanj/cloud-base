@@ -18,3 +18,7 @@ gate:
   ignore:
     authentication:
       startWith: /oauth,/open
+
+logging:
+  file:
+    name: gateway.log
