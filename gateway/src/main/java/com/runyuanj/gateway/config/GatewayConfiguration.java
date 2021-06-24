@@ -1,7 +1,5 @@
 package com.runyuanj.gateway.config;
 
-import com.runyuanj.gateway.service.IRouteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +17,7 @@ public class GatewayConfiguration {
     }
 
     /**
-     * 路由配置代码版
+     * 使用方法配置路由
      *
      * @param builder
      * @return

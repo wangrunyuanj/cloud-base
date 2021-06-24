@@ -15,12 +15,39 @@ spring:
       config:
         server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
         file-extension: yml
+
   jackson:
     time-zone: GMT+8
   servlet:
     multipart:
       max-request-size: "2MB"
       max-file-size: "2MB"
+
+  # cache
+  cache:
+    type: redis
+  redis:
+    lettuce:
+      pool:
+        max-active: 300
+        max-wait: -1
+        max-idle: 20
+        min-idle: 0
+    timeout: 3000
+
+  # thymeleaf模板
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+
+  # db connection pool
+  datasource:
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 20
+      max-lifetime: 600000
+      connection-test-query: SELECT 1
+
 # spring-boot-admin
 management:
   endpoints:
@@ -49,3 +76,28 @@ mybatis-plus:
     db-config:
       logic-delete-value: "Y" # 逻辑已删除值(默认为 Y)
       logic-not-delete-value: "N" # 逻辑未删除值(默认为 N)
+
+#jetcache:
+#  statIntervalMinutes: 15  # 统一间隔
+#  areaInCacheName: false  # 设置不把areaName作为Key前缀
+#  hidePackages: com.runyuanj # 如果@Cached和@CreateCache的name是自动生成的，会默认的将包名和方法名作为前缀,该设置会被从包名中截掉
+#  local:
+#    # 默认永久本地缓存
+#    default:
+#      type: caffeine
+#      keyConvertor: fastjson
+#  remote:
+#    # 默认永久的远程缓存
+#    default:
+#      type: redis
+#      keyConvertor: fastjson
+#      valueEncoder: kryo
+#      valueDecoder: kryo
+#      expireAfterWriteInMillis: 2000 # 以毫秒为单位指定超时时间的全局配置
+#      poolConfig:
+#        minIdle: 5
+#        maxIdle: 20
+#        maxTotal: 50
+#      host: ${spring.redis.host}
+#      port: ${spring.redis.port}
+#      # password: ${REDIS_PASSWORD:root}

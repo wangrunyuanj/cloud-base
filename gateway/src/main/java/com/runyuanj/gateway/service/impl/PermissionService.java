@@ -1,8 +1,6 @@
 package com.runyuanj.gateway.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.anno.Cached;
 import com.runyuanj.common.response.Result;
 import com.runyuanj.gateway.service.IPermissionService;
 import com.runyuanj.gateway.service.ServiceFeign;
@@ -50,8 +48,6 @@ public class PermissionService implements IPermissionService {
      * @return
      */
     @Override
-    @Cached(name = "gateway_auth::", key = "#authentication+#method+#url",
-            cacheType = CacheType.LOCAL, expire = 10, timeUnit = SECONDS, localLimit = 20000)
     public boolean permission(String authentication, String url, String method) {
 
         // 如果请求未携带token信息, 直接拒绝
@@ -96,8 +92,6 @@ public class PermissionService implements IPermissionService {
      * @return
      */
     @Override
-    @Cached(name = "gateway_ignore_url::", key = "#url",
-            cacheType = CacheType.LOCAL, expire = 10, timeUnit = SECONDS, localLimit = 20000)
     public boolean ignoreAuthentication(String url) {
         return Stream.of(this.ignoreUrls.split(",")).anyMatch(ignoreUrl -> url.startsWith(StringUtils.trim(ignoreUrl)));
     }

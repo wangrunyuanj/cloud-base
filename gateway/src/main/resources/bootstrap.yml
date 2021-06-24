@@ -7,8 +7,9 @@ spring:
     oauth2:
       jwt:
         signingKey: runyuanj123
+  # 包含哪些配置文件
   profiles:
-    include: core, log, message, gateway, gateway-cli
+    include: core, log, message, gateway, gateway-cli, web
 
 gate:
   ignore:

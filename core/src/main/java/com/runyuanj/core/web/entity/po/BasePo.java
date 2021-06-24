@@ -26,14 +26,14 @@ public class BasePo implements Serializable {
     private String id;
 
     @TableField(fill = INSERT)
-    private String createBy;
+    private String createdBy;
 
     @TableField(fill = INSERT)
-    private Date createTime;
+    private Date createdTime;
 
     @TableField(fill = UPDATE)
-    private String updateBy;
+    private String updatedBy;
 
     @TableField(fill = UPDATE)
-    private Date updateTime;
+    private Date updatedTime;
 }

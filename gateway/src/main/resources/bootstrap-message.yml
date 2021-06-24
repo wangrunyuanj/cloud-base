@@ -5,57 +5,50 @@ spring:
   #      group-id: "gatewayFilter"
   rabbitmq:
     addresses: 111.229.218.230:5672
-    username: guest
-    password: guest
-# spring.cloud.stream.bindings.process-in-0.destination: words
+    username: admin
+    password: admin
+# spring.cloud.stream.rabbit.default.<property>=<value> 全局配置
+# spring.cloud.stream.bindings.process-in-0.destination: words 指定路由key
+# spring.cloud.stream.bindings.[exchangeName].consumer.[key]: value. 具体属性参见官方文档
   cloud:
       function:
         # mapping function name
-        definition: uppercaseFunction;process;gateway;input;output
+        definition: route
       bindings:
-        # destination: exchange名称
-        uppercaseFunction-in-0:
-          destination: upercase
-        uppercaseFunction-out-0:
-          destination: process
-        process-in-0:
-          destination: process
-        gateway-in-0:
-          destination: gateway-1
-          group: gatewayGroup
-        input-in-0:
-          destination: inputChannel
-        output-out-0:
-          destination: process
+        # destination: 路由key. 找到与该exchange绑定的以路由key开头的队列.
+        route-in-0:
+          destination: gateway-route-topic
+          content-type: text/plain
+          group: route-group
+          consumer:
+            bindingRoutingKey: add-route
+
+#        uppercase-in-0:
+#          destination: msg
+#          group: upmsg
+#          consumer:
+#            exclusive: false
+#        # 输出
+#        uppercase-out-0:
+#          destination: gawayFilter
+#        # 输出
+#        process-out-0:
+#          destination: msg2
+#        process-in-0:
+#          destination: gatewayFilter
+#          group: gatewayMsg
+#          consumer:
+#            exclusive: false
+          # 设置group, 防止被同一group的多个实例消费
+          # group: gateway
+
 # RabbitMQ Consumer Properties: spring.cloud.stream.rabbit.bindings.<channelName>.consumer..
 # Rabbit Producer Properties: spring.cloud.stream.rabbit.bindings.<channelName>.producer..
-# default-binder: rabbit
-#      rabbit:
-#        bindings:
-#          process-in-0:
-#            # consumer
-#            consumer:
-#              enable-batching: true
-#              batch-size: 10
-#              receive-timeout: 200
-#          consumer:
-#            batch-mode: true
 # spring.cloud.stream.bindings.<binding name>.destination=myExhange
 # spring.cloud.stream.bindings.<binding name>.group=myQueue
 #spring.cloud.stream.rabbit.bindings.<binding name>.consumer.bindQueue=false
 #spring.cloud.stream.rabbit.bindings.<binding name>.consumer.declareExchange=false
 #spring.cloud.stream.rabbit.bindings.<binding name>.consumer.queueNameGroupOnly=true
-
-# otherway: spring.cloud.stream.rabbit.bindings.<binding name>.consumer.bindingRoutingKey=myRoutingKey
-#        input:
-#          destination: input
-#        output:
-#          destination: gatewayconfig
-# spring.cloud.stream.bindings
-
-# spring.cloud.stream.function.destination
-
-#
 #        binder:
 #          brokers: 10.0.4.138:8088
 #          required-acks: 1

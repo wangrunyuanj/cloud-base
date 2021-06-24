@@ -1,89 +1,120 @@
 package com.runyuanj.gateway.service.impl;
 
-import com.alicp.jetcache.Cache;
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.anno.CreateCache;
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.runyuanj.gateway.entity.po.GatewayRoute;
+import com.runyuanj.gateway.mapper.GatewayRouteMapper;
 import com.runyuanj.gateway.service.IRouteService;
+import com.runyuanj.gateway.util.EventSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.FilterDefinition;
+import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ConcurrentReferenceHashMap;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * 管理routeDefinitions
+ * 网关路由的增删改查
+ * <p>
+ * 加载路由. 存入缓存
  */
 @Service
 @Slf4j
-public class RouteService implements IRouteService {
-
-    private static final String GATEWAY_ROUTES = "gateway_routes::";
+public class RouteService extends ServiceImpl<GatewayRouteMapper, GatewayRoute> implements IRouteService {
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private EventSender eventSender;
 
-    @CreateCache(name = GATEWAY_ROUTES, cacheType = CacheType.REMOTE)
-    private Cache<String, RouteDefinition> gatewayRouteCache;
+    /**
+     * routeDefinition缓存, 弱引用
+     */
+    private Map<String, RouteDefinition> gatewayRouteCache = new ConcurrentReferenceHashMap<>(128);
 
-    private Map<String, RouteDefinition> routeDefinitionMaps = new HashMap<>();
-
+    @Override
     @PostConstruct
-    private void loadDefinition() {
-        log.info("loadRouteDefinition, 开始初使化路由");
-        Set<String> gatewayKeys = stringRedisTemplate.keys(GATEWAY_ROUTES + "*");
-
-        if (isEmpty(gatewayKeys)) {
-            return;
-        }
-        log.info("准备初使化路由, gatewayKeys：{}", gatewayKeys);
-
-        Set<String> gatewayKeyIds = gatewayKeys.stream().map(key -> {
-            return key.replace(GATEWAY_ROUTES, EMPTY);
-        }).collect(toSet());
-
-        Map<String, RouteDefinition> allRoutes = gatewayRouteCache.getAll(gatewayKeyIds);
-        log.info("allRoutes：{}", allRoutes);
-
-        allRoutes.values().forEach(routeDefinition -> {
-            try {
-                routeDefinition.setUri(new URI(routeDefinition.getUri().toASCIIString()));
-            } catch (URISyntaxException e) {
-                log.error("网关加载RouteDefinition异常：", e);
-            }
-        });
-
-        routeDefinitionMaps.putAll(allRoutes);
-        log.info("已初使化路由信息：{}", routeDefinitionMaps.size());
+    public void reload() {
+        log.info("加载路由");
+        List<GatewayRoute> gatewayRoutes = this.list(new QueryWrapper<>());
+        gatewayRoutes.forEach(gatewayRoute ->
+                gatewayRouteCache.put(gatewayRoute.getRouteId(), gatewayRouteToRouteDefinition(gatewayRoute)));
     }
 
     @Override
-    public Collection<RouteDefinition> getRouteDefinitions() {
-        return routeDefinitionMaps.values();
-    }
+    public boolean add(GatewayRoute gatewayRoute) {
 
-    @Override
-    public boolean save(RouteDefinition routeDefinition) {
-        routeDefinitionMaps.put(routeDefinition.getId(), routeDefinition);
-        log.info("新增路由1条：{},目前路由共{}条", routeDefinition, routeDefinitionMaps.size());
-        return true;
+        boolean isSuccess = this.save(gatewayRoute);
+
+        RouteDefinition routeDefinition = gatewayRouteToRouteDefinition(gatewayRoute);
+        addRouteDefinition(routeDefinition);
+
+        log.info("新增路由规则：{}", routeDefinition);
+        return isSuccess;
     }
 
     @Override
     public boolean delete(String routeId) {
-        routeDefinitionMaps.remove(routeId);
-        log.info("删除路由1条：{},目前路由共{}条", routeId, routeDefinitionMaps.size());
+        boolean isSuccess = this.removeById(routeId);
+        log.info("删除路由1条：{},目前路由共{}条", routeId, gatewayRouteCache.size());
+
+        gatewayRouteCache.remove(routeId);
+        eventSender.send("rm-route", routeId);
+
+        return isSuccess;
+    }
+
+    @Override
+    public Collection<RouteDefinition> getRouteDefinitions() {
+        if (gatewayRouteCache == null || gatewayRouteCache.isEmpty()) {
+            reload();
+        }
+        return gatewayRouteCache.values();
+    }
+
+    /**
+     * 向缓存中添加routeDefinition并将事件发送到消息队列
+     *
+     * @param routeDefinition
+     * @return
+     */
+    @Override
+    public boolean addRouteDefinition(RouteDefinition routeDefinition) {
+        gatewayRouteCache.put(routeDefinition.getId(), routeDefinition);
+        eventSender.send("add-route", JSON.toJSONString(routeDefinition));
         return true;
     }
+
+    /**
+     * 将数据库中json对象转换为网关需要的RouteDefinition对象
+     *
+     * @param gatewayRoute
+     * @return RouteDefinition
+     */
+    private RouteDefinition gatewayRouteToRouteDefinition(GatewayRoute gatewayRoute) {
+        RouteDefinition routeDefinition = new RouteDefinition();
+        routeDefinition.setId(gatewayRoute.getRouteId());
+        routeDefinition.setOrder(gatewayRoute.getOrders());
+        routeDefinition.setUri(URI.create(gatewayRoute.getUri()));
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            routeDefinition.setFilters(objectMapper.readValue(gatewayRoute.getFilters(), new TypeReference<List<FilterDefinition>>() {
+            }));
+            routeDefinition.setPredicates(objectMapper.readValue(gatewayRoute.getPredicates(), new TypeReference<List<PredicateDefinition>>() {
+            }));
+        } catch (IOException e) {
+            log.error("网关路由对象转换失败", e);
+        }
+        return routeDefinition;
+    }
+
 }

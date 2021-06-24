@@ -1,8 +1,5 @@
 package com.runyuanj.org.service.impl;
 
-import com.alicp.jetcache.anno.CacheInvalidate;
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.anno.Cached;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -46,7 +43,6 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
 
     @Override
     @Transactional
-    @CacheInvalidate(name = "user::", key = "#id")
     public boolean delete(String id) {
         this.removeById(id);
         return userRoleService.removeByUserId(id);
@@ -54,7 +50,6 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
 
     @Override
     @Transactional
-    @CacheInvalidate(name = "user::", key = "#user.id")
     public boolean update(User user) {
         if (StringUtils.isNotBlank(user.getPassword()))
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -64,7 +59,6 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
     }
 
     @Override
-    @Cached(name = "user::", key = "#id", cacheType = CacheType.BOTH)
     public UserVo get(String id) {
         User user = this.getById(id);
         if (Objects.isNull(user)) {
@@ -75,7 +69,6 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
     }
 
     @Override
-    @Cached(name = "user::", key = "#uniqueId", cacheType = CacheType.BOTH)
     public User getByUniqueId(String uniqueId) {
         User user = this.getOne(new QueryWrapper<User>()
                 .eq("username", uniqueId)

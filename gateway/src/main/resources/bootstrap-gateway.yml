@@ -1,10 +1,11 @@
 spring:
   redis:
-    host: ${REDIS_HOST:10.0.4.138}
-    port: ${REDIS_PORT:8086}
+    host: ${REDIS_HOST:111.229.218.230}
+    port: ${REDIS_PORT:6379}
     lettuce:
       pool:
         max-active: 300
+    password: root123!
   security:
     oauth2:
       client:
@@ -29,46 +30,3 @@ spring:
         wiretap: true
       httpclient:
         wiretap: true
-
-jetcache:
-  statIntervalMinutes: 15  # 统一间隔
-  areaInCacheName: false  # 设置不把areaName作为Key前缀
-  hidePackages: com.runyuanj # 如果@Cached和@CreateCache的name是自动生成的，会默认的将包名和方法名作为前缀,该设置会被从包名中截掉
-  local:
-    # 默认永久本地缓存
-    default:
-      type: caffeine
-      keyConvertor: fastjson
-  remote:
-    # 默认永久的远程缓存
-    default:
-      type: redis
-      keyConvertor: fastjson
-      valueEncoder: kryo
-      valueDecoder: kryo
-      expireAfterWriteInMillis: 2000 # 以毫秒为单位指定超时时间的全局配置
-      poolConfig:
-        minIdle: 5
-        maxIdle: 20
-        maxTotal: 50
-      host: ${spring.redis.host}
-      port: ${spring.redis.port}
-      # password: ${REDIS_PASSWORD:root}
-
-logging:
-  level:
-#    org:
-#      springframework:
-#        cloud:
-#          gateway: debug
-#        http:
-#          server:
-#            reactive: debug
-#        web:
-#          reactive: debug
-#        boot:
-#          autoconfigure:
-#            web: debug
-#    reactor:
-#      netty: debug
-#    redisratelimiter: debug
