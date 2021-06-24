@@ -1,0 +1,25 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 5131f864258e5c1fb52c
+            client-secret: 0e814819298710aa575bd62f74c4f97281af0357
+    user:
+      name: admin
+      password: 12345678
+    strategy: MODE_THREADLOCAL # 默认MODE_THREADLOCAL
+
+  # redis
+  redis:
+    host: ${REDIS_HOST:111.229.218.230}
+    port: ${REDIS_PORT:6379}
+    password: root123!
+
+  # mysql
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:${DATASOURCE_DBTYPE:mysql}://${DATASOURCE_HOST:111.229.218.230}:${DATASOURCE_PORT:3306}/sc_auth?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=GMT
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:root123!}

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.runyuanj.gateway.entity.po.GatewayRoute;
 import com.runyuanj.gateway.mapper.GatewayRouteMapper;
 import com.runyuanj.gateway.service.IRouteService;
-import com.runyuanj.gateway.util.EventSender;
+import com.runyuanj.gateway.config.EventSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
@@ -38,6 +38,7 @@ public class RouteService extends ServiceImpl<GatewayRouteMapper, GatewayRoute> 
 
     /**
      * routeDefinition缓存, 弱引用
+     * TODO 添加redis
      */
     private Map<String, RouteDefinition> gatewayRouteCache = new ConcurrentReferenceHashMap<>(128);
 

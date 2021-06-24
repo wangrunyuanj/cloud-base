@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.stream.Stream;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 @Service
 @Slf4j
 public class PermissionService implements IPermissionService {
@@ -25,6 +23,7 @@ public class PermissionService implements IPermissionService {
     private static final String BEARER = "Bearer ";
     @Resource
     private ServiceFeign serviceFeign;
+
     /**
      * jwt filter 密钥，主要用于token解析，签名验证
      */

@@ -329,7 +329,7 @@
         <module>gateway</module>
         <module>org</module>
         <module>core</module>
-        <module>authorization</module>
+        <module>auth</module>
         <module>monitor</module>
     </modules>
 </project>

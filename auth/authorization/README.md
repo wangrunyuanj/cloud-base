@@ -1,3 +1,5 @@
+#授权服务
+
 ## 基于JWT的登录与权限验证
 1. JwtAuthenticationManager覆盖了ProviderManager, 在添加Filter时初始化providers
 2. 实现JwtAuthenticationProvider 和 ResourcePermissionAuthenticationProvider

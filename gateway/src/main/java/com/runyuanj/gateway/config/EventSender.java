@@ -1,4 +1,4 @@
-package com.runyuanj.gateway.util;
+package com.runyuanj.gateway.config;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
