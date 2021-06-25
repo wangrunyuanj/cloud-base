@@ -18,6 +18,7 @@ public class EventConfig {
     @Bean
     public Consumer<String> route() {
         return message -> {
+            // 通过事件处理路由
             log.info("route接收的普通消息为：{}", message);
         };
     }

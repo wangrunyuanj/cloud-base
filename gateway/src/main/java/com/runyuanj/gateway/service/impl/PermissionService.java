@@ -1,6 +1,5 @@
 package com.runyuanj.gateway.service.impl;
 
-import com.runyuanj.auth.api.service.IAuthService;
 import com.runyuanj.auth.api.service.impl.AuthService;
 import com.runyuanj.gateway.service.IPermissionService;
 import com.runyuanj.gateway.util.Constants;

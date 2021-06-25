@@ -7,11 +7,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.codec.support.DefaultServerCodecConfigurer;
 
-@Configuration
+/**
+ * 在代码中设置路由策略
+ * 自定义路由策略需要实现GlobalFilter
+ */
+// @Configuration
 public class GatewayConfiguration {
 
-
-    @Bean
+    // @Bean
     public ServerCodecConfigurer serverCodecConfigurer() {
         return new DefaultServerCodecConfigurer();
     }
@@ -22,7 +25,7 @@ public class GatewayConfiguration {
      * @param builder
      * @return
      */
-    @Bean
+    // @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("path_route", r -> r.path("/login.html")
