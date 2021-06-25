@@ -1,0 +1,18 @@
+server:
+  port: 8802
+
+spring:
+  application:
+    name: authentication
+
+  security:
+    oauth2:
+      jwt:
+        signingKey: 123456
+
+  profiles:
+    # 无条件加载bootstrap-core.yml文件
+    include: core, log, authentication
+logging:
+  file:
+    name: logs/auth/authentication.log

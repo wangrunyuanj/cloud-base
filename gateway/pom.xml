@@ -26,16 +26,36 @@
         </repository>
     </distributionManagement>
 
-    <dependencies>
+    <!-- 定义环境 resource 标签中指定配置 -->
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>dev</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--            <properties>-->
+<!--                <serverAddr>111.229.218.230:8848</serverAddr>-->
+<!--                <namespace>runyuanj</namespace>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 
+    <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
+        <!-- 鉴权Api -->
         <dependency>
             <groupId>com.runyuanj</groupId>
-            <artifactId>authorization</artifactId>
+            <artifactId>auth-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.runyuanj</groupId>
+            <artifactId>core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

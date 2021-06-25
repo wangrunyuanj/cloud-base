@@ -4,6 +4,10 @@ import com.runyuanj.common.response.Result;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 
+/**
+ *
+ * @author runyu
+ */
 public interface IAuthService {
     /**
      * 调用签权服务，判断用户是否有权限

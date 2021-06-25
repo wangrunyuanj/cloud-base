@@ -14,7 +14,10 @@ spring:
         server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
       config:
         server-addr: ${REGISTER_HOST:111.229.218.230}:${REGISTER_PORT:8848}
+        # 以 spring.application.name开头, 后缀为.yml的文件作为其配置文件, 例如 gateway-config.yml
+#        prefix: ${spring.application.name}
         file-extension: yml
+#        namespace: '@namespace@'
 
   jackson:
     time-zone: GMT+8

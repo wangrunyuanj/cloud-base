@@ -1,10 +1,4 @@
-server:
-  port: 8802
-
 spring:
-  application:
-    name: auth-api
-
   security:
     oauth2:
       jwt:
